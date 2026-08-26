@@ -1,0 +1,2531 @@
+#+TITLE: Your Emacs
+#+SUBTITLE: A course, a reference, and a guide to Org — for the config in C:/Users/Administrator/.emacs.d
+#+AUTHOR: Written for Shaul — Emacs 30.2, Org 9.7.11, Windows
+#+DATE: 2026-08-21
+#+STARTUP: content
+#+OPTIONS: toc:3 num:nil todo:t
+#+TAGS: basics(b) keys(k) config(c) org(o) writing(w) code(d) git(g) fix(f) windows(n)
+
+* Start here
+
+** What this is
+
+Three books in one file.
+
+*Book I is a course in Emacs itself.* It starts at "I have opened this program
+and I am not sure how to close it" and ends at "I can move, edit, search,
+navigate and get help without thinking about it." Read it in order. It assumes
+nothing.
+
+*Book II is a reference for /this/ config* — the one in
+=C:/Users/Administrator/.emacs.d=. Which modules exist, what each one gives you,
+every key it binds, what is installed on this machine and what is not, how to
+change it, and what to do when it breaks. You will come back to Book II for
+years.
+
+*Book III is a guide to Org mode.* Org is a whole system living inside Emacs — an
+outliner, a task manager, a table engine, a literate-programming environment, a
+publishing tool. Your config is /written/ in Org, and so is this guide. Book III
+teaches Org from zero and then covers exactly how it behaves in your setup.
+
+** How to read it
+
+Book I in order, once. Books II and III by lookup, forever.
+
+If you are impatient: read [[#seven-keys][The seven keys that matter]], then Book II's
+[[#key-reference][key reference]], then come back.
+
+** Every key here was checked against your actual config
+
+The bindings in this guide were read out of
+=C:/Users/Administrator/.emacs.d/modules/*.el=, not from memory and not from the
+internet. Where a key does something different inside an Org buffer than it does
+everywhere else, that is stated explicitly and was verified by asking Emacs.
+Where a feature is configured but the tool it needs is *not installed on this
+machine*, that is stated too — there are several, and finding out the hard way is
+annoying.
+
+Where I am uncertain, I say so.
+
+** A word about the reputation
+
+Emacs has a reputation for being hard. Half of that reputation is earned and half
+is a misunderstanding.
+
+The earned half: the key names are strange, they predate every convention you
+know, and =C-x C-s= to save will feel absurd for about a week.
+
+The misunderstanding: people think you must /memorise/ Emacs. You must not. Emacs
+is the most self-documenting program you will ever use, and this config adds two
+things — *which-key* and *completion everywhere* — that turn it from a memory
+test into a menu you can browse. You will learn perhaps twenty keys by heart.
+Everything else you will look up from inside the editor, in under two seconds,
+forever.
+
+* Book I — Emacs itself, from zero
+:PROPERTIES:
+:CUSTOM_ID: book-one
+:END:
+
+** 1. Reading the key notation
+:PROPERTIES:
+:CUSTOM_ID: notation
+:END:
+
+Emacs writes keys with modifier prefixes. Learn these four and you can read any
+Emacs documentation ever written.
+
+| Written  | Means                                   |
+|----------+-----------------------------------------|
+| =C-x=    | Hold *Ctrl*, press =x=                  |
+| =M-x=    | Hold *Alt*, press =x= (Alt is "Meta")   |
+| =S-<up>= | Hold *Shift*, press the up arrow        |
+| =C-M-x=  | Hold *Ctrl and Alt* together, press =x= |
+
+Keys written with spaces between them are pressed *in sequence*, not together:
+
+- =C-c p f= means: Ctrl-c, then =p=, then =f=. Three separate presses.
+- =C-x C-s= means: Ctrl-x, then Ctrl-s. The Ctrl stays down through both, but
+  they are still two presses.
+
+Special names:
+
+| Name    | Key                                                |
+|---------+----------------------------------------------------|
+| =RET=   | Enter                                              |
+| =SPC=   | Space                                              |
+| =TAB=   | Tab                                                |
+| =DEL=   | Backspace                                          |
+| =ESC=   | Escape                                             |
+| =<f8>=  | The F8 function key                                |
+| =C-`=   | Ctrl and the backtick key (top-left, under Escape) |
+
+One more convention: *ESC works as Meta.* If Alt is awkward or something is
+eating it, =ESC x= does what =M-x= does. Press and release Escape, then =x=.
+
+** 2. The seven keys that matter
+:PROPERTIES:
+:CUSTOM_ID: seven-keys
+:END:
+
+Before anything else. If you remember nothing else from Book I, remember these.
+
+| Key       | What it does                                                     |
+|-----------+------------------------------------------------------------------|
+| =C-g=     | *Cancel.* Escape hatch. Stuck, half-typed, wrong menu — =C-g=.   |
+| =M-x=     | *Run any command by name.* The universal entry point.            |
+| =C-x C-f= | Open a file                                                      |
+| =C-x C-s= | Save                                                             |
+| =C-x C-c= | Quit Emacs                                                       |
+| =C-/=     | Undo (press it again to keep undoing)                            |
+| =C-h k=   | *What does this key do?* Then press the key you're curious about |
+
+=C-g= is the most important key in the editor. Press it whenever anything feels
+wrong. It is never destructive. If you press it twice it is still not
+destructive. Develop the reflex.
+
+*** If you are stuck right now
+
+Press =C-g=. If that doesn't help, press =C-g= three more times. If Emacs seems
+frozen, press =C-g= again — a long-running command will notice and abort.
+
+To quit: =C-x C-c=. If it asks about unsaved buffers, answer =y= or =n= per
+buffer, or =!= to save everything.
+
+** 3. The vocabulary
+:PROPERTIES:
+:CUSTOM_ID: vocabulary
+:END:
+
+Emacs' words for things predate the words you know. They are not synonyms for
+modern terms, and translating them wrongly will confuse you later, so learn them
+properly now. It's six words.
+
+- *Buffer* — a piece of text Emacs is holding. Usually a file's contents, but
+  also command output, a help page, a directory listing, a terminal. A buffer
+  /may or may not/ be attached to a file. You can have hundreds open. Most are
+  invisible at any moment.
+
+- *Window* — a pane inside the Emacs frame showing one buffer. Splitting the
+  screen gives you more windows. Windows are cheap and disposable; closing one
+  does *not* close the buffer it was showing.
+
+- *Frame* — what your operating system calls a window. Yes, the names are swapped
+  relative to everything else. Emacs got there first.
+
+- *Point* — the cursor position. *Mark* — the other end of a selection. The text
+  between point and mark is the *region* (what other editors call "the
+  selection").
+
+- *Minibuffer* — the single line at the very bottom of the frame where you type
+  command names, filenames, search terms, and answer questions. When Emacs is
+  asking you something, it is asking there.
+
+- *Mode* — a buffer's behaviour. Every buffer has exactly one *major mode* (its
+  "type": Org mode, Python mode, Magit mode) and any number of *minor modes*
+  layered on top (line numbers, spell check, auto-completion). The mode line at
+  the bottom of each window tells you which ones are active.
+
+The single most useful consequence: *buffers and windows are independent.*
+Killing a window doesn't lose your work; killing a buffer might. =C-x 0= closes a
+window and is always safe. =C-x k= kills a buffer and will ask before losing
+unsaved changes.
+
+** 4. Files and buffers
+:PROPERTIES:
+:CUSTOM_ID: files
+:END:
+
+| Key       | Does                                                   |
+|-----------+--------------------------------------------------------|
+| =C-x C-f= | *Find file* — open a file (creates it if it's new)     |
+| =C-x C-s= | Save this buffer                                       |
+| =C-x s=   | Save every modified buffer (asks per buffer)           |
+| =C-x C-w= | Save As — write this buffer to a different filename    |
+| =C-x b=   | Switch to another buffer                               |
+| =C-x C-b= | List all buffers (opens *ibuffer* in this config)      |
+| =C-x k=   | Kill (close) a buffer, asking which                    |
+| =C-x K=   | Kill /this/ buffer, no name prompt (this config)        |
+| =C-c k=   | Kill every other file buffer (this config's addition)  |
+| =C-x C-c= | Quit Emacs                                             |
+
+*** How =C-x C-f= actually works
+
+It is not a file dialog. It is a text prompt in the minibuffer that starts at the
+current directory, and in this config it is backed by fuzzy completion, which
+makes it faster than any dialog.
+
+Things worth knowing:
+
+- Type *fragments in any order*. To open =modules/23-terminal.el= you can type
+  =term 23= and it will find it. That is *orderless* matching (see
+  [[#completion][the completion system]]).
+- =~/= means your home directory, =C:/Users/Administrator=. Emacs accepts forward
+  slashes on Windows everywhere, and you should use them — backslashes are escape
+  characters in many contexts and will bite you.
+- Typing =/= or =~/= /in the middle/ of the prompt throws away everything before
+  it and starts fresh from there. This is a feature; it means you never have to
+  delete a long wrong path.
+- =RET= on a directory opens that directory in a file-manager buffer.
+- Opening a file that does not exist creates an empty buffer. Nothing touches
+  disk until you save.
+
+*** Auto-revert, and why files change under you
+
+This config turns on =global-auto-revert-mode=. If a file changes on disk and you
+have no unsaved edits, Emacs quietly reloads it. That is what you want when Git
+or another program is rewriting files. If you /do/ have unsaved edits, Emacs
+leaves your version alone and warns you when you save.
+
+=C-c R= (this config) reverts the current buffer from disk without asking. Use it
+when you want to throw away what you've typed.
+
+*** No backup files
+
+This config sets =make-backup-files nil=, =auto-save-default nil= and
+=create-lockfiles nil=. That means *no* =file~=, =#file#= or =.#file= clutter in
+your directories — and also *no automatic recovery* if Emacs dies with unsaved
+changes. Save often, or use Git. This is a deliberate trade and you should know
+you made it.
+
+*** Killing a buffer
+
+Killing closes a buffer. It never touches the file on disk — the only thing at
+risk is unsaved edits, and Emacs knows it, so with changes pending it stops you:
+
+#+begin_example
+Buffer notes.txt modified; kill anyway? (yes, no, save and kill)
+#+end_example
+
+Press =n= to back out with everything intact, =y= to kill anyway and throw the
+changes away, or =s= to save first and then kill. Note that =C-x K= does not
+skip this question — it skips only having to /name/ a buffer, never the
+protection of your edits.
+
+Three footnotes. First, killing a buffer is unrelated to the
+[[#editing][kill ring]]: same verb, different machinery, and a killed buffer's
+text goes nowhere except away. Second, undo history mostly survives even a
+kill here, because [[#editing][undo-tree]] keeps its history on disk; reopen
+the file and the tree comes back with it. Third, the asterisked buffers —
+=*scratch*=, =*Messages*=, help windows, terminals — are special and
+disposable by design. =*scratch*= regenerates whenever you need it;
+=*Messages*= holds everything that ever flashed past in the echo area.
+
+This is the logic behind =C-c k=: it kills every other *file* buffer and
+deliberately spares anything whose name starts with =*= or a space — the
+infrastructure stays up, only real files get closed. For heavy cleanup,
+ibuffer (=C-x C-b=) is the mass tool: mark buffers with =m=, then =D= kills
+them all in one go.
+
+** 5. Moving around
+:PROPERTIES:
+:CUSTOM_ID: moving
+:END:
+
+*** Within a line
+
+| Key   | Does                   |
+|-------+------------------------|
+| =C-f= | Forward one character  |
+| =C-b= | Backward one character |
+| =M-f= | Forward one /word/     |
+| =M-b= | Backward one word      |
+| =C-a= | Beginning of line      |
+| =C-e= | End of line            |
+
+The arrow keys work exactly as you expect and always will. =C-f= and =C-b= exist
+because they keep your hands on the home row; use them or don't.
+
+In this config, *=C-a= is smarter than standard*: it moves to the first
+non-whitespace character of the line, and pressing it again goes to the true
+column zero. (That's =crux-move-beginning-of-line=.)
+
+*** Within a buffer
+
+| Key           | Does                                                                            |
+|---------------+---------------------------------------------------------------------------------|
+| =C-n= / =C-p= | Next / previous line                                                            |
+| =C-v=         | Page down                                                                       |
+| =M-v=         | Page up                                                                         |
+| =M-<=         | Beginning of buffer                                                             |
+| =M->=         | End of buffer                                                                   |
+| =M-g g=       | Go to line number                                                               |
+| =C-l=         | Recentre the view on the cursor (press repeatedly to cycle: middle, top, bottom) |
+
+=M-<= and =M->= behave slightly differently here because of *beginend*: in
+structured buffers (Org files, directory listings, Magit) the first press goes to
+the first /meaningful/ line rather than the literal first line. Press again for
+the literal top. This is almost always what you wanted.
+
+*** Jumping anywhere on screen — avy
+
+This is the one that changes how you move, and it has no equivalent in ordinary
+editors. Learn it.
+
+| Key     | Does                                                                                        |
+|---------+---------------------------------------------------------------------------------------------|
+| =M-j=   | Type a few characters; every match on screen gets a letter; press that letter to jump there |
+| =M-g j= | Same, but jump to a /line/                                                                  |
+| =M-g w= | Same, but jump to a /word/                                                                  |
+
+The flow is: see where you want to be, =M-j=, type the first two or three
+characters of the word you're looking at, then press the single letter that
+appears over it. Two to four keystrokes to anywhere visible, without the mouse
+and without counting lines.
+
+*** Where was I?
+
+| Key         | Does                                                                              |
+|-------------+-----------------------------------------------------------------------------------|
+| =C-c ;=     | Jump back to your last edit (=goto-last-change=; press again to walk further back) |
+| =C-u C-SPC= | Jump back through the /mark ring/ — the places you've been                        |
+
+This config also enables =save-place-mode=: reopen a file and the cursor is where
+you left it, even across restarts.
+
+** 6. Editing text
+:PROPERTIES:
+:CUSTOM_ID: editing
+:END:
+
+*** The region (selecting)
+
+| Key     | Does                                                          |
+|---------+---------------------------------------------------------------|
+| =C-SPC= | Set the mark here; now move, and the text between is selected |
+| =C-x h= | Select the whole buffer                                       |
+| =C-w=   | *Cut* (kill) the region                                       |
+| =M-w=   | *Copy* the region                                             |
+| =C-y=   | *Paste* (yank)                                                |
+| =M-y=   | After pasting, cycle through earlier cuts                     |
+
+Shift-arrow selection works too, exactly as you'd expect. Your =C-c= / =C-v=
+muscle memory does not — those are prefix keys here. Use =C-w= / =M-w= / =C-y=.
+
+*The kill ring.* Emacs does not have "a clipboard" — it has a /ring/ of the last
+several things you cut or copied. =C-y= pastes the most recent; =M-y= replaces
+what you just pasted with the one before it, and again for the one before that.
+In this config =M-y= is upgraded to =consult-yank-pop=, which shows you the whole
+ring in a searchable list with previews instead of cycling blindly. That is
+genuinely better and worth using deliberately: cut three things, then paste them
+in any order.
+
+*** Expanding a selection intelligently
+
+| Key    | Does                                               |
+|--------+----------------------------------------------------|
+| =C-==  | Expand the region to the next larger syntactic unit |
+
+Press it once: the word. Again: the string or the parenthesised expression.
+Again: the whole statement. Again: the function. It understands the language of
+the buffer. To shrink back, =C-u C-==. This is the fastest way to select "this
+thing, whatever this thing is."
+
+*** Killing (cutting)
+
+| Key     | Does                                  |
+|---------+---------------------------------------|
+| =C-k=   | Kill from cursor to end of line       |
+| =M-d=   | Kill the next word                    |
+| =M-DEL= | Kill the previous word                |
+| =C-w=   | Kill the region                       |
+
+In this config =C-k= is =crux-smart-kill-line=: on a line with text after the
+cursor it kills to end of line; press it again on the now-empty line and it kills
+the line itself, joining up. So =C-k C-k= removes a line entirely.
+
+Consecutive kills *append* into one kill-ring entry. Four =C-k= presses in a row
+give you one four-line paste, not four separate ones. This is deliberate and very
+useful once you notice it.
+
+*** Lines
+
+| Key                   | Does                                                    |
+|-----------------------+---------------------------------------------------------|
+| =M-<up>= / =M-<down>= | Move the current line (or region) up / down             |
+| =C-c C-d=             | Duplicate the current line or region (=duplicate-dwim=) |
+| =S-<return>=          | Open a new line below and go there, indented correctly  |
+| =C-S-<return>=        | Open a new line /above/ and go there                    |
+| =C-o=                 | Open a blank line at the cursor, staying put            |
+| =C-x C-o=             | Delete surrounding blank lines                          |
+
+Note: =C-c C-d= is =duplicate-dwim= /everywhere except Org buffers/, where Org's
+own =C-c C-d= (set a deadline) wins. That's not a bug — major modes are allowed
+to override global keys, and Org does. Same story for =C-c C-f= and =C-c ;=. See
+[[#org-conflicts][Key conflicts in Org buffers]].
+
+*** Multiple cursors
+
+| Key           | Does                                                           |
+|---------------+----------------------------------------------------------------|
+| =C->=         | Add a cursor at the next occurrence of the current word/region |
+| =C-<=         | Add a cursor at the previous occurrence                        |
+| =C-c C-<=     | Add a cursor at /every/ occurrence                             |
+| =C-S-c C-S-c= | Select some lines, then this puts a cursor on each of them     |
+
+Then type — every cursor types. =C-g= or =RET= exits multiple-cursor mode.
+
+This is the right tool for "rename this variable in these six places I can see."
+For anything larger, use search-and-replace or =wgrep= (below), which scale
+better.
+
+*** Keyboard macros
+
+Stock Emacs can record a sequence of edits and replay it exactly:
+
+| Key           | Does                                  |
+|---------------+---------------------------------------|
+| =<f3>=        | Start recording                       |
+| =<f4>=        | Stop recording — later, replay        |
+| =C-u 10 <f4>= | Replay the last macro ten times       |
+
+The flow: press =<f3>=, perform the edit once — movement, deletions, searches,
+all of it is remembered — then =<f4>= to stop recording. Move the cursor
+somewhere similar and =<f4>= replays the whole sequence there. This is the
+right tool when an edit has a /shape/ rather than a pattern to search for:
+delete the first word of each of thirty lines, wrap every number in a column
+in backticks. Multiple cursors wants you to find each place by eye;
+search-and-replace needs a pattern; a macro just copies your hands. =C-g=
+while recording throws the macro away.
+
+*** Undo, and the tree
+
+| Key     | Does                            |
+|---------+---------------------------------|
+| =C-/=   | Undo                            |
+| =C-?=   | Redo                            |
+| =C-x u= | Open the *undo tree* visualiser |
+
+Standard Emacs undo is famously confusing (undo is itself undoable, so redo is
+"undo the undo"). This config installs *undo-tree*, which fixes it: =C-/= undoes,
+=C-?= redoes, and they mean what you think.
+
+The tree is the real prize. =C-x u= opens a graph of your edit history as a
+branching tree. When you undo three edits and then type something new, standard
+editors throw away the branch you abandoned — undo-tree keeps it. Navigate with
+the arrow keys, watch the buffer update live, press =q= to leave it where you
+landed. Nothing you have typed in this buffer is ever truly lost.
+
+The history is saved to disk in =.emacs.d/undo-tree-history/=, so it survives
+closing the file /and/ restarting Emacs.
+
+** 7. Searching and replacing
+:PROPERTIES:
+:CUSTOM_ID: searching
+:END:
+
+*** Incremental search
+
+| Key       | Does                                                  |
+|-----------+-------------------------------------------------------|
+| =C-s=     | Search forward, letter by letter, jumping as you type |
+| =C-r=     | Search backward                                       |
+| =C-s C-s= | Repeat the last search                                |
+| =RET=     | Stop here                                             |
+| =C-g=     | Cancel and go back to where you started               |
+
+While searching: =C-s= again jumps to the next match, =C-r= to the previous,
+=DEL= backs up one character of your search term, =M-%= starts a replace using
+what you've already typed.
+
+*** Searching a whole buffer as a list
+
+| Key     | Does                                                        |
+|---------+-------------------------------------------------------------|
+| =M-s l= | =consult-line= — every matching line in a live filtered list |
+
+This is different from =C-s= and often better. It shows all matches at once,
+narrows as you type, previews each as you move through them, and =RET= jumps. Use
+=C-s= to find the next one; use =M-s l= to find /the right one/.
+
+*** Searching across files
+
+| Key     | Does                                                                 |
+|---------+----------------------------------------------------------------------|
+| =M-s r= | =consult-ripgrep= — search the contents of every file in the project |
+| =M-s f= | =consult-fd= — find files by name                                    |
+
+Both are live: type, see matches, preview, =RET=. Both need external tools, and
+both are installed on this machine (=rg= and =fd= via scoop — verified).
+
+A trick worth learning: in =consult-ripgrep=, a =#= in your input separates
+"what ripgrep searches for" from "how the candidate list is filtered." So
+=foo#bar= means "lines matching =foo=, then narrowed to those also matching
+=bar=." It lets you cast a wide net and then sift it without re-running the
+search.
+
+*** Replacing
+
+| Key     | Does                                                    |
+|---------+---------------------------------------------------------|
+| =M-%=   | Query replace (asks at each match)                      |
+| =C-M-%= | Query replace with a regular expression                 |
+| =M-s %= | Replace the word at the cursor, everywhere              |
+| =C-c q= | *Visual* regexp replace — shows you the matches live    |
+| =C-c M= | Put a cursor on every regexp match (visual-regexp + mc) |
+
+During a query replace: =y= replaces this one, =n= skips it, =!= replaces all the
+rest without asking, =^= goes back one, =q= stops.
+
+This config adds *anzu*, which puts a live count in the mode line ("3/17") so you
+can see how much damage you are about to do before you press =!=.
+
+=C-c q= (visual-regexp) is the one to reach for with a regex you're unsure of: it
+highlights what would change /as you type the pattern/, before you commit.
+
+*** Editing search results directly — wgrep
+
+This is a power move. Run =M-s r= to search the project, then get the results into
+a real buffer (press =C-.= and choose the export action — see [[#completion][Embark]]). In that
+buffer, =M-x wgrep-change-to-wgrep-mode= makes the *search results themselves
+editable*. Change lines in place, press =C-c C-c=, and your edits are written back
+into all the original files at once.
+
+This is how you do a careful cross-file refactor: search, review the hits in one
+place, edit only the ones you meant, commit them all. =wgrep-auto-save-buffer= is
+on, so the files are saved for you.
+
+** 8. Windows and layout
+:PROPERTIES:
+:CUSTOM_ID: windows
+:END:
+
+| Key                      | Does                                         |
+|--------------------------+----------------------------------------------|
+| =C-x 2=                    | Split horizontally (new window below)        |
+| =C-x 3=                    | Split vertically (new window right)          |
+| =C-x 1=                    | Close all other windows — keep only this one |
+| =C-x 0=                    | Close this window                            |
+| =C-x o=                    | Go to the next window                        |
+| =M-o=                      | *Ace-window* — jump to any window by letter    |
+| =C-c <left>= / =C-c <right>= | Undo / redo the window layout                |
+| =C-x 5 2=                  | New /frame/ (a real OS window)                 |
+| =C-x 5 0=                  | Close this frame                             |
+
+In this config =C-x 2= and =C-x 3= are improved: they split, rebalance the sizes,
+and *move the cursor into the new window*, which is what you meant every time.
+
+=M-o= is the one to use once you have more than two windows. It labels each window
+with a letter from the home row (=a s d f g h j k l=) and one keystroke takes you
+there.
+
+=C-c <left>= deserves special mention. Magit, help, and completion popups all
+rearrange your windows. =winner-undo= puts the layout back exactly as it was. It
+is the =C-/= of window arrangement.
+
+** 9. Getting help — Emacs describes itself
+:PROPERTIES:
+:CUSTOM_ID: help
+:END:
+
+This is the section that makes Emacs learnable. Every command, key, variable and
+mode in the editor can explain itself, including everything in your own config
+and every third-party package. This is not documentation that might be out of
+date — it is generated from the running program.
+
+| Key       | Answers                                                |
+|-----------+--------------------------------------------------------|
+| =C-h k=   | *What does this key do?* Then press the key            |
+| =C-h f=   | Describe a function/command by name                    |
+| =C-h v=   | Describe a variable                                    |
+| =C-h m=   | Describe every mode active in this buffer, and its keys |
+| =C-h b=   | List /every/ key binding active right now              |
+| =C-h B=   | Same, but as a searchable list you can act on (embark) |
+| =C-h o=   | Describe any symbol, function or variable              |
+| =C-h a=   | *Apropos* — search command names by keyword            |
+| =C-h t=   | The built-in interactive tutorial                      |
+| =C-h C-h= | Help about help                                        |
+
+In this config, =C-h k=, =C-h f= and =C-h v= open *helpful* buffers rather than
+plain ones: same information, plus the source code, plus which keys run it, plus
+its current value, plus a link to jump straight to where it's defined. Pressing
+=RET= on a link inside a help buffer follows it; =l= goes back.
+
+*** which-key: the popup that teaches you
+
+Press =C-c= and wait half a second. A panel appears at the bottom listing every
+key that can follow =C-c= and what it does. Press =C-x= and wait: same thing.
+
+This is the single most important learning tool in the config. You do not need to
+remember what is under =C-c t= or =C-c e= — press the prefix, wait, read.
+
+*** The three questions
+
+Nearly every "how do I…" resolves to one of these:
+
+1. *"What did I just press?"* → =C-h k=, then the key.
+2. *"Is there a command for this?"* → =C-h a= (apropos) with a keyword, or just
+   =M-x= and type a guess — command names are descriptive and the completion is
+   fuzzy. Looking for something about windows? =M-x window= and read.
+3. *"What can I do here?"* → =C-h m= for this buffer's modes and keys.
+
+** 10. Running commands, and the universal argument
+:PROPERTIES:
+:CUSTOM_ID: prefix-arg
+:END:
+
+=M-x= runs any command by name. That is roughly ten thousand commands, and this
+config's completion makes them findable: type fragments in any order.
+
+*** The prefix argument
+
+=C-u= before a command changes its behaviour. This is a general mechanism, not a
+per-command feature.
+
+- =C-u 5 C-n= — move down 5 lines. Any number works with any movement command.
+- =C-u C-SPC= — jump to a previous mark instead of setting one.
+- =C-u C-== — /shrink/ the expand-region selection instead of growing it.
+- =C-u C-c t n= — in this config, open a terminal but *ask which shell* first.
+
+When a command's help says "with prefix argument, …", =C-u= is what it means.
+Plain =C-u= with no number usually means "do the alternate thing"; =C-u 4=, =C-u
+20= and so on mean "do it that many times."
+
+** 11. Working with directories
+:PROPERTIES:
+:CUSTOM_ID: dired
+:END:
+
+=C-x d= opens a directory. In this config that is *Dirvish*, a modernised file
+manager with icons, file sizes, and a preview pane.
+
+| Key         | In a directory buffer                                           |
+|-------------+-----------------------------------------------------------------|
+| =RET= / =l= | Open the file or enter the directory                            |
+| =h=         | Go up to the parent directory                                   |
+| =TAB=       | Expand this directory /inline/ as a tree                        |
+| =a=         | Quick-access bookmarks (Home, Downloads, Org, Source, Projects) |
+| =f=         | Find files here by name (=fd=)                                  |
+| =M-t=       | Toggle the full-screen preview layout                           |
+| =m= / =u=   | Mark / unmark a file                                            |
+| =D=         | Delete marked files                                             |
+| =R=         | Rename or move                                                  |
+| =C=         | Copy                                                            |
+| =+=         | Create a directory                                              |
+| =g=         | Refresh                                                         |
+| =q=         | Quit                                                            |
+
+And the one you'll use most: *=<f8>= toggles a file-tree sidebar* down the left
+side, the way an IDE does. It follows the file you're editing.
+
+*Renaming many files at once:* press =C-x C-q= in a directory buffer. The listing
+becomes editable text. Edit the filenames as if they were a document, then =C-c
+C-c= to apply. Emacs performs the renames. This is =wdired=, it is the same trick
+as =wgrep=, and it is the fastest bulk-rename tool you will ever use.
+
+** 12. Recovering from trouble
+:PROPERTIES:
+:CUSTOM_ID: recovery
+:END:
+
+| Symptom                                | Fix                                                      |
+|----------------------------------------+----------------------------------------------------------|
+| Half-typed a key sequence              | =C-g=                                                    |
+| A command is asking something odd      | =C-g=                                                    |
+| Emacs seems frozen                     | =C-g=, repeatedly. Then wait — a subprocess may be slow. |
+| Screen looks corrupted                 | =C-l= to redraw                                          |
+| Accidentally hid all windows           | =C-x 1=, or =C-c <left>= to undo the layout change       |
+| A buffer is read-only and shouldn't be | =C-x C-q= toggles read-only                              |
+| Typed a huge amount of garbage         | =C-/= repeatedly, or =C-x u= for the undo tree           |
+| No idea what mode this buffer is in    | =C-h m=                                                  |
+| Config broke on startup                | See [[#troubleshooting][Troubleshooting]] in Book II     |
+| Something went wrong and you missed it | =M-x view-echo-area-messages= — every message, in order  |
+
+That last one is underrated. Emacs prints a lot of useful information in the echo
+area at the bottom, and it scrolls past faster than you can read. The =*Messages*=
+buffer keeps all of it.
+
+* Book II — This config
+:PROPERTIES:
+:CUSTOM_ID: book-two
+:END:
+
+** 1. The sixty-second model
+:PROPERTIES:
+:CUSTOM_ID: model
+:END:
+
+Four facts explain the whole thing.
+
+*It is literate.* Every module is an Org document — =modules/NN-name.org= —
+containing prose explaining the reasoning and code blocks containing the actual
+Emacs Lisp. Saving the =.org= /tangles/ it, extracting the code blocks into
+=modules/NN-name.el=. *The =.org= is the source of truth. The =.el= is
+generated.* Edit the =.el= and your change is destroyed the next time the =.org=
+is saved.
+
+*The loader is self-assembling.* =init.el= loads /every/ =.el= file in =modules/=
+in filename order. There is no list of modules to maintain. Drop in a
+=28-whatever.org=, save it to tangle, restart — it loads. The zero-padded numbers
+exist purely so the alphabetical sort matches the intended load order.
+
+*Packages come from MELPA.* =use-package-always-ensure= is =t=, so any package
+mentioned in a module that isn't installed gets fetched on first launch. They
+land in =elpa/=. The full list lives in =custom.el= as
+=package-selected-packages= — that's the manifest that lets you rebuild =elpa/=
+from nothing.
+
+*It is tuned for Windows specifically.* =init.el= sets the pipe and file-stat
+knobs that make Magit, LSP and ripgrep bearable on this platform: no delay
+between pipe reads, a 64 KB pipe buffer, no expensive =stat()= calls, Git as the
+only version-control backend probed, and no font-cache compaction (which
+otherwise causes garbage-collection storms with icon fonts).
+
+*** Layout
+
+#+begin_example
+C:/Users/Administrator/.emacs.d/
+├── init.el                 loader, Windows perf tuning, package management
+├── custom.el               the package manifest (generated; don't hand-edit)
+├── modules/
+│   ├── NN-name.org         SOURCE — prose + code
+│   └── NN-name.el          GENERATED — do not edit
+├── elpa/                   installed packages
+├── snippets/               your own yasnippet templates (currently empty)
+├── undo-tree-history/      persistent undo, per file
+├── eln-cache/              natively-compiled code
+├── recentf, history, places   session state
+├── EMACS-PRIMER.md         a short intro to Emacs itself
+└── README-WINDOWS.md       a short reference for this config
+#+end_example
+
+Note that =EMACS-PRIMER.md= mentions hydras for "seforim" (=C-c S=) and text
+direction (=C-c D=). *Those are not in this Windows config* — that paragraph was
+written for the Linux one and didn't get trimmed on the way over. See
+[[#linux-sibling][The Linux sibling]].
+
+** 2. The modules
+:PROPERTIES:
+:CUSTOM_ID: modules
+:END:
+
+| #  | Module      | What it gives you                                                                                                     |
+|----+-------------+-----------------------------------------------------------------------------------------------------------------------|
+| 00 | core        | Garbage-collection tuning (gcmh), process/scroll performance, huge-file handling                                      |
+| 01 | ui          | doom-one theme, doom-modeline, nerd icons, relative line numbers, fonts, no backup clutter, UTF-8, recentf, savehist   |
+| 03 | completion  | vertico · orderless · marginalia · consult · corfu · embark · which-key · helpful                                     |
+| 04 | editing     | undo-tree, multiple-cursors, expand-region, anzu, crux, visual-regexp, wgrep, olivetti, focus                         |
+| 05 | navigation  | avy, ace-window, winner, tab-bar workspaces, ibuffer groups, buffer-killing helpers                                    |
+| 06 | org         | Org configuration, org-modern styling, capture templates, agenda                                                       |
+| 12 | programming | eglot (LSP) for Python/Rust/Java, yasnippet, editorconfig                                                              |
+| 13 | magit       | Git — status, dispatch, gutter marks, time machine                                                                    |
+| 16 | hydras      | The =C-c SPC= launcher menu                                                                                            |
+| 17 | utils       | Open/reload config, auto-tangle on save, better window splits, Emacs server                                            |
+| 20 | projectile  | Project detection and navigation (=C-c p=)                                                                             |
+| 22 | dirvish     | The file manager and the =<f8>= sidebar                                                                                |
+| 23 | terminal    | Multi-shell tabbed terminal panel (PowerShell / Nushell / Bash)                                                        |
+| 24 | tabs        | centaur-tabs buffer strip + the =C-c T= tabs hydra                                                                     |
+| 25 | markdown    | Markdown editing with live side-by-side preview /inside/ Emacs                                                         |
+| 26 | typst       | Typst editing with live side-by-side PDF preview                                                                       |
+| 27 | local-ai    | gptel — AI chat, pointed at a local Ollama                                                                             |
+
+Numbers 02, 07–11, 14, 15, 18, 19, 21 are absent on purpose. They exist in the
+Linux config (LaTeX, ConTeXt, org-roam, pdf-tools, vterm, Hebrew, seforim) and
+were left out here. The gaps are deliberate — the numbering stays aligned between
+the two configs so a module can be lifted across without renumbering.
+
+** 3. Keys you will actually use
+:PROPERTIES:
+:CUSTOM_ID: key-reference
+:END:
+
+The complete reference, grouped by what you're doing. Everything below was read
+out of the config files.
+
+*** The launcher
+
+| Key       | Does                                                       |
+|-----------+------------------------------------------------------------|
+| =C-c SPC= | *The launcher hydra* — a labelled menu of the big features |
+
+Press it. A panel appears listing Git, project, file, terminal and note commands
+with single-letter keys. This is the "I know there's a command for this" key.
+Press =q= or =C-g= to dismiss.
+
+Its contents:
+
+| Key | Runs                        |
+|-----+-----------------------------|
+| =g= | Magit status                |
+| =G= | Magit dispatch              |
+| =t= | Git time machine            |
+| =p= | Switch project              |
+| =f= | Find file in project        |
+| =r= | Ripgrep the project         |
+| =d= | Dirvish                     |
+| =e= | Dirvish sidebar             |
+| =`= | Toggle the terminal         |
+| =c= | Org capture                 |
+| =a= | Org agenda                  |
+| =w= | Reading room (centred text) |
+| =T= | The tabs hydra              |
+
+*** Files, buffers, windows
+
+| Key                          | Does                                         |
+|------------------------------+----------------------------------------------|
+| =C-x C-f=                    | Open a file                                  |
+| =C-x C-s=                    | Save                                         |
+| =C-x b=                      | Switch buffer (=consult-buffer= — see below) |
+| =C-x 4 b=                    | Switch buffer in the other window            |
+| =C-x C-b=                    | ibuffer — the full buffer list, grouped      |
+| =C-x K=                      | Kill this buffer, no name prompt             |
+| =C-c k=                      | Kill all other file buffers                  |
+| =C-c R=                      | Revert this buffer from disk, no confirmation |
+| =C-x 2= / =C-x 3=            | Split below / right, and move there          |
+| =M-o=                        | Jump to a window by letter                   |
+| =C-c <left>= / =C-c <right>= | Undo / redo the window layout                |
+| =C-x r b=                    | Jump to a bookmark                           |
+
+=C-x b= is worth a paragraph. =consult-buffer= is not just a buffer list — it is
+a *unified* switcher. Open buffers, recently-opened files, and bookmarks all in
+one list. And it /narrows/: type =b SPC= at the start to see only buffers, =f
+SPC= for only recent files, =m SPC= for only bookmarks. The =<= key (this
+config's =consult-narrow-key=) shows you which narrowing keys are available.
+
+*ibuffer* (=C-x C-b=) groups your buffers automatically into Org, Code, Dired,
+Magit, Term, Help and Emacs sections. Mark buffers with =m=, then =D= to kill
+them all — the fastest way to clean up after a long session.
+
+*** Tabs and workspaces
+
+Two independent tab systems, which is confusing until you see the split:
+
+- *centaur-tabs* — the strip at the top showing /buffers/, grouped by project.
+- *tab-bar* — Emacs' built-in /workspaces/, each holding its own window layout.
+
+| Key         | Does                                            |
+|-------------+-------------------------------------------------|
+| =C-c <=     | Previous buffer tab (in the strip)              |
+| =C-c >=     | Next buffer tab                                 |
+| =C-<tab>=   | Next workspace                                  |
+| =C-S-<tab>= | Previous workspace                              |
+| =C-x t n=   | New workspace                                   |
+| =C-x t k=   | Close workspace                                 |
+| =C-x t r=   | Rename workspace                                |
+| =C-c T=     | *The tabs hydra* — everything above in one menu |
+
+=C-c T= is the one to remember; it covers both systems and stays open while you
+work (it's a "pink" hydra, meaning repeated presses keep working). Inside it,
+=1=–=9= jump straight to a workspace, =d= kills the current buffer, =o= kills all
+the others, and =s= opens a project in a brand-new workspace *named after the
+project* — which is the actual reason to use workspaces at all.
+
+*** Projects
+
+| Key       | Does                                            |
+|-----------+-------------------------------------------------|
+| =C-c p=   | The projectile command map (wait for which-key) |
+| =C-c p p= | Switch project (with live preview)              |
+| =C-c p f= | Find a file in this project                     |
+| =C-c p b= | Switch to a buffer in this project              |
+| =C-c p d= | Find a directory in this project                |
+| =C-c p k= | Kill all this project's buffers                 |
+
+A "project" is any directory Projectile recognises — usually one containing
+=.git=. It searches =~/=, =~/source/= and =~/projects/= for them.
+
+Indexing uses the =alien= method, which means it shells out to =fd= and =git=
+rather than walking directories in Lisp. On Windows that is the difference
+between instant and unusable. =fd= is installed (verified).
+
+*** Git
+
+| Key       | Does                                                |
+|-----------+-----------------------------------------------------|
+| =C-x g=   | *Magit status* — the main event                     |
+| =C-x M-g= | Magit dispatch (every Magit command as a menu)      |
+| =C-c v g= | Magit commands for /this file/ only                 |
+| =C-c v t= | Git time machine — step through this file's history |
+
+Magit is the best Git interface in existence and is on its own a sufficient
+reason to use Emacs. From the status buffer:
+
+| Key   | Does                                                 |
+|-------+------------------------------------------------------|
+| =TAB= | Expand/collapse a section (a file, a hunk)           |
+| =s=   | Stage the thing at the cursor                        |
+| =u=   | Unstage it                                           |
+| =k=   | Discard it (careful — this throws work away)         |
+| =c c= | Commit — opens a message buffer; =C-c C-c= to finish |
+| =P p= | Push                                                 |
+| =F p= | Pull                                                 |
+| =b b= | Switch branch                                        |
+| =l l= | Log                                                  |
+| =g=   | Refresh                                              |
+| =q=   | Quit                                                 |
+| =?=   | *Show every command available here*                  |
+
+The key insight about Magit: you can stage /part/ of a file. Put the cursor on a
+hunk and press =s=, or select a few lines within a hunk and press =s= — only
+those lines are staged. This makes "commit the fix but not the debug print" a
+two-second operation.
+
+Note: =magit-refresh-status-buffer= is =nil= here. The status buffer does *not*
+automatically update on every file save — a deliberate Windows performance
+choice, because refreshing means spawning Git subprocesses and those are slow
+here. Press =g= to refresh when you want current information. If Magit ever seems
+to be showing you stale state, that is why.
+
+*git-gutter* puts change marks in the fringe of every code buffer, showing which
+lines you have modified since the last commit.
+
+*** The terminal
+
+| Key         | Does                                      |
+|-------------+-------------------------------------------|
+| =C-`=       | Toggle a terminal panel across the bottom |
+| =C-c t t=   | Same thing                                |
+| =C-c t n=   | New terminal tab (PowerShell)             |
+| =C-c t N=   | New terminal tab, choosing the shell      |
+| =C-<next>=  | Next terminal tab (inside a terminal)     |
+| =C-<prior>= | Previous terminal tab                     |
+
+Multiple terminals appear as tabs along the top of the terminal panel. On this
+machine the shell picker will offer *PowerShell*, *Nushell* and *Bash* — all
+three are installed (verified: =powershell.exe=, =nu=, and Git for Windows'
+=bash=). =pwsh= (PowerShell 7) is not installed, so "PowerShell" means Windows
+PowerShell 5.1.
+
+This is Emacs' built-in =shell=, not a real terminal emulator. It handles normal
+command output fine and full-screen curses programs badly. =vterm= — the proper
+terminal emulator — cannot be built on Windows without a C toolchain and
+libvterm, which is why this module exists in this form.
+
+*** Writing and reading
+
+| Key       | Does                                                            |
+|-----------+-----------------------------------------------------------------|
+| =C-c w=   | *Reading room* — centre the text, wrap lines, hide line numbers |
+| =C-c C-f= | Focus mode — dim everything except the current paragraph        |
+
+=C-c w= is the one for long prose. It turns a wall of full-width text into a
+centred column about 100 characters wide with soft wrapping, which is far easier
+to read and write in. Press it again to go back.
+
+(In an Org buffer, =C-c C-f= is Org's own command instead. Use =M-x focus-mode=
+there.)
+
+*** Markdown
+
+| Key       | Does                                        |
+|-----------+---------------------------------------------|
+| =C-c m p= | Toggle live side-by-side preview            |
+| =C-c m r= | Re-render the preview now                   |
+| =C-c m e= | Export this file to =.html= next to it      |
+
+The preview renders inside Emacs — a right-hand pane showing the formatted
+document, refreshing after 0.8 seconds of idle time and on every save, without
+losing your scroll position.
+
+*⚠ This will not work on this machine yet.* It looks for =pandoc=, =cmark-gfm=,
+=cmark=, =markdown_py=, =multimarkdown= or =markdown= on your PATH and *none of
+them are installed* (verified). Install one:
+
+#+begin_src powershell
+scoop install pandoc
+#+end_src
+
+Then either restart Emacs, or run =M-x set-variable RET
+my/markdown-preview-command RET nil RET= to make it re-detect without a restart.
+
+*** Typst
+
+| Key       | Does                                     |
+|-----------+------------------------------------------|
+| =C-c C-c= | Compile this =.typ= file once            |
+| =C-c C-v= | Open the compiled PDF                    |
+| =C-c m p= | Live preview — recompile on every change |
+
+*⚠ Also not usable on this machine yet.* Neither =typst= nor =tinymist= (the
+language server) is installed, and neither is a PDF renderer. The module is inert
+until:
+
+#+begin_src powershell
+scoop install typst tinymist ghostscript
+#+end_src
+
+Without ghostscript (or mupdf), the live preview still works but opens the PDF in
+your external viewer instead of inside Emacs. The module checks for all of this
+and tells you what is missing rather than failing mysteriously — which is the
+correct behaviour, and a pattern the whole config follows.
+
+*** AI
+
+| Key       | Does                                            |
+|-----------+-------------------------------------------------|
+| =C-c g g= | Open a gptel chat buffer                        |
+| =C-c g s= | Send the region (or buffer) to the model        |
+| =C-c g m= | The gptel menu — switch model, backend, options |
+
+Configured to talk to a *local Ollama* at =localhost:11434=, asking =ollama list=
+at startup which models you have.
+
+*⚠ =ollama= is not on this machine's PATH* (verified — though =~/.ollama= exists,
+which suggests it was installed at some point and has since gone missing from
+PATH). With Ollama absent the model list falls back to a hardcoded =llama3= and
+requests will fail to connect. Either install or repair Ollama, or point gptel at
+a cloud backend — module 27's =.org= documents how.
+
+Responses come back as Org markup, matching the rest of the config.
+
+*** Editing the config itself
+
+| Key       | Does                       |
+|-----------+----------------------------|
+| =C-c e i= | Open =init.el=             |
+| =C-c e m= | Open the =modules/= directory |
+| =C-c e r= | Reload the config          |
+| =C-c e R= | Restart Emacs entirely     |
+
+** 4. The completion system — why your Emacs looks different
+:PROPERTIES:
+:CUSTOM_ID: completion
+:END:
+
+This is the part that most changes the day-to-day feel, and it is five packages
+working together. Understanding the division of labour makes the whole thing
+predictable.
+
+*Vertico* — draws the vertical list of candidates in the minibuffer. That is all
+it does. Fifteen at a time.
+
+*Orderless* — decides what "matches." Instead of requiring a prefix, it splits
+what you type on spaces and requires each piece to appear /somewhere/, in /any
+order/. =23 term= finds =23-terminal.el=. =org cap= finds =org-capture=. This is
+the single biggest usability win in the config and you should type accordingly —
+fragments, not prefixes.
+
+*Marginalia* — the grey annotations to the right of each candidate. File sizes
+and dates for files, docstrings for commands, current values for variables. Free
+information you would otherwise have to go and look up.
+
+*Consult* — the upgraded commands: =consult-buffer=, =consult-line=,
+=consult-ripgrep=, =consult-yank-pop=. Their defining feature is *live preview*:
+as you move down the candidate list, Emacs shows you the actual thing. This
+config sets a 0.2-second debounce so the preview doesn't thrash while you scroll
+fast.
+
+*Embark* — act on a candidate instead of just selecting it.
+
+| Key     | Does                                                     |
+|---------+----------------------------------------------------------|
+| =C-.=   | *Act* on the thing at point — offers every relevant action |
+| =C-;=   | *Do what I mean* — run the most likely action immediately  |
+| =C-h B= | Show every active key binding, searchably                 |
+
+Embark is the "right-click menu" of Emacs, and it works on whatever the cursor is
+near: a filename in a buffer, a candidate in a completion list, a URL, a symbol
+in code. Press =C-.= and see what is on offer. Its best trick: in the middle of a
+=consult-ripgrep=, press =C-.= and choose the export action to dump *every match
+into an editable buffer* — which is the wgrep workflow from Book I, reachable in
+two keystrokes.
+
+Because =prefix-help-command= is set to Embark's version, pressing =C-h= after
+any prefix (say =C-x C-h=) gives you a /searchable, selectable/ list of what
+follows, not a static wall of text.
+
+*Corfu* — the little popup that completes code and text *in the buffer* (as
+opposed to the minibuffer). It appears automatically after two characters and a
+0.2-second pause. =TAB= or =RET= accepts, arrows navigate, =C-g= dismisses.
+
+** 5. Programming support
+:PROPERTIES:
+:CUSTOM_ID: programming
+:END:
+
+*Eglot* is the LSP client — it connects to language servers that provide real
+completion, jump-to-definition, error checking and renaming.
+
+Configured to start automatically for:
+
+| Language | Server           | Installed here?             |
+|----------+------------------+-----------------------------|
+| Python   | =pyright=        | *No* — =npm install -g pyright= |
+| Rust     | =rust-analyzer=  | *Yes* (via rustup)          |
+| Java     | jdtls            | Auto-downloads on first use |
+| Typst    | =tinymist=       | *No*                        |
+
+Once a server is running:
+
+| Key                           | Does                          |
+|-------------------------------+-------------------------------|
+| =M-.=                         | Jump to definition            |
+| =M-,=                         | Jump back                     |
+| =M-x eglot-rename=            | Rename a symbol everywhere    |
+| =M-x eglot-format=            | Format the buffer or region   |
+| =M-x eglot-code-actions=      | Offer fixes at the cursor     |
+| =M-x flymake-goto-next-error= | Next diagnostic               |
+| =M-x eglot-shutdown=          | Stop the server for this project |
+
+=eglot-events-buffer-size= is 0 — LSP traffic is not logged. That is a
+significant Windows performance win, but it means that if you ever need to debug
+why a language server is misbehaving, you must set that variable back to
+something non-zero first, then restart the server.
+
+*Yasnippet* expands templates: type an abbreviation and press =TAB=. The
+=yasnippet-snippets= package supplies a large library for most languages. Your
+own =snippets/= directory is currently empty; =M-x yas-new-snippet= starts one.
+
+*Rust* formats on save (=rust-format-on-save t=), and =cargo-minor-mode= adds
+=C-c C-c C-b= (build), =C-c C-c C-t= (test), =C-c C-c C-r= (run).
+
+*Editorconfig* is on, so a project's =.editorconfig= governs indentation
+automatically.
+
+Other niceties in every code buffer: *rainbow-delimiters* colours nested brackets
+by depth, *electric-pair-mode* inserts closing brackets and quotes for you,
+*show-paren-mode* highlights the match instantly (zero delay), and relative line
+numbers make =C-u 12 C-n= style jumps easy to aim.
+
+** 6. External tools — what's here and what isn't
+:PROPERTIES:
+:CUSTOM_ID: external-tools
+:END:
+
+The config degrades gracefully by design: a missing tool disables its feature and
+tells you what to install. Nothing below is required to /boot/.
+
+Verified on this machine, 2026-08-21:
+
+| Tool                | Status      | Used for                          | Install                     |
+|---------------------+-------------+-----------------------------------+-----------------------------|
+| =git=               | ✓ installed | Magit, projectile, version control | —                           |
+| =rg= (ripgrep)      | ✓ installed | =M-s r=, project search            | —                           |
+| =fd=                | ✓ installed | =M-s f=, fast project indexing     | —                           |
+| =rust-analyzer=     | ✓ installed | Rust LSP                           | —                           |
+| =node= / =npm=      | ✓ installed | (needed to install pyright)        | —                           |
+| =powershell=        | ✓ installed | terminal                           | —                           |
+| =nu= (Nushell)      | ✓ installed | terminal                           | —                           |
+| =bash=              | ✓ installed | terminal                           | (Git for Windows)           |
+| MSYS2 gcc/libgccjit | ✓ installed | native compilation                 | —                           |
+| =pandoc=            | ✗ *missing* | Markdown preview + export          | =scoop install pandoc=      |
+| =typst=             | ✗ *missing* | Typst compilation                  | =scoop install typst=       |
+| =tinymist=          | ✗ *missing* | Typst LSP                          | =scoop install tinymist=    |
+| ghostscript         | ✗ *missing* | PDF preview inside Emacs           | =scoop install ghostscript= |
+| =ollama=            | ✗ *missing* | local AI (gptel)                   | =scoop install ollama=      |
+| =pyright=           | ✗ *missing* | Python LSP                         | =npm install -g pyright=    |
+
+To turn on everything at once:
+
+#+begin_src powershell
+scoop install pandoc typst tinymist ghostscript
+npm install -g pyright
+#+end_src
+
+*Deliberately unavailable on Windows:* =vterm= (needs libvterm and a C toolchain
+— module 23 uses the built-in shell instead), =jinx= spell-check (needs Enchant),
+=pdf-tools= (compiles a C helper). These are not oversights.
+
+** 7. Changing the config
+:PROPERTIES:
+:CUSTOM_ID: changing
+:END:
+
+*** The rule
+
+*Edit the =.org=. Never the =.el=.* The =.el= is generated and will be
+overwritten without warning the next time the =.org= is saved.
+
+The auto-tangle hook (in =17-utils.el=) watches for saves of any =.org= file
+inside =modules/= and re-tangles it on the spot. You will see "Tangled
+06-org.org" in the echo area. Then =C-c e r= reloads, or restart for a clean
+slate.
+
+Unlike the Linux config, =init.el= here does *not* re-tangle at startup — it
+loads the =.el= files directly. So a missing or stale =.el= stays stale. If a
+change is not taking effect, open the =.org= and save it (or =M-x
+org-babel-tangle=).
+
+*** Adding a package
+
+1. Open the relevant module's =.org=.
+2. Add a =use-package= form inside a code block:
+
+#+begin_src emacs-lisp
+(use-package some-package
+  :bind ("C-c x" . some-command)
+  :config
+  (setq some-variable t))
+#+end_src
+
+3. Save (it tangles automatically).
+4. =C-c e r= to reload. The package downloads from MELPA on first use.
+5. =M-x my/package-write-manifest= to record it in =custom.el=.
+
+That last step matters. The manifest is what makes =elpa/= reproducible — without
+it there is no way to rebuild after a wipe, and =package-autoremove= would treat
+every package as an orphan.
+
+*** A minute on =use-package=
+
+Every package in this config is configured with one =use-package= form, and the
+keywords are worth knowing because they're how you'll read the modules:
+
+| Keyword    | Means                                                              |
+|------------+--------------------------------------------------------------------|
+| =:ensure nil= | Don't install it — it's built into Emacs (org, eglot, which-key…) |
+| =:demand t=   | Load it immediately at startup rather than lazily                |
+| =:defer=      | Load it later (the default here — =use-package-always-defer= is =t=) |
+| =:bind=       | Set keys; also makes the package load on first use of that key    |
+| =:hook=       | Run this mode when that mode starts                               |
+| =:config=     | Code to run *after* the package loads                             |
+| =:custom=     | Set user options properly (with their setters)                    |
+| =:diminish=   | Hide this minor mode's name from the mode line                    |
+
+Because =use-package-always-defer= is =t=, most packages don't load until you
+first use them. That's why startup is fast and why the first invocation of
+something occasionally has a small pause.
+
+*** Adding a module
+
+Create =modules/28-yourname.org= starting with:
+
+#+begin_example
+,#+TITLE: 28 · Your Thing
+,#+PROPERTY: header-args:emacs-lisp :tangle 28-yourname.el :mkdirp yes :comments no
+#+end_example
+
+Write prose and code blocks. End the last code block with =(provide '28-yourname)=.
+Save to tangle, restart. The loader finds it with no other change.
+
+*** Useful config commands
+
+| Command                         | Does                                            |
+|---------------------------------+-------------------------------------------------|
+| =M-x my/package-refresh=        | Force-refresh the MELPA/ELPA index              |
+| =M-x my/package-restore=        | Install every package in the manifest that's missing |
+| =M-x my/package-write-manifest= | Regenerate the manifest from the modules        |
+| =M-x my/reload-init=            | Reload the config (=C-c e r=)                   |
+| =M-x org-babel-tangle=          | Tangle the current =.org= by hand               |
+| =M-x view-echo-area-messages=   | Read everything Emacs has told you this session |
+
+** 8. Troubleshooting
+:PROPERTIES:
+:CUSTOM_ID: troubleshooting
+:END:
+
+*Package install fails with =https://melpa.org/packages/foo-<date>.tar: Not
+found=.* The cached index is stale. MELPA rebuilds daily and deletes the
+superseded tarball, so a week-old index requests files that no longer exist. A
+stale GNU ELPA index does the same to =compat=, which takes vertico, magit and
+org-modern down with it. Run =M-x my/package-refresh=. =init.el= already refreshes
+any index older than a week and retries a failed install once, so this shouldn't
+recur.
+
+*A module didn't load.* =M-x view-echo-area-messages=. The loader catches errors
+per-module, reports the module name and reason with a =⚠= marker, and keeps going
+— so one broken module never takes down the whole config.
+
+*A change to a module isn't taking effect.* The =.el= is stale. Open the =.org=,
+save it, watch for "Tangled …", then =C-c e r=.
+
+*Emacs is slow to start.* Check native compilation: =M-: (native-comp-available-p)
+RET= should return =t=. It needs =C:/msys64/mingw64/bin= on PATH, which =init.el=
+adds when the directory exists. The first launch after a package update compiles
+in the background and is expected to be slower — that is a one-time cost per
+package.
+
+Startup time is reported in the echo area every launch ("Emacs ready in 1.23s").
+
+*The Markdown preview says no converter found.* Nothing is installed. =scoop
+install pandoc=, then restart or =M-x set-variable RET my/markdown-preview-command
+RET nil RET=.
+
+*The Typst preview opens an external viewer.* Emacs can't render PDFs here.
+=scoop install ghostscript= gets you =doc-view= inside Emacs.
+
+*Magit shows stale information.* By design — =magit-refresh-status-buffer= is
+=nil= for performance. Press =g=.
+
+*Fonts look wrong.* =01-ui= picks the first /installed/ family from a list:
+JetBrains Mono, Cascadia Code, Consolas, Courier New. Install JetBrains Mono for
+the intended look. A missing font never errors, it just falls through to the next
+one.
+
+*Icons are missing, or show as empty boxes.* =M-x nerd-icons-install-fonts=, then
+restart.
+
+*The tab strip has no accent bar (daemon only).* Known and handled — see the
+comment in =24-tabs.el=. The active-bar image can only be built in a graphical
+frame, and the daemon's first frame isn't one, so the config rebuilds it when a
+real frame appears.
+
+*Hebrew search returns nothing.* Confirm =rg= is on PATH. Do *not* set a UTF-8
+process coding system — the default locale coding is what makes ripgrep match
+Hebrew on Windows.
+
+*Reset one module completely.* Delete its =.el=, open the =.org=, save.
+
+*Rebuild everything from scratch.* Delete =elpa/=, start Emacs, run =M-x
+my/package-restore=.
+
+*Start Emacs without any config at all* (to prove a problem is yours and not
+Emacs'): =emacs -Q= from a shell.
+
+** 9. The Linux sibling
+:PROPERTIES:
+:CUSTOM_ID: linux-sibling
+:END:
+
+This config has a larger twin: =github.com/SYKhayyat/emacs-config=, described as
+"Portable literate Emacs config — NixOS, Linux, Windows, macOS."
+
+That repo has /more/ modules — Hebrew and seforim support, LaTeX, ConTeXt,
+org-roam, pdf-tools, vterm, citar, web search — organised as
+=modules/essentials/= and =modules/extras/=, with different numbering from the
+Windows config here.
+
+The two are maintained separately and on purpose. The architecture is identical
+(literate Org modules, self-assembling loader, the same key bindings for the
+shared features), but the Linux one takes packages from Nix rather than MELPA
+(=use-package-always-ensure= is =nil= there) and includes modules that cannot
+build on Windows.
+
+*Do not copy files between them expecting things to work.* The module numbers
+don't line up and the package-sourcing model is inverted.
+
+** 10. Reproducing this setup on a new machine
+:PROPERTIES:
+:CUSTOM_ID: reproducing
+:END:
+
+1. Install Emacs 30+ (MSYS2's =mingw-w64-x86_64-emacs=, or the official Windows
+   build).
+2. Optionally install MSYS2's =gcc= and =libgccjit= for native compilation.
+3. Copy =.emacs.d/init.el=, =custom.el= and =modules/= (the =.org= files are
+   enough; the =.el= regenerate).
+4. Start Emacs. It will fetch every package in the manifest. This takes a while
+   and prints a lot; let it finish.
+5. If anything is missing afterwards: =M-x my/package-restore=.
+6. Install the external tools from [[#external-tools][§6]] as you need them.
+
+* Book III — Org mode
+:PROPERTIES:
+:CUSTOM_ID: book-three
+:END:
+
+** 1. What Org actually is
+
+Org is usually described as "an outliner with markup," which is true and
+misleading. It is more accurate to say: *Org is a plain-text format that Emacs
+treats as a structured document, and about eight different tools built on top of
+that structure.*
+
+The format is the point. An =.org= file is readable in Notepad. Nothing is
+hidden, nothing is binary, nothing is lost when the software changes. Git diffs
+it cleanly. It will outlive every note-taking app you have ever tried.
+
+The tools built on it:
+
+- an *outliner* — fold, unfold, promote, demote, reorder whole sections
+- a *markup language* — emphasis, lists, links, footnotes, images, code
+- a *task manager* — TODO states, priorities, tags, deadlines
+- an *agenda* — a calendar and task view assembled from your files
+- a *table editor* with a real spreadsheet engine
+- a *capture* system for getting things down fast
+- a *literate-programming* environment — runnable code inside prose
+- an *export* engine — HTML, PDF, Markdown, plain text, more
+
+You do not need all eight. Most people use two or three. Your config is /written/
+in the eighth one, which is why it's covered here.
+
+This file you are reading is an Org document. Fold it with =S-TAB= and you will
+see the shape of it.
+
+** 2. Structure — the outline
+:PROPERTIES:
+:CUSTOM_ID: org-structure
+:END:
+
+*** Headlines
+
+A headline is a line starting with one or more asterisks and a space:
+
+#+begin_example
+,* Top level
+,** Second level
+,*** Third level
+,* Another top level
+#+end_example
+
+That is the entire structural syntax. Depth is the number of stars. Everything
+between one headline and the next belongs to it — that is a /subtree/.
+
+In your config, =org-hide-leading-stars= is on and *org-modern* replaces the
+stars with coloured bullets (=◉ ○ ◈ ◇ ✦=…). So you will see a single decorative
+bullet, not =***=. The stars are still there in the file; they're just not drawn.
+Type them normally.
+
+Also on: =org-startup-indented=, which /visually/ indents the text under each
+headline to match its depth. This is virtual — the file has no leading
+whitespace. It just looks like a proper outline.
+
+*** Folding — the single most important Org habit
+
+| Key     | Does                                                     |
+|---------+----------------------------------------------------------|
+| =TAB=   | Cycle *this* headline: folded → children shown → all shown |
+| =S-TAB= | Cycle the *whole document* through the same three states |
+
+Get in the habit of =S-TAB= when you open a file. You see the top-level headings
+only — the table of contents — and can navigate from there. A 3,000-line document
+becomes a one-screen menu.
+
+Your config sets =#+STARTUP: content= in this file, meaning it opens showing all
+headlines and no body text. You can put that line in any Org file. The options:
+
+| Line                     | Opens as                           |
+|--------------------------+------------------------------------|
+| =#+STARTUP: overview=    | Only top-level headlines (default) |
+| =#+STARTUP: content=     | All headlines, no body text        |
+| =#+STARTUP: showall=     | Everything expanded                |
+| =#+STARTUP: showeverything= | Everything, including drawers   |
+
+*** Moving around the outline
+
+| Key       | Does                                       |
+|-----------+--------------------------------------------|
+| =C-c C-n= | Next visible headline                      |
+| =C-c C-p= | Previous visible headline                  |
+| =C-c C-f= | Next headline at the *same* level          |
+| =C-c C-b= | Previous headline at the same level        |
+| =C-c C-u= | Up to the parent headline                  |
+| =C-c C-j= | Jump — a searchable list of every headline |
+| =M-g o=   | =consult-outline= — same idea, with preview and live filtering |
+
+=C-c C-j= and =M-g o= are the ones to learn. In a long document, don't scroll:
+list the headings and jump. =M-g o= (this config's addition) is the nicer of the
+two because it previews as you move.
+
+*** Restructuring
+
+| Key                   | Does                                        |
+|-----------------------+---------------------------------------------|
+| =M-<left>=            | Promote this headline one level (fewer stars) |
+| =M-<right>=           | Demote it one level                         |
+| =M-S-<left>=          | Promote the headline *and all its children* |
+| =M-S-<right>=         | Demote the whole subtree                    |
+| =M-<up>= / =M-<down>= | Move this headline (with its subtree) up / down among its siblings |
+| =C-c C-w=             | *Refile* — move this subtree to another headline, anywhere |
+| =C-c C-x C-w=         | Cut the subtree                             |
+| =C-c C-x M-w=         | Copy the subtree                            |
+| =C-c C-x C-y=         | Paste a subtree                             |
+
+=M-<up>= and =M-<down>= are the ones you will wear out. They move a whole
+section, children and all, with one keystroke. Reorganising a document in Org
+takes seconds, and that changes how you write — you stop worrying about getting
+the order right the first time.
+
+Note this shadows the global =move-text= binding from module 04. Inside Org you
+get Org's version, which is what you want.
+
+*** Creating headlines
+
+| Key       | Does                                                          |
+|-----------+---------------------------------------------------------------|
+| =M-RET=   | New headline at the same level as this one                    |
+| =C-RET=   | New headline *after the whole current subtree*                |
+| =M-S-RET= | New TODO headline at the same level                           |
+| =C-S-RET= | New TODO headline after the subtree                           |
+
+The difference between =M-RET= and =C-RET= is worth internalising. With the
+cursor in the middle of a long section, =M-RET= splits it right there; =C-RET=
+puts the new headline after everything belonging to the current one. When adding
+to a list of sections, you almost always want =C-RET=.
+
+*** Narrowing — working on one section
+
+| Key       | Does                                          |
+|-----------+-----------------------------------------------|
+| =C-x n s= | *Narrow* the buffer to this subtree only      |
+| =C-x n w= | *Widen* back to the whole file                |
+
+Narrowing hides everything else in the buffer. Not folded — /gone/, as far as
+editing, searching and replacing are concerned. In a 5,000-line file this is how
+you work on one chapter without accidentally query-replacing across the other
+twelve. =C-x n w= brings it all back.
+
+** 3. Markup — writing in Org
+:PROPERTIES:
+:CUSTOM_ID: org-markup
+:END:
+
+*** Emphasis
+
+| You type      | You get       |
+|---------------+---------------|
+| =*bold*=      | *bold*        |
+| =/italic/=    | /italic/      |
+| =_underline_= | _underline_   |
+| ~=verbatim=~  | =verbatim=    |
+| ~~code~~      | ~code~        |
+| =+strike+=    | +strike+      |
+
+The marker must touch the text (=*bold*=, not =* bold *=) and there must be
+whitespace or punctuation outside it.
+
+*⚠ An important gotcha in your config.* =org-hide-emphasis-markers= is =t=. The
+=*= and =/= characters are *invisible* once you move the cursor off them. Text
+just appears bold. This looks lovely and makes editing confusing, because you
+cannot see where the markup starts and ends.
+
+Two ways to cope:
+
+1. Move the cursor onto the word — Org reveals the markers around point... in
+   some setups. If it doesn't for you, use 2.
+2. =M-x org-toggle-link-display= is /not/ it — for emphasis you want:
+   =M-: (setq org-hide-emphasis-markers nil) RET= then =M-x font-lock-update=.
+   Turn it back on the same way.
+
+If the hidden markers annoy you more than they please you, change
+=org-hide-emphasis-markers= to =nil= in =modules/06-org.org= and be done.
+
+Also on: =org-pretty-entities=, so =\alpha= displays as α and =H_2O= shows a real
+subscript. Same trade — prettier display, slightly surprising editing.
+
+*** Lists
+
+#+begin_example
+- a bullet
+- another bullet
+  - nested (indent by two)
+- and back out
+
+1. a numbered item
+2. another
+   1. nested numbering
+
+- term :: a description list
+- another term :: its description
+
+- [ ] an unchecked box
+- [X] a checked box
+#+end_example
+
+| Key       | Does                                                           |
+|-----------+----------------------------------------------------------------|
+| =M-RET=   | New item at the same level                                     |
+| =TAB=     | (on an item) fold it                                           |
+| =M-<left>= / =M-<right>= | Outdent / indent the item                       |
+| =M-<up>= / =M-<down>=    | Move the item up / down                         |
+| =C-c C-c= | (on a checkbox) toggle it                                      |
+| =S-<left>= / =S-<right>= | (on the bullet) cycle the list type: - → + → 1. |
+
+Checkboxes get a progress counter if you add =[/]= or =[%]= to the parent
+headline:
+
+#+begin_example
+,* Packing [1/3]
+  - [X] passport
+  - [ ] charger
+  - [ ] tickets
+#+end_example
+
+The counter updates itself every time you toggle a box.
+
+*** Links
+
+#+begin_example
+[[https://example.com][the text you see]]
+[[https://example.com]]
+[[file:notes/other.org][another file]]
+[[file:notes/other.org::*Some Heading][straight to a heading]]
+[[*A heading in this file][an internal link]]
+[[#custom-id][a link to a CUSTOM_ID]]
+#+end_example
+
+| Key       | Does                                            |
+|-----------+-------------------------------------------------|
+| =C-c C-l= | Insert or edit a link (prompts for both parts)  |
+| =C-c C-o= | Open the link at the cursor                     |
+| =RET=     | Also opens it — because =org-return-follows-link= is =t= in your config |
+| =C-c &=   | Jump back after following a link                |
+| =M-x org-toggle-link-display= | Show the raw link syntax        |
+
+To capture a link to *where you are right now* — a file, a specific headline, a
+line of code, an email — press =C-c l= (=org-store-link=) there, then =C-c C-l=
+in your Org file to paste it as a proper link. That binding is /not/ set in your
+config; add it if you want it:
+
+#+begin_src emacs-lisp
+(global-set-key (kbd "C-c l") #'org-store-link)
+#+end_src
+
+*** Footnotes
+
+#+begin_example
+Some claim.[fn:1]
+
+[fn:1] The support for the claim.
+#+end_example
+
+=C-c C-x f= creates a footnote and jumps to where you write it. Press it again in
+the note to jump back. Org renumbers them for you.
+
+*** Blocks
+
+#+begin_example
+,#+begin_quote
+Something someone said.
+,#+end_quote
+
+,#+begin_example
+Text shown exactly as written, no markup interpreted.
+,#+end_example
+
+,#+begin_src python
+print("syntax-highlighted, and runnable")
+,#+end_src
+
+,#+begin_verse
+Line breaks
+    and indentation
+        preserved.
+,#+end_verse
+#+end_example
+
+*The fast way to type these:* =C-c C-,= (=org-insert-structure-template=) offers
+a menu — =q= for quote, =e= for example, =s= for source, =v= for verse — and
+inserts the block with the cursor inside it. Use it; typing =#+begin_src= by hand
+is a waste of your afternoon.
+
+Your config sets =org-src-fontify-natively=, so code inside =#+begin_src= blocks
+is syntax-highlighted with the real language mode.
+
+*** Editing a code block properly
+
+| Key       | Does                                                                |
+|-----------+---------------------------------------------------------------------|
+| =C-c '=   | Open this block in a dedicated buffer in the *real* language mode   |
+| =C-c '=   | (again, inside) save and return                                     |
+| =C-c C-k= | (inside) abandon the edit                                           |
+
+Inside that buffer you get full Python mode, or Rust mode, or Emacs Lisp mode —
+completion, indentation, LSP, everything. This is how you edit the code blocks in
+your config modules. =org-src-tab-acts-natively= is on, so =TAB= indents the way
+the language expects even without opening the dedicated buffer.
+
+*** Images and inline display
+
+=[[file:diagram.png]]= on its own line is an image link. =C-c C-x C-v= toggles
+inline display of images in the buffer.
+
+*** Comments
+
+A line starting with =#= followed by a space is a comment and is not exported.
+=C-c ;= toggles comment status on the current line or headline (this is Org's
+=C-c ;=, which overrides the global =goto-last-change= binding).
+
+*** Horizontal rule
+
+Five or more dashes on their own line: =-----=
+
+** 4. Tables — and the spreadsheet nobody expects
+:PROPERTIES:
+:CUSTOM_ID: org-tables
+:END:
+
+Type a =|=, some text, another =|=, then press =TAB=. Org builds a table and
+keeps it aligned forever.
+
+#+begin_example
+| Name  | Qty | Price |
+|-------+-----+-------|
+| Bolts |  12 |  0.40 |
+| Nuts  |  30 |  0.15 |
+#+end_example
+
+A row of =|---= (typed as =|-= then =TAB=) becomes a full-width separator.
+
+| Key                          | Does                                     |
+|------------------------------+------------------------------------------|
+| =TAB=                        | Next cell (creates a new row at the end) |
+| =S-TAB=                      | Previous cell                            |
+| =RET=                        | Next row, same column                    |
+| =M-<left>= / =M-<right>=     | Move this *column* left / right          |
+| =M-<up>= / =M-<down>=        | Move this *row* up / down                |
+| =M-S-<left>= / =M-S-<right>= | Delete / insert a column                 |
+| =M-S-<up>= / =M-S-<down>=    | Delete / insert a row                    |
+| =C-c -=                      | Insert a horizontal separator line       |
+| =C-c ^=                      | Sort the rows                            |
+| =C-c C-c=                    | Realign, and recalculate formulas        |
+
+One more that will not fit in the table above, because it contains the character
+that separates table cells: =C-c= followed by the pipe character turns the
+selected region into a table, splitting on commas or tabs.
+
+Alignment is automatic and happens as you type. Right-aligned numbers,
+left-aligned text, columns sized to content. You do not manage it.
+
+*** Formulas
+
+Org tables do arithmetic. Add a formula line below the table:
+
+#+begin_example
+| Item  | Qty | Price | Total |
+|-------+-----+-------+-------|
+| Bolts |  12 |  0.40 |  4.80 |
+| Nuts  |  30 |  0.15 |  4.50 |
+|-------+-----+-------+-------|
+|       |     |       |  9.30 |
+,#+TBLFM: $4=$2*$3::@5$4=vsum(@2..@3)
+#+end_example
+
+Read the reference syntax as: =$N= is column N, =@N= is row N, =@N$M= is one
+cell, =..= is a range. =vsum=, =vmean=, =vmax= and friends work on ranges.
+=C-c C-c= on the =#+TBLFM:= line recalculates everything.
+
+To build a formula interactively instead of writing it: put the cursor in the
+target cell and press =C-c == . Org prompts, shows what it will compute, and
+writes the =#+TBLFM:= line for you.
+
+This is a genuine spreadsheet — it uses Calc underneath, so it does units,
+algebra and arbitrary precision. Most people never need more than =vsum=.
+
+** 5. Tasks — TODO, tags, priorities
+:PROPERTIES:
+:CUSTOM_ID: org-tasks
+:END:
+
+*** TODO states
+
+Any headline can carry a keyword:
+
+#+begin_example
+,* TODO Buy a new keyboard
+,* DONE Renew the domain
+#+end_example
+
+Your config defines this sequence:
+
+#+begin_example
+TODO(t) → IN-PROGRESS(p) → WAITING(w) → | → DONE(d) / CANCELLED(c)
+#+end_example
+
+The =|= separates "still open" from "finished." Anything left of it counts as
+outstanding in the agenda; anything right of it is done.
+
+| Key                  | Does                                                 |
+|----------------------+------------------------------------------------------|
+| =C-c C-t=            | Cycle the TODO state / choose one by its letter      |
+| =S-<left>= / =S-<right>= | (on a headline) step through the states directly |
+| =C-c C-t= then =p=   | Jump straight to IN-PROGRESS (the letters in the parens) |
+
+Because =org-log-done= is ='time=, marking something DONE stamps it:
+
+#+begin_example
+,* DONE Renew the domain
+  CLOSED: [2026-08-21 Thu 14:32]
+#+end_example
+
+That is a free, automatic record of when you finished things. It is also what
+makes the agenda's "what did I do this week" views work.
+
+*** Priorities
+
+#+begin_example
+,* TODO [#A] The urgent one
+,* TODO [#B] The normal one
+,* TODO [#C] The someday one
+#+end_example
+
+=S-<up>= and =S-<down>= on a headline cycle the priority. A, B, C — B is the
+default when unset.
+
+*** Tags
+
+Tags go at the end of a headline, colon-delimited:
+
+#+begin_example
+,* TODO Read the Rust book                                    :reading:research:
+#+end_example
+
+| Key       | Does                                                      |
+|-----------+-----------------------------------------------------------|
+| =C-c C-q= | Set tags on this headline (completion; =RET= when done)   |
+| =C-c \=   | Show only headlines matching a tag search                 |
+| =C-c / m= | Same, as a sparse tree                                    |
+
+Your config predefines four with quick keys:
+
+| Tag         | Key |
+|-------------+-----|
+| =research=  | =r= |
+| =writing=   | =w= |
+| =urgent=    | =u= |
+| =reading=   | =R= |
+
+So =C-c C-q= then =u= tags something urgent in three keystrokes. You can still
+type any other tag freely; the list is a shortcut, not a restriction.
+
+Tags are *inherited*: a subtree under a headline tagged =:research:= counts as
+research too, without repeating it.
+
+*** Properties and drawers
+
+#+begin_example
+,* A headline
+  :PROPERTIES:
+  :CUSTOM_ID: my-anchor
+  :Author:   Someone
+  :END:
+#+end_example
+
+Properties are structured metadata. =C-c C-x p= sets one. They fold away into a
+=:PROPERTIES:= drawer so they don't clutter the document. =CUSTOM_ID= is the
+useful one for most people: it gives a headline a stable anchor you can link to
+(=[[#my-anchor]]=) that survives renaming the heading.
+
+*** Clocking time
+
+| Key           | Does                                       |
+|---------------+--------------------------------------------|
+| =C-c C-x C-i= | Clock *in* on this task                    |
+| =C-c C-x C-o= | Clock *out*                                |
+| =C-c C-x C-j= | Jump to the currently clocked task         |
+| =C-c C-x C-r= | Insert a clock report table for this subtree |
+
+Clocked time accumulates in a =:LOGBOOK:= drawer. If you ever need to know where
+your hours went, this is the tool, and it costs two keystrokes per task.
+
+** 6. Dates, scheduling and the agenda
+:PROPERTIES:
+:CUSTOM_ID: org-agenda
+:END:
+
+*** Timestamps
+
+| Key                   | Does                                                    |
+|-----------------------+---------------------------------------------------------|
+| =C-c .=               | Insert a timestamp (a calendar pops up; =RET= to pick)   |
+| =C-c !=               | Insert an *inactive* timestamp (see below)               |
+| =S-<up>= / =S-<down>= | (on a date) change the field under the cursor by one     |
+| =S-<left>= / =S-<right>= | (on a date) move by a day                            |
+
+The date prompt understands plain English. Type =+3d= for three days from now,
+=fri= for this coming Friday, =+2w= for a fortnight, =12= for the 12th of this
+month.
+
+#+begin_example
+<2026-08-25 Mon>          active   — shows up in the agenda
+[2026-08-25 Mon]          inactive — recorded, but not on the calendar
+<2026-08-25 Mon 14:00-15:30>   with a time range
+<2026-08-25 Mon +1w>      repeating weekly
+#+end_example
+
+Angle brackets mean "put this on my calendar." Square brackets mean "note the
+date, don't nag me."
+
+*** SCHEDULED and DEADLINE
+
+#+begin_example
+,* TODO Write the report
+  SCHEDULED: <2026-08-22 Fri>
+  DEADLINE:  <2026-08-29 Fri>
+#+end_example
+
+| Key       | Does           |
+|-----------+----------------|
+| =C-c C-s= | Set SCHEDULED  |
+| =C-c C-d= | Set DEADLINE   |
+
+The distinction matters and people get it backwards:
+
+- *SCHEDULED* = "I intend to start work on this that day." It appears on that
+  day's agenda and keeps appearing until done.
+- *DEADLINE* = "this must be finished by then." It starts warning you in advance
+  (14 days by default) and turns increasingly alarming as the date nears.
+
+A task can have both. Most only need one.
+
+*Repeating tasks* are the underrated feature:
+
+#+begin_example
+,* TODO Water the plants
+  SCHEDULED: <2026-08-22 Fri +3d>
+#+end_example
+
+Mark it DONE and it does not go away — it reschedules itself three days out and
+returns to TODO, logging the completion. That is a recurring task in one line of
+plain text.
+
+*** The agenda
+
+=C-c a= opens the agenda dispatcher. It builds a view across every file in
+=org-agenda-files=, which in your config is *every =.org= file in =~/org/=*.
+
+The dispatcher's main options:
+
+| Key | View                                              |
+|-----+---------------------------------------------------|
+| =a= | The agenda — a week's calendar with everything due |
+| =t= | All TODO items, everywhere                        |
+| =m= | Match a tags query                                |
+| =s= | Search all agenda files for text                  |
+| =L= | Timeline for the current file                     |
+
+Inside an agenda view:
+
+| Key           | Does                                   |
+|---------------+----------------------------------------|
+| =RET=         | Go to that item in its file            |
+| =TAB=         | Peek at it in another window           |
+| =t=           | Change its TODO state, from here       |
+| =C-c C-s=     | Reschedule it, from here               |
+| =C-c C-d=     | Change its deadline, from here         |
+| =:=           | Set tags                               |
+| =,=           | Set priority                           |
+| =f= / =b=     | Forward / back one period              |
+| =d= / =w= / =m= | Day / week / month view              |
+| =.=           | Jump to today                          |
+| =r= / =g=     | Refresh                                |
+| =q=           | Quit                                   |
+
+The agenda is *live-editable*. You can reschedule five tasks without opening a
+single file. That is the whole reason to keep tasks in Org rather than a text
+file.
+
+*⚠ Your =~/org/= directory is currently empty* (verified). The agenda will
+therefore show nothing until you put files there. It works; it just has nothing
+to read.
+
+** 7. Capture — getting things down fast
+:PROPERTIES:
+:CUSTOM_ID: org-capture
+:END:
+
+=C-c c= opens the capture menu. Capture exists to solve one problem: a thought
+arrives while you are doing something else, and stopping to file it properly
+means you either lose the thought or lose your place. Capture takes it, puts it
+somewhere sensible, and returns you to exactly where you were.
+
+Your config defines three templates:
+
+| Key | Template | Goes to                            | Contains                       |
+|-----+----------+------------------------------------+--------------------------------|
+| =t= | Todo     | =~/org/inbox.org= under "Tasks"    | =* TODO=, plus a link back      |
+| =n= | Note     | =~/org/inbox.org= under "Notes"    | a heading, plus a link back     |
+| =j= | Journal  | =~/org/journal.org=, by date       | a heading with a timestamp      |
+
+The =%a= in the Todo and Note templates inserts *a link back to where you were
+when you pressed =C-c c=* — the file and line, the email, the web page. That is
+the feature. Capture a TODO while reading code and the TODO knows which line of
+which file provoked it.
+
+Inside a capture buffer:
+
+| Key       | Does                                       |
+|-----------+--------------------------------------------|
+| =C-c C-c= | Save it and go back to what you were doing |
+| =C-c C-k= | Throw it away                              |
+| =C-c C-w= | Save it, but refile it somewhere else first |
+
+The journal template uses a *datetree*: entries file themselves under
+=2026 → August → 2026-08-21=, created as needed. You never make a heading for
+today; you just write.
+
+*** Adding your own template
+
+Templates live in =modules/06-org.org=. The shape:
+
+#+begin_src emacs-lisp
+("k" "Key idea" entry
+ (file+headline "~/org/inbox.org" "Ideas")
+ "* %?\n  Captured %U\n  %a")
+#+end_src
+
+The placeholders worth knowing:
+
+| Code  | Inserts                                          |
+|-------+--------------------------------------------------|
+| =%?=  | Where the cursor ends up (put it where you'll type) |
+| =%a=  | A link back to where you were                    |
+| =%i=  | Whatever text was selected when you pressed =C-c c= |
+| =%U=  | An inactive timestamp of now                     |
+| =%t=  | Today's date, active                             |
+| =%^g= | Prompt for tags                                  |
+| =%^{Prompt}= | Ask you a question and insert the answer  |
+
+** 8. Refile and archive
+:PROPERTIES:
+:CUSTOM_ID: org-refile
+:END:
+
+Capture puts everything in an inbox. Refiling is how the inbox empties.
+
+| Key       | Does                                                    |
+|-----------+---------------------------------------------------------|
+| =C-c C-w= | *Refile* this subtree — pick a destination by completion |
+| =C-u C-c C-w= | Jump to a refile target without moving anything     |
+| =C-c C-x C-a= | Archive the subtree (moves it to =file.org_archive=) |
+| =C-c C-x A= | Archive to an =:ARCHIVE:= subtree in the same file      |
+
+Refile is the workhorse of any Org-based system: capture fast into one place,
+then once a day or once a week, sit in the inbox and =C-c C-w= each item to where
+it belongs.
+
+Out of the box, refile only offers headings in the current file. To refile across
+all your agenda files — which is what you want — add this to
+=modules/06-org.org=:
+
+#+begin_src emacs-lisp
+(setq org-refile-targets '((org-agenda-files :maxlevel . 3))
+      org-refile-use-outline-path 'file
+      org-outline-path-complete-in-steps nil)
+#+end_src
+
+That last pair makes the completion show full paths like =projects.org/Work/Q3=
+in one flat searchable list, which with your orderless matching is very fast.
+
+** 9. Babel — running code inside prose
+:PROPERTIES:
+:CUSTOM_ID: org-babel
+:END:
+
+This is the feature your entire Emacs config is built on, so it deserves proper
+treatment.
+
+A source block can be *executed*, and its output inserted below it:
+
+#+begin_example
+,#+begin_src python
+return 6 * 7
+,#+end_src
+
+,#+RESULTS:
+: 42
+#+end_example
+
+=C-c C-c= inside the block runs it. The =#+RESULTS:= block is created and updated
+automatically.
+
+Languages must be enabled first. Emacs Lisp works out of the box; others need:
+
+#+begin_src emacs-lisp
+(org-babel-do-load-languages
+ 'org-babel-load-languages
+ '((emacs-lisp . t)
+   (python . t)
+   (shell . t)))
+#+end_src
+
+Add that to =modules/06-org.org= if you want to run Python or shell blocks.
+
+*** Header arguments
+
+Written after the language name:
+
+| Argument            | Effect                                              |
+|---------------------+-----------------------------------------------------|
+| =:results value=    | Insert what the code returns (default for most)     |
+| =:results output=   | Insert what it printed                              |
+| =:results silent=   | Run it, insert nothing                              |
+| =:exports code=     | On export, show the code only                       |
+| =:exports results=  | On export, show the output only                     |
+| =:exports both=     | Show both                                           |
+| =:session foo=      | Keep a persistent interpreter — blocks share state  |
+| =:var x=3=          | Pass a variable in                                  |
+| =:tangle file.py=   | Write this block to that file when tangling         |
+| =:eval no=          | Never run this one                                  |
+
+=:session= is the one that makes this a notebook: several Python blocks through a
+document, all sharing one live interpreter, each showing its output where it
+belongs.
+
+*** Tangling — where your config comes from
+
+*Tangling* extracts code blocks into real source files. That is the mechanism
+behind every module in your Emacs config.
+
+The header line at the top of each module:
+
+#+begin_example
+,#+PROPERTY: header-args:emacs-lisp :tangle 06-org.el :mkdirp yes :comments no
+#+end_example
+
+means "every emacs-lisp block in this file goes into =06-org.el=, in order,
+without comment markers."
+
+| Key           | Does                                        |
+|---------------+---------------------------------------------|
+| =C-c C-v t=   | Tangle this file                            |
+| =M-x org-babel-tangle= | Same                               |
+| =C-c C-v C-v= | The whole babel command menu                |
+
+In your config you rarely run this by hand: the =after-save-hook= in
+=17-utils.el= tangles any module =.org= automatically when you save it.
+
+The reason to write a config this way is that the /explanation lives next to the
+code and cannot drift away from it/. Your modules explain why
+=w32-pipe-read-delay= is 0 and why =magit-refresh-status-buffer= is =nil= — in
+prose, right above the lines that do it. Six months from now, that is the
+difference between "why did I do this?" and knowing.
+
+** 10. Export
+:PROPERTIES:
+:CUSTOM_ID: org-export
+:END:
+
+=C-c C-e= opens the export dispatcher. Pick a format, pick a destination.
+
+| Keys  | Produces                          |
+|-------+-----------------------------------|
+| =h h= | HTML file                         |
+| =h o= | HTML, and open it                 |
+| =l p= | PDF via LaTeX                     |
+| =l o= | PDF, and open it                  |
+| =m m= | Markdown                          |
+| =t a= | ASCII / plain text                 |
+| =t u= | UTF-8 plain text                   |
+| =C-b= | (toggle) export only the subtree at point |
+
+*⚠ PDF export needs a LaTeX installation*, which is not present on this machine.
+HTML, Markdown and plain-text export work with no external tools at all.
+
+Document-level settings go at the top of the file:
+
+#+begin_example
+,#+TITLE: The Document
+,#+AUTHOR: Your Name
+,#+DATE: 2026-08-21
+,#+OPTIONS: toc:2 num:nil
+,#+STARTUP: content
+#+end_example
+
+| Option    | Means                                    |
+|-----------+------------------------------------------|
+| =toc:2=   | Table of contents, two levels deep       |
+| =toc:nil= | No table of contents                     |
+| =num:nil= | Don't number the headings                |
+| =todo:t=  | Show TODO keywords in the export         |
+| =^:nil=   | Don't treat =a_b= as a subscript         |
+
+To keep a headline out of the export entirely, tag it =:noexport:=.
+
+** 11. Org in /your/ config specifically
+:PROPERTIES:
+:CUSTOM_ID: org-here
+:END:
+
+Everything set in =modules/06-org.org=, and what each one actually does to you:
+
+| Setting                          | Value      | Effect                                        |
+|----------------------------------+------------+-----------------------------------------------|
+| =org-directory=                  | =~/org/=   | Where notes live; the agenda reads this folder |
+| =org-startup-indented=           | =t=        | Virtual indentation matching outline depth     |
+| =org-hide-leading-stars=         | =t=        | Only the last star shows                       |
+| =org-hide-emphasis-markers=      | =t=        | =*bold*= displays as bold with no markers      |
+| =org-ellipsis=                   | =" ▾"=     | Folded sections end with ▾ instead of =...=    |
+| =org-pretty-entities=            | =t=        | =\alpha= shows as α, =H_2O= subscripts properly |
+| =org-src-fontify-natively=       | =t=        | Code blocks are syntax-highlighted             |
+| =org-src-tab-acts-natively=      | =t=        | =TAB= in a code block indents like the language |
+| =org-edit-src-content-indentation= | =0=      | Code blocks aren't extra-indented              |
+| =org-return-follows-link=        | =t=        | =RET= on a link opens it                       |
+| =org-log-done=                   | ='time=    | DONE stamps a CLOSED time                      |
+| =visual-line-mode=               | on         | Soft-wrap prose at the window edge             |
+
+Plus *org-modern*, which restyles the whole thing: round tags, coloured bullets
+(=◉ ○ ◈ ◇ ✦ ✧ ✶ ✷ ❋ ❊= by depth), cleaner tables, and framed blocks. It is
+display only — the file on disk is ordinary Org.
+
+*** Key conflicts in Org buffers
+:PROPERTIES:
+:CUSTOM_ID: org-conflicts
+:END:
+
+Org binds several keys that this config also binds globally. Major modes win, so
+*inside an Org buffer you get Org's version*. Verified by asking Emacs directly:
+
+| Key         | Globally (module 04/05)   | In an Org buffer                     |
+|-------------+---------------------------+--------------------------------------|
+| =C-c C-d=   | =duplicate-dwim=          | =org-deadline=                       |
+| =C-c C-f=   | =focus-mode=              | =org-forward-heading-same-level=     |
+| =C-c ;=     | =goto-last-change=        | =org-toggle-comment=                 |
+| =M-<up>=    | =move-text-up=            | =org-metaup= (move the subtree)      |
+| =M-<down>=  | =move-text-down=          | =org-metadown=                       |
+
+None of these is a problem — Org's version is the one you want in an Org
+document. But if you reach for =C-c C-f= expecting focus mode and get moved to
+the next heading, this is why. Use =M-x= for the global command when you need it
+in an Org file.
+
+*** Speed keys — not on, and worth turning on
+
+Org has a mode where, *with the cursor on a headline's first star*, single letters
+become commands: =n= next heading, =p= previous, =f= forward same level, =u= up,
+=t= cycle TODO, =c= cycle folding, =I= / =O= clock in/out, =?= list them all.
+
+It is genuinely the fastest way to work through an outline, and *your config does
+not enable it*. To turn it on, add to =modules/06-org.org=:
+
+#+begin_src emacs-lisp
+(setq org-use-speed-commands t)
+#+end_src
+
+Then =?= on a headline shows the full list.
+
+*** Things you might want to add
+
+None of these are set up. Each is one line in =modules/06-org.org=.
+
+#+begin_src emacs-lisp
+;; C-c l anywhere stores a link you can paste with C-c C-l
+(global-set-key (kbd "C-c l") #'org-store-link)
+
+;; Refile across every agenda file, not just this one
+(setq org-refile-targets '((org-agenda-files :maxlevel . 3))
+      org-refile-use-outline-path 'file
+      org-outline-path-complete-in-steps nil)
+
+;; Single-letter commands on headlines
+(setq org-use-speed-commands t)
+
+;; Don't let a parent be DONE while a child is still TODO
+(setq org-enforce-todo-dependencies t)
+
+;; Run Python and shell blocks, not just elisp
+(org-babel-do-load-languages
+ 'org-babel-load-languages
+ '((emacs-lisp . t) (python . t) (shell . t)))
+
+;; Colour the TODO keywords distinctly
+(setq org-todo-keyword-faces
+      '(("IN-PROGRESS" . "orange")
+        ("WAITING"     . "purple")
+        ("CANCELLED"   . "gray")))
+#+end_src
+
+And the practical one: *create =~/org/inbox.org= and =~/org/journal.org=.* The
+capture templates will create them on first use, but having them exist means the
+agenda has something to read from day one.
+
+** 12. A workflow that actually works
+
+If you want a system rather than a pile of features, this is the smallest one
+that holds up.
+
+1. *One inbox.* Everything goes to =~/org/inbox.org= via =C-c c=. Never think
+   about where something belongs at the moment you think of it.
+2. *A few project files* in =~/org/= — one per area of life or work. They're all
+   agenda files automatically.
+3. *Refile daily.* Open the inbox, =C-c C-w= each item to its project. Two
+   minutes.
+4. *Schedule, don't prioritise.* =C-c C-s= with a date you actually intend to
+   work on it beats =[#A]= on forty things.
+5. *=C-c a a= every morning.* That's the day.
+6. *Archive when a project closes* (=C-c C-x C-a=), so the agenda stays about the
+   present.
+
+The features not in that list — clocking, properties, formulas, custom agenda
+views — are there when you need them and cost nothing when you don't. Add them
+one at a time, when a real problem asks for one. Building the elaborate system
+first is the classic way to end up with an elaborate system and no notes in it.
+
+* Appendix A — The one-page card
+:PROPERTIES:
+:CUSTOM_ID: card
+:END:
+
+If you print one thing, print this.
+
+** Survival
+
+| =C-g=     | Cancel anything          |
+| =M-x=     | Run a command by name    |
+| =C-h k=   | What does this key do?   |
+| =C-x C-f= | Open a file              |
+| =C-x C-s= | Save                     |
+| =C-x C-c= | Quit                     |
+| =C-/=     | Undo                     |
+
+** The daily twenty
+
+| =C-x b=   | Switch buffer / recent file / bookmark |
+| =C-x K=   | Kill this buffer                       |
+| =M-o=     | Jump to a window                       |
+| =M-j=     | Jump anywhere on screen                |
+| =M-s l=   | Find a line in this buffer             |
+| =M-s r=   | Ripgrep the project                    |
+| =C-c p f= | Find a file in the project             |
+| =C-x g=   | Magit                                  |
+| =C-c SPC= | The launcher menu                      |
+| =C-c T=   | The tabs menu                          |
+| =<f8>=    | File-tree sidebar                      |
+| =C-`=     | Terminal panel                         |
+| =C-x d=   | File manager                           |
+| =C-c w=   | Reading room                           |
+| =C-c a=   | Org agenda                             |
+| =C-c c=   | Org capture                            |
+| =C-.=     | Act on the thing at point (Embark)     |
+| =C-==     | Expand the selection                   |
+| =C-x u=   | Undo tree                              |
+| =C-c e r= | Reload the config                      |
+
+** Org, the ten that matter
+
+| =TAB= / =S-TAB= | Fold this heading / the whole document |
+| =M-RET=         | New headline                           |
+| =C-RET=         | New headline after this subtree        |
+| =M-<up/down>=   | Move the subtree                       |
+| =M-<left/right>= | Promote / demote                      |
+| =C-c C-t=       | Cycle TODO state                       |
+| =C-c C-q=       | Set tags                               |
+| =C-c C-s= / =C-c C-d= | Schedule / deadline              |
+| =C-c C-c=       | The do-what-I-mean key (toggle, recalc, run, confirm) |
+| =C-c C-,=       | Insert a block template                |
+
+* Appendix B — Master key reference
+:PROPERTIES:
+:CUSTOM_ID: master-keys
+:END:
+
+Everything this config binds, grouped by prefix. Built-in Emacs keys are included
+where they matter.
+
+** =C-c= — the user prefix
+
+| Key           | Command                                            |
+|---------------+----------------------------------------------------|
+| =C-c SPC=     | Launcher hydra                                     |
+| =C-c T=       | Tabs & workspaces hydra                            |
+| =C-c a=       | Org agenda                                         |
+| =C-c c=       | Org capture                                        |
+| =C-c k=       | Kill all other file buffers                        |
+| =C-c q=       | Visual regexp query-replace                        |
+| =C-c w=       | Reading room (centred text)                        |
+| =C-c M=       | Visual regexp → multiple cursors                   |
+| =C-c R=       | Revert buffer, no confirmation                     |
+| =C-c ;=       | Goto last change (Org: toggle comment)             |
+| =C-c <=       | Previous buffer tab                                |
+| =C-c >=       | Next buffer tab                                    |
+| =C-c <left>=  | Winner undo (restore window layout)                |
+| =C-c <right>= | Winner redo                                        |
+| =C-c C-d=     | Duplicate line/region (Org: set deadline)          |
+| =C-c C-f=     | Focus mode (Org: forward heading same level)       |
+| =C-c C-<=     | Mark all like this (multiple cursors)              |
+| =C-c e i=     | Open init.el                                       |
+| =C-c e m=     | Open modules directory                             |
+| =C-c e r=     | Reload config                                      |
+| =C-c e R=     | Restart Emacs                                      |
+| =C-c g g=     | gptel chat                                         |
+| =C-c g s=     | gptel send                                         |
+| =C-c g m=     | gptel menu                                         |
+| =C-c m p=     | Live preview (Markdown and Typst)                  |
+| =C-c m r=     | Markdown: re-render preview                        |
+| =C-c m e=     | Markdown: export HTML                              |
+| =C-c p=       | Projectile command map                             |
+| =C-c t t=     | Toggle terminal                                    |
+| =C-c t n=     | New terminal (PowerShell)                          |
+| =C-c t N=     | New terminal, choose shell                         |
+| =C-c v g=     | Magit file dispatch                                |
+| =C-c v t=     | Git time machine                                   |
+
+** =C-x= — the system prefix
+
+| Key         | Command                                |
+|-------------+----------------------------------------|
+| =C-x C-f=   | Find file                              |
+| =C-x C-s=   | Save                                   |
+| =C-x s=     | Save all                               |
+| =C-x b=     | consult-buffer                         |
+| =C-x 4 b=   | consult-buffer, other window           |
+| =C-x C-b=   | ibuffer                                |
+| =C-x k=     | Kill a buffer (asks)                   |
+| =C-x K=     | Kill this buffer                       |
+| =C-x d=     | Dirvish                                |
+| =C-x g=     | Magit status                           |
+| =C-x M-g=   | Magit dispatch                         |
+| =C-x u=     | Undo-tree visualiser                   |
+| =C-x 1=     | Delete other windows                   |
+| =C-x 2=     | Split below, and follow                |
+| =C-x 3=     | Split right, and follow                |
+| =C-x 0=     | Delete this window                     |
+| =C-x o=     | Other window                           |
+| =C-x n s=   | Narrow to subtree                      |
+| =C-x n w=   | Widen                                  |
+| =C-x r b=   | Jump to bookmark                       |
+| =C-x t n=   | New workspace                          |
+| =C-x t k=   | Close workspace                        |
+| =C-x t r=   | Rename workspace                       |
+| =C-x C-q=   | Toggle read-only / editable dired      |
+
+** =M-= and singles
+
+| Key           | Command                          |
+|---------------+----------------------------------|
+| =M-j=         | avy jump to char                 |
+| =M-o=         | ace-window                       |
+| =M-y=         | consult-yank-pop                 |
+| =M-g g=       | Goto line                        |
+| =M-g o=       | consult-outline                  |
+| =M-g j=       | avy goto line                    |
+| =M-g w=       | avy goto word                    |
+| =M-s l=       | consult-line                     |
+| =M-s r=       | consult-ripgrep                  |
+| =M-s f=       | consult-fd                       |
+| =M-s %=       | Replace word at cursor           |
+| =M-<up/down>= | Move text (Org: move subtree)    |
+| =C-.=         | Embark act                       |
+| =C-;=         | Embark dwim                      |
+| =C-==         | Expand region                    |
+| =C->= / =C-<= | Mark next / previous like this   |
+| =C-S-c C-S-c= | Mark lines (multiple cursors)    |
+| =C-/= / =C-?= | Undo / redo                      |
+| =C-a= / =C-k= | Smart line start / smart kill    |
+| =C-`=         | Toggle terminal                  |
+| =C-<tab>=     | Next workspace                   |
+| =C-S-<tab>=   | Previous workspace               |
+| =S-<return>=  | Open line below                  |
+| =C-S-<return>= | Open line above                 |
+| =<f3>= / =<f4>= | Keyboard macro: record / stop-or-replay |
+| =<f8>=        | Dirvish sidebar                  |
+
+** =C-h= — help
+
+| Key       | Shows                             |
+|-----------+-----------------------------------|
+| =C-h k=   | What a key does (helpful)         |
+| =C-h f=   | A function (helpful)              |
+| =C-h v=   | A variable (helpful)              |
+| =C-h m=   | This buffer's modes and keys      |
+| =C-h b=   | All active bindings               |
+| =C-h B=   | All bindings, searchable (embark) |
+| =C-h o=   | Any symbol                        |
+| =C-h a=   | Apropos — search command names    |
+| =C-h t=   | The built-in tutorial             |
+
+* Appendix C — Glossary
+:PROPERTIES:
+:CUSTOM_ID: glossary
+:END:
+
+- *Agenda* — Org's assembled view of tasks and dates across your files.
+- *Babel* — Org's system for executing code blocks inside a document.
+- *Buffer* — text Emacs is holding, file-backed or not.
+- *Capture* — filing a thought into a predetermined place without leaving what
+  you're doing.
+- *Corfu* — the in-buffer completion popup.
+- *Consult* — upgraded search/switch commands with live preview.
+- *Dirvish* — the file manager (a modernised =dired=).
+- *Eglot* — the built-in LSP client.
+- *Embark* — act on the thing at point; the contextual menu.
+- *Frame* — an OS-level window.
+- *Hydra* — a popup menu of related commands that stays open.
+- *Kill ring* — the history of things you've cut or copied.
+- *Literate config* — a config written as prose documents that generate the code.
+- *Magit* — the Git interface.
+- *Major mode* — a buffer's type. Exactly one per buffer.
+- *Marginalia* — the annotations beside completion candidates.
+- *Mark* — the other end of the selection; *region* is what's between it and point.
+- *MELPA* — the main third-party package archive.
+- *Minibuffer* — the prompt line at the bottom of the frame.
+- *Minor mode* — optional behaviour layered on a buffer. Any number.
+- *Orderless* — completion matching on space-separated fragments in any order.
+- *Point* — the cursor.
+- *Projectile* — project detection and per-project commands.
+- *Refile* — moving an Org subtree to another heading, anywhere.
+- *Subtree* — a headline and everything nested under it.
+- *Tangle* — extract code blocks from an Org file into real source files.
+- *use-package* — the macro every module uses to declare and configure a package.
+- *Vertico* — the vertical completion list in the minibuffer.
+- *wgrep / wdired* — making search results and directory listings directly
+  editable, then writing the edits back.
+- *which-key* — the popup listing what can follow a prefix key.
+- *Window* — a pane inside a frame showing one buffer.
+- *Yasnippet* — template expansion.
+
+* Appendix D — Where to look things up
+:PROPERTIES:
+:CUSTOM_ID: further-reading
+:END:
+
+*Inside Emacs, first.* These are complete, offline, and match the version you are
+actually running:
+
+| Command             | Opens                                             |
+|---------------------+---------------------------------------------------|
+| =C-h t=             | The interactive tutorial — genuinely good          |
+| =C-h r=             | The complete Emacs manual                         |
+| =C-h i=             | Info — every manual on the system, including Org  |
+| =M-x org-info=      | The Org manual                                    |
+| =C-h m=             | What this buffer can do, right now                |
+| =C-h ?=             | Every help command there is                       |
+
+The Org manual (=C-h i= then choose Org) is exhaustive and well written. When
+this guide runs out, that is where to go.
+
+*In this folder:*
+- =C:/Users/Administrator/.emacs.d/README-WINDOWS.md= — the short version of Book II
+- =C:/Users/Administrator/.emacs.d/EMACS-PRIMER.md= — the short version of Book I
+  (with the caveat about the seforim/direction hydras noted earlier)
+- =C:/Users/Administrator/.emacs.d/modules/*.org= — the config itself, with the
+  reasoning written out. Genuinely worth reading; that is the whole point of a
+  literate config.
+
+*Online:* =github.com/SYKhayyat/emacs-config= — the larger Linux/portable sibling.
+
+* Appendix E — Ten things to try this week
+:PROPERTIES:
+:CUSTOM_ID: practice
+:END:
+
+Reading about an editor teaches you nothing. Each of these takes under two
+minutes and each one is a habit worth having.
+
+1. Press =C-h t= and do the built-in tutorial. Half an hour, and it is the best
+   half hour you will spend on this.
+2. Press =C-c= and wait. Read what which-key shows you. Do the same for =C-x=,
+   =C-c e=, =C-c t=.
+3. Open a long file and press =M-j=, then jump somewhere with three keystrokes.
+4. Open two files, split with =C-x 3=, then use =M-o= to move between them.
+5. Make a mess of a buffer, then open =C-x u= and walk the undo tree.
+6. Run =M-s r= in a project, then =C-.= on a result and see what Embark offers.
+7. Open =C-x g= in any Git repo. Stage a single hunk with =s=. Press =?= and read.
+8. Create =~/org/inbox.org=. Press =C-c c t=, write a TODO, =C-c C-c=. Then
+   =C-c a t= to see it.
+9. In any Org file, press =S-TAB= three times and watch the document collapse and
+   expand.
+10. Open =modules/06-org.org=, change one setting, save it, and press =C-c e r=.
+    You have now edited your own editor while it was running, which is the entire
+    reason this thing exists.

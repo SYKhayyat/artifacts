@@ -1,0 +1,1195 @@
+#+TITLE: Photoshop: A Complete Tutorial for Photographers
+#+SUBTITLE: The pixel editor, taught from zero to professional competence.
+#+AUTHOR: Shaul
+#+DATE: 2026-08-24
+#+STARTUP: content
+#+OPTIONS: toc:3 num:nil
+
+Written 24 August 2026 against *Photoshop 27.x* ("Photoshop 2026"; mid-2026
+releases ran v27.6–27.8). Features are version-tagged where recent, so an older
+build knows what it lacks. The core this guide teaches — layers, masks,
+selections, retouching, compositing — has been stable across a decade of
+versions; nothing important below depends on the newest build.
+
+Assumes a working local install with *no Adobe account attached* — section 3
+states exactly which features that costs you and why almost none of them matter
+for photographic work.
+
+Written for a working photographer who knows photography cold and Photoshop
+not at all: every term defined before use, every procedure complete.
+
+-----
+
+* Contents
+
+1. [[*1. Concepts you need first][Concepts you need first]]
+2. [[*2. When Photoshop, and when not][When Photoshop, and when not]]
+3. [[*3. Install, first run, and the account question][Install, first run, and the account question]]
+4. [[*4. Preferences that matter][Preferences that matter]]
+5. [[*5. The interface in ten minutes][The interface in ten minutes]]
+6. [[*6. Opening photos the right ways][Opening photos the right ways]]
+7. [[*7. Camera Raw inside Photoshop][Camera Raw inside Photoshop]]
+8. [[*8. Layers, completely][Layers, completely]]
+9. [[*9. Masks, completely][Masks, completely]]
+10. [[*10. The selection arsenal][The selection arsenal]]
+11. [[*11. Adjustment layers cookbook][Adjustment layers cookbook]]
+12. [[*12. The retouching toolbox][The retouching toolbox]]
+13. [[*13. Four compositing jobs, step by step][Four compositing jobs, step by step]]
+14. [[*14. Text, logos, borders, watermarks][Text, logos, borders, watermarks]]
+15. [[*15. Sharpening, noise, upscaling][Sharpening, noise, upscaling]]
+16. [[*16. Actions and automation][Actions and automation]]
+17. [[*17. Saving, exporting, delivering][Saving, exporting, delivering]]
+18. [[*18. Printing and soft-proofing][Printing and soft-proofing]]
+19. [[*19. Gotchas][Gotchas]]
+20. [[*20. Shortcuts][Shortcuts]]
+21. [[*21. Where to learn more][Where to learn more]]
+22. [[*Appendix A. One composite, end to end][Appendix A. One composite, end to end]]
+23. [[*Appendix B. Every preference and option, explained][Appendix B. Every preference and option, explained]]
+24. [[*Setup checklist][Setup checklist]]
+
+-----
+
+* 1. Concepts you need first
+
+Eight ideas carry the program. Two minutes each; after them, everything else
+is detail.
+
+** Pixels, dimensions, PPI
+
+An image is a grid of coloured squares. Pixel dimensions (6000 × 4000) are
+real; the PPI number in metadata is a print-density suggestion affecting
+nothing on screen. Screens care about dimensions; printers divide dimensions
+by PPI. "72 dpi for web" is folklore.
+
+** Bit depth
+
+8-bit = 256 levels/channel (viewing); 16-bit = 65,536 (editing without
+banding). Photoshop edits raw-derived work at 16-bit natively; some ancient
+filters demand 8-bit (section 19), but modern photographic editing lives at
+16 or 32-bit float.
+
+** Colour spaces
+
+sRGB universal; Adobe RGB wider for some print labs; ProPhoto huge, used as
+internal working space by raw converters. A file shown in the wrong space
+looks flat or radioactive — colour management (embedded profiles) prevents it.
+Section 4 sets sane defaults once.
+
+** Layers
+
+Transparent sheets stacked top-down composing into the image. Everything in
+Photoshop is layers wearing costumes: adjustments, text, retouching patches,
+composites. Section 8 is the full doctrine.
+
+** Masks
+
+Greyscale transparency maps attached to layers: white reveals, black hides,
+grey partially shows. Painting a mask redirects where a layer appears without
+touching its pixels. The pixels-are-sacred/masks-are-disposable asymmetry is
+the entire professional technique.
+
+** Selections
+
+Regions limiting where tools act. Selections convert to masks and back;
+fluent work shuttles between them (section 10).
+
+** Smart Objects and smart filters
+
+A *Smart Object* is a layer wrapping its content like a capsule: transform it
+repeatedly without quality loss (transforms apply to the wrapper), edit the
+original anytime by double-clicking. Apply a filter *to* a Smart Object and it
+becomes a *Smart Filter*: re-editable, maskable, removable forever. This is
+Photoshop's non-destructive machinery — adjustment layers plus smart objects
+plus smart filters covers 95% of what non-destructive means in practice.
+
+** Destructive vs non-destructive
+
+Destructive rewrites pixels; non-destructive stores instructions. Professionals
+work destructively only when nothing remains to preserve — because clients
+change minds, tastes drift, and future-you is the customer.
+
+-----
+
+* 2. When Photoshop, and when not
+
+** Not Photoshop's job
+
+- Developing raw files: exposure/contrast/colour/WB/sharpening/noise belong in
+  Lightroom Classic (~LIGHTROOM-GUIDE.org~) or Camera Raw (same engine,
+  section 7) — parametric, revisable, sensor-deep.
+- Organising/culling/cataloguing: Lightroom, Bridge, or folders. Photoshop is
+  a one-document-at-a-time tool wearing a file browser as a hat.
+- Batch tone/colour consistency across a shoot: develop-side presets beat
+  anything here.
+
+** Photoshop's job
+
+- *Composites*: sky replacement, exposure blends, head swaps — anything
+  stacking multiple photographs.
+- *Heavy object removal*: beyond spot-healing scale — people, cars, wires —
+  via Remove tool, Clone, and manual synthesis (generative variants need an
+  account; section 12 marks what survives without).
+- *Pixel-precise masking*: hand-painted edges at 400% zoom, pen-tool paths.
+- *Typography/graphic elements* on photographs.
+- *Frequency-separation skin work*, dodge&burn shaping, liquify.
+- *Print finishing*: soft-proofing, output sharpening, lab TIFF prep.
+- *Focus stacking and panoramas* at pixel-editor depth.
+
+The rule matches the whole folder's philosophy: *raw editors do raw things;
+pixel editors do pixel things.*
+
+-----
+
+* 3. Install, first run, and the account question
+
+** Getting it running
+
+A Creative Cloud desktop app normally manages install/updates; on an
+accountless machine your build arrives however it arrived and stays put —
+updates don't auto-arrive. Check what you actually have: ~Help → About
+Photoshop~ (version number), ~Help → System Info~ (full environment dump).
+Scan whatever installer produced it: cracked installers are the classic
+malware vector, and photo archives are exactly the asset you cannot lose.
+
+** What works locally, permanently
+
+Everything photographic: all sections of this document except the marked
+exceptions — layers/masks/selections, retouching tools, Camera Raw (including
+its local AI denoise/masking), printing, actions, automation. Photoshop's core
+never needed Adobe's servers.
+
+** What needs the account (and mostly doesn't matter)
+
+- *Generative Fill/Expand/Generate Image* (Firefly/Gemini/partner models),
+  generative credits, Firefly Boards — cloud AI synthesis. Dead without sign-in.
+  The manual alternatives in section 12 cover the same jobs with more control.
+- *Neural Filters*: most are cloud-processed; expect failures without login.
+  The few local ones vary by build.
+- Cloud documents, font sync, share-for-review, web/iPad companions.
+- New *camera support via ACR updates*: a frozen build supports cameras to its
+  release date — irrelevant for D7200-era bodies, decisive for future ones.
+
+** First-run housekeeping
+
+Close the Home screen's tutorial propaganda. If a "color profile mismatch"
+dialog ever appears asking how to open files, answer "Use embedded profile" —
+section 4 makes the default permanent.
+
+-----
+
+* 4. Preferences that matter
+
+~Edit → Preferences~ (Ctrl+K). Set once:
+
+- *Performance*: Memory usage ≈ 85% of available; History States 50 (default
+  20 is timid); Graphics Processor → Advanced if stable, Basic if glitches;
+  scratch disks = your fastest SSD, never the system drive alone.
+- *File Handling*: "Maximize PSD compatibility" → Always (enables Lightroom/
+  other apps to read layered PSDs); image previews full size.
+- *Color Settings* (under Edit menu proper): Working Spaces → RGB = *ProPhoto
+  RGB*; Color Management Policies → *Preserve Embedded Profiles*; tick "ask
+  when opening" for missing profiles only. This makes Photoshop honest about
+  colour from every source without nagging.
+- *Interface*: UI font size to taste; HUD color pickers on.
+- *Tools*: "Show transformation values", snap toggles live here too.
+- *Technology Previews*: leave alone unless chasing a named feature.
+
+Units (rulers) → pixels for screen work, inches/cm for print jobs; switch
+per-document via right-clicking the ruler.
+
+-----
+
+* 5. The interface in ten minutes
+
+** Layout anatomy
+
+Default *Essentials* workspace:
+
+- *Toolbar*, left edge: tools grouped by type; long-press (or right-click) a
+  visible icon reveals its hidden siblings. Pressing the tool's letter key
+  cycles through its group.
+- *Options bar*, top: the selected tool's settings. This bar is half the
+  program — every tool behaves differently depending on what's set here, and
+  unexplained tool behaviour is almost always a stale option-bar setting.
+- *Panels*, right: Layers (bottom-right, your home), Properties (contextual —
+  shows settings for whatever's selected), Adjustments, Masks, History,
+  Color/Swatches. Open any others via *Window* menu.
+- *Canvas*, centre. *Contextual Task Bar* floats near selections offering
+  relevant actions (v27.x made it smarter; dismissible if it annoys).
+
+~Tab~ hides/shows all panels; ~Shift+Tab~ hides everything except the toolbar.
+*Window → Workspace → Reset Essentials* un-breaks a mangled layout — use it
+without shame.
+
+** Navigation
+
+| Action            | Keys                                    |
+|-------------------+-----------------------------------------|
+| Zoom in/out       | Ctrl + +/- , or Alt-wheel               |
+| Fit on screen     | Ctrl+0                                  |
+| Actual pixels     | Ctrl+1 (the only honest judging zoom)   |
+| Pan               | hold Space, drag                        |
+| Rotate view       | ~R~, drag (view only, not pixels)       |
+| Screen modes      | ~F~ cycles standard/fullscreen          |
+
+** Rulers, guides, snapping
+
+~Ctrl+R~ rulers; drag guides off rulers; guides snap-enabled via View menu;
+~Ctrl+;~ toggles guide visibility. For alignment-critical composites, guides
+beat eyeballing.
+
+-----
+
+* 6. Opening photos the right ways
+
+How a photo enters determines what kind of editing session you're having:
+
+- *Raw file* (~File → Open~, or drag onto the app) → opens into *Camera Raw*
+  first (section 7). Always. That's correct behaviour, not an obstacle.
+- *JPEG/TIFF* → opens directly onto canvas as Background layer. To route one
+  through Camera Raw anyway (its superior controls): ~Filter → Camera Raw
+  Filter~ anytime, or ~Shift+Ctrl+A~.
+- *Into an open document*: drag a second image onto the canvas → lands as a
+  Smart Object layer (modern default) — the right container for composites.
+- *~File → Place Embedded~/Linked*: deliberate insertion as Smart Object;
+  Linked references an external file (updates when it changes — watermark
+  mechanism, section 14).
+- *From Lightroom*: ~Ctrl+E~ there handles everything (its guide, §11); the
+  rendered TIFF arrives with develop settings baked and lands back in the
+  catalogue automatically on save/close.
+
+Multiple raws at once: select several in the Open dialog → they queue inside
+one Camera Raw window with filmstrip — batch develop before anything touches
+pixels.
+
+** Image size and canvas size, once cleanly
+
+- ~Image → Image Size~ (~Ctrl+Alt+I~): resamples pixels — changes how much
+  image exists. Resample chain dropdown: *Preserve Details 2.0* for
+  enlargements, Bicubic Sharper for reductions. Tick "Resample" off to change
+  PPI without touching pixels (print-prep move).
+- ~Image → Canvas Size~ (~Ctrl+Alt+C~): changes the sheet around existing
+  pixels — borders, room for text, composite expansion.
+
+-----
+
+* 7. Camera Raw inside Photoshop
+
+Every raw opens here first; treat it as Lightroom's Develop module embedded —
+literally the same processing engine, same panels, same results. If you've
+read that guide's §7–9, you know this room.
+
+** The panels, in working order
+
+- *Basic*: WB (eyedropper ~I~ on neutral), exposure/contrast/
+  highlights/shadows/whites/blacks (same semantics as LrC), texture/clarity/
+  dehaze, vibrance/saturation.
+- *Curve*: point curve + parametric sliders, targeted adjustment on-image.
+- *Color Mixer / Point Color*: HSL per band, surgical single-colour control.
+- *Color Grading*: shadows/mid/high wheels.
+- *Detail*: sharpening with Alt-masked slider, noise reduction, *Denoise*
+  switch (AI, local GPU, produces Enhanced DNG — same machinery as LrC's),
+  *AI sharpen* in recent builds.
+- *Masking* (circle icon top toolbar): subject/sky/background/object/people/
+  brush/radial/linear/color/luminance ranges — identical system to LrC's,
+  including Feather & Edge refinement sliders (18.4+/15.5-era builds).
+- *Geometry*: upright corrections, crop (~C~) with overlays, straighten tool.
+
+** The division-of-labour decision
+
+With Lightroom installed, raw development belongs there (catalogue keeps the
+history); Photoshop's Camera Raw exists for raws arriving cold — downloads,
+client disks, one-off jobs without catalogue ceremony. Same engine means no
+quality argument, only workflow ones. Editing a JPEG seriously? ~Filter →
+Camera Raw Filter~ on a *Smart Object* gives non-destructive develop-grade
+control inside a pixel document — the single best trick for graded JPEG work.
+
+** Batch within Camera Raw
+
+Filmstrip on the left: adjust one frame fully → select-all → *Sync Settings*
+→ choose which settings propagate. Whole card developed in ninety seconds;
+then *Done* (settings stored) or *Open* (into pixel editing).
+
+-----
+
+* 8. Layers, completely
+
+** Layer taxonomy
+
+- *Background*: the locked bottom layer of opened JPEGs — no transparency, no
+  bottom position. Double-click to convert to normal Layer 0.
+- *Pixel layers*: ordinary painted content.
+- *Adjustment layers*: effect-without-pixels affecting everything below
+  (section 11) — the workhorses.
+- *Fill layers*: solid colour/gradient/pattern, editable forever.
+- *Type layers*: live text (section 14).
+- *Shape/vector layers*: resolution-independent geometry.
+- *Smart Object layers*: encapsulated content (section 1) — transforms and
+  filters apply without destroying source pixels.
+- *Groups* (~Ctrl+G~): folders; can carry their own masks; pass-through mode
+  preserves internal blend interactions with layers below.
+
+Panel mechanics: drag to reorder (order = stacking), eye = visibility,
+opacity/fill sliders per layer, link chains, lock icons, name by double-click
+(rename everything — "Layer 47 copy 3" is how projects rot), colour-code tags
+via right-click.
+
+** Blend modes, the photographer's six-and-a-half
+
+Mode dropdown per layer; grouped families. What matters photographically:
+
+- *Normal*: plain stacking.
+- *Multiply*: white becomes transparent, darks compound — texture/frame
+  overlays, shadow intensification, exposure blending's dark half.
+- *Screen*: black vanishes, lights compound — light leaks, glow builds,
+  exposure blending's bright half.
+- *Overlay / Soft Light*: contrast blend around mid-grey — grey-layer dodge&
+  burn (section 12) lives here; Soft Light is the gentler sibling.
+- *Luminosity*: takes brightness from this layer, colour from below — the key
+  to luminosity-mask workflows and sharpening-on-a-copy tricks.
+- *Color*: inverse — colour from above, brightness from below; tinting
+  monochrome images, fixing colour casts on cloned regions.
+- *Pass-through* (groups only): group doesn't isolate internal blends.
+
+Opacity scales whole-layer presence; *Fill* scales content while preserving
+layer effects/stroke visibility (matters once styles enter).
+
+** Masks preview: the two-second health check
+
+Alt-click any mask thumbnail = full-screen mask view. The number-one habit
+separating clean work from halos and seams.
+
+** Clipping masks
+
+~Alt~-click between two layers (or ~Ctrl+Alt+G~): the upper clips to the
+lower's silhouette — adjustments/effects affecting *only* the layer beneath
+instead of everything below. Portrait retouch layers clip to the subject
+layer; textures clip to shapes.
+
+** Smart objects in practice
+
+Right-click → Convert to Smart Object before: scaling down/up repeatedly,
+applying filters you might re-tune, embedding raws. Double-click the smart
+object thumbnail edits its contents in a child document (Camera Raw for raws);
+save-inside commits back. Smart Filters stack under the layer with individual
+masks and double-clickable parameters. ~Layer → Smart Objects → Replace
+Contents~ swaps the payload keeping all transforms — template machinery.
+
+** Merging discipline
+
+~Ctrl+E~ merge down, ~Ctrl+Shift+Alt+E~ *stamp visible* (new layer containing
+flattened view of everything — original layers survive beneath; the only
+flatten a professional uses routinely). Full flattening happens at delivery,
+on duplicates, never on masters.
+
+-----
+
+* 9. Masks, completely
+
+** Creating them
+
+- Layers panel bottom icons: *Add Layer Mask* (white = reveal-all) or Alt+click
+  it (black = hide-all).
+- From an active selection: same button converts the selection to a mask
+  instantly — the standard bridge from section 10.
+- ~Layer → Layer Mask → Reveal All / Hide All / From Transparency~;
+  *Apply/Delete* live in the same menu and via right-click.
+- Adjustment and fill layers arrive already wearing one; Smart Filters carry
+  their own separate mask.
+
+** Painting them
+
+Select the mask thumbnail first (a thin border around the thumbnail = paint
+will land on the mask, not the pixels — check this constantly at first), then
+brush:
+
+| Key             | Effect                                   |
+|-----------------+------------------------------------------|
+| ~B~             | Brush tool                                |
+| ~[~ / ~]~       | smaller / larger                          |
+| ~Shift+[~/~]~   | softer / harder edge                      |
+| ~X~             | swap black↔white                          |
+| ~D~             | reset colours to black/white              |
+| number keys     | brush opacity (3 = 30%)                   |
+| ~Shift~+drag    | straight stroke between points            |
+| ~Alt~+brush     | erase-mode while held                     |
+
+** Opacity vs Flow — the distinction separating clean from blotchy
+
+*Opacity* caps the whole stroke: one pass over a spot applies at most that
+strength no matter how long you scrub. *Flow* is per-instant deposition:
+holding still keeps depositing. For masks and retouching, *low Flow (10–30%)
+with high Opacity builds gradual, streak-free transitions*; high-opacity
+dabbing produces polka-dot artefacts you'll otherwise hunt all evening.
+
+** The Properties panel controls
+
+Select any mask → Properties: *Density* (overall mask ceiling), *Feather*
+(non-destructive edge softening — prefer over re-painting), plus invert and
+boundary-refinement buttons routing into Select & Mask.
+
+** Non-brush mask techniques
+
+- *Gradient on a mask*: ~G~ linear gradient black→white across the thumbnail —
+  perfect graduated sky filters in one drag.
+- *Paste into mask*: copy any image/channel/shape, Alt-click the mask
+  thumbnail to view it, paste. Luminosity masks are built exactly this way
+  (next subsection).
+- *Selections → mask* conversions with feather applied at conversion time.
+
+** Luminosity masks without plugins
+
+The classic pro technique: masks keyed to brightness so adjustments hit only
+highlights/shadows/mids naturally:
+
+1. ~Ctrl+Alt+2~ loads the image's luminance as a selection (brightest tones).
+2. Click *Add Layer Mask* on your adjustment layer — it now affects only what
+   was bright.
+3. Refine: ~Ctrl+Alt+Shift+click~ a channel thumbnail intersects selections
+   iteratively (~Channels~ panel) — each intersection narrows toward the true
+   highlights; build "brights-of-brights" masks this way. Shadows = invert
+   (~Ctrl+Shift+I~).
+
+Free panels automate this; manual fluency takes an hour and never breaks.
+
+** Discipline checklist for every mask job
+
+View the mask alone (Alt-click) before judging the result · feather edges on
+anything organic · never paint at 100% opacity on organic subjects · toggle
+the layer eye for before/after honesty · name masks' layers meaningfully.
+
+-----
+
+* 10. The selection arsenal
+
+Selections restrict every tool's reach. The craft is picking the fastest tool
+that yields the needed precision.
+
+** The tools
+
+- *Object Selection* (~W~ group): hover an object → one-click AI selection;
+  drag a marquee around ambiguous regions for candidate picks. The default
+  first resort on modern builds.
+- *Quick Selection* (~W~): paint to grow, Alt-paint to subtract; edge-sensing.
+  Good subjects, busy-but-contrasty backgrounds.
+- *Magic Wand* (hidden in ~W~ group): clicks colour-similar contiguous pixels;
+  *Tolerance* in options bar is everything (low = strict). *Contiguous* unticked
+  grabs image-wide like Select Similar.
+- *Select Subject* button (options bar when any selection tool active / ~Select~
+  menu): whole-frame AI subject cutout, improved in 15.4-era engine updates.
+- *Select Sky*: one-click sky detection — the front door of sky replacement.
+- *Rectangular/Elliptical Marquee* (~M~): Shift constrains; options-bar Fixed
+  ratio/size for exact geometry.
+- *Lasso* (~L~): freehand; *Polygonal* click-point mode; *Magnetic* snaps to
+  contrast while tracing.
+- *Pen tool* (~P~): bezier paths — the precision instrument no AI matches for
+  product edges, hairlines against studio sweeps. Path → right-click →
+  *Make Selection* with feather. Slowest, sharpest, never fooled. Worth an
+  afternoon's practice once, forever after irreplaceable.
+- *Select → Color Range*: eyedropper-based colour families with fuzziness +
+  localized checkboxes; skin-tone detection mode included.
+- *Focus Area* (~Select~ menu): selects what's sharp — shallow-DOF subject
+  extraction from bokeh backgrounds, occasionally magical.
+
+** Select & Mask workspace
+
+Any rough selection → *Select & Mask* (~Ctrl+Alt+R~) — the refinement room:
+
+- *Refine Edge brush*: paints over hair/fur; engine rebuilds wispy edges
+  intelligently. The reason this workspace exists.
+- Global sliders: Radius (edge zone width), Smooth, Feather, Contrast,
+  Shift Edge (grow/shrink — kills white fringe).
+- *Decontaminate Colors*: replaces fringe pixels' inherited background colour.
+- Output to: Layer Mask (usual), New Layer, Selection.
+
+** Refinement moves outside the workspace
+
+~Select~ menu: Modify → Border/Smooth/Expand/Contract/Feather · Grow/Similar
+(colour-family expansion) · Invert ~Ctrl+Shift+I~ · Transform Selection
+(reposition the marching ants without repainting).
+
+** Quick Mask (~Q~)
+
+Paint-a-selection mode: reddened overlay = unselected; paint black to remove,
+white to add; ~Q~ back converts strokes to selection. For hand-built masks at
+high zoom it beats every dialog.
+
+** Storage and reuse
+
+~Select → Save Selection~ banks it as a channel (Channels panel); reload
+anytime; Ctrl-click a channel thumbnail loads its selection. Banked selections
+turn recurring complex extractions into one-click recalls — build a library
+for repeat clients/products.
+
+** Fringe-killing protocol (the composite maker's routine)
+
+1. Contract 1 px + feather 1–2 px before masking hard-edged subjects.
+2. Decontaminate in Select & Mask where backgrounds were bright.
+3. Residual halo: clip a Hue/Saturation adjustment to the masked layer,
+   targeted-adjustment pipette onto the halo colour, saturation −100, mask it
+   to the fringe only. Nuclear option, always works.
+
+-----
+
+* 11. Adjustment layers cookbook
+
+~Layer → New Adjustment Layer~ or the Adjustments panel icons. Each arrives as
+a non-destructive layer with a mask, affecting everything below, re-editable
+forever via double-click. This is Photoshop's tonal/colour core — learn these
+twelve and never touch a destructive ~Image → Adjustments~ menu item again.
+
+** Curves — the master control
+
+Per-channel point curves; click to add points, drag to bend. Moves that matter:
+
+- Gentle S: two points, shadows slightly down, highlights slightly up = honest
+  contrast.
+- Matte fade: raise the black point (bottom-left node up) = filmic lifted
+  blacks.
+- Channel grading: blue-down/warm-highlights, blue-up/cool-shadows; red-green
+  cross-grading for skin harmonisation.
+- Targeted adjustment hand (finger icon): drag directly on image regions to
+  move the curve beneath them.
+- Hold Alt while dragging endpoints shows clipping thresholds.
+
+** Levels — curves reduced to endpoints
+
+Three sliders (black point, midtone gamma, white point) + output clampers.
+Setting black/white points just inside histogram ends is the first move on
+scans and flat exports. Everything else Curves does better.
+
+** Exposure
+
+Stop-based brightness with offset/gamma — mirrors raw-editor thinking for
+pixel-layer documents.
+
+** Vibrance vs Hue/Saturation
+
+- *Vibrance*: weighted saturation protecting skin — first choice always.
+- *Hue/Saturation*: per-band H/S/L control with on-image targeting (hand
+  tool); Colorize toggle tints monochrome. Saturation −100 on targeted bands
+  doubles as the fringe killer (section 10).
+
+** Color Balance
+
+Shadow/midtone/highlight wheels with Preserve Luminosity ticked — the graded
+look in thirty seconds (teal shadows, warm highs, restraint).
+
+** Selective Color
+
+Per-ink-family CMYK slider surgery (all the reds' cyan content, independently
+of anything else). Old print-shop tool, still unbeatable for specific colour
+family corrections nothing else reaches.
+
+** Photo Filter
+
+Warming/cooling gel simulation (85, LBI...) at density-controlled strength —
+temperature nudges with analogue logic.
+
+** Gradient Map
+
+Remaps luminance onto a chosen gradient — duotones, split-tones, dramatic
+false-colour. Blend-mode Soft Light at low opacity = instant sophisticated
+grade.
+
+** Black & White conversion
+
+Per-source-colour lightness sliders over the greyscale render — the honest
+monochrome converter (vs Desaturate's fixed weights). Drag on-image targeting
+like curves. Pair with a masked Curves for zone-system-grade B&W work.
+
+** Color Lookup (LUTs)
+
+Applies .cube/.3dl industry grade files — film-emulation packs live here.
+Blend-mode/opacity tempering applies as with any layer.
+
+** Threshold & Posterize
+
+Graphic-design territory; photographers use Threshold occasionally for
+extreme-luminance masks built from its output.
+
+** Invert (~Ctrl+I~ on layer/mask)
+
+Full negative; mask-inverting shortcut doubles here contextually.
+
+** The stacking doctrine
+
+Adjustments compose top-down; each sees the result of those above. Standard
+finishing order: exposure-level fixes (Curves/Levels) → colour correction
+(Vibrance/Hue-Sat/Balance) → creative grading (Balance wheels/LUTs/Gradient
+Map) → local masks layered atop. Name each layer by intent ("Curves - warm
+the shadows") — future-you reads names, not minds.
+
+-----
+
+* 12. The retouching toolbox
+
+** The healing family
+
+- *Spot Healing Brush* (~J~): dab the flaw; content-aware fill figures out
+  context. First resort for dust, blemishes, small litter. "Sample All Layers"
+  tick lets it work on a blank retouch layer above — non-destructive by
+  default, do this.
+- *Healing Brush*: Alt-click source first, then paint — you choose what
+  texture gets borrowed while lighting/colour blends. For structured areas
+  where Spot's guess goes wrong.
+- *Patch Tool*: draw a region, drag it onto donor texture; or Content-Aware
+  mode. The mid-size removal tool (fence posts across grass, wires against
+  sky segments).
+- *Remove tool* (2023+, core of modern cleanup): brush-stroke over anything;
+  AI fills from surrounding context. Runs *locally*, no account needed.
+  Handles medium objects startlingly well — power lines are its party trick:
+  one stroke along the wire, gone. The default answer for everything between
+  spot-heal and full compositing.
+- *Clone Stamp* (~S~): verbatim copying with Alt-set source. For structure,
+  pattern continuation, and anywhere blending would lie. Options: Aligned
+  (source follows), sample-all-layers, clone-source panel (~Shift+F5~ window)
+  for offset/rotation/scaled sources.
+
+** Find Distractions / Remove distractions (v27.6+)
+
+Select menu → finds and queues distracting elements automatically on supported
+builds; review each fix rather than accepting wholesale.
+
+** Dodge & burn — the shaping layer stack
+
+The darkroom technique that separates finished portraits from filtered ones:
+
+1. Two new 50%-grey layers (#808080 fill), both blend mode *Overlay* (or Soft
+   Light for gentler reach) — name them "dodge"/"burn".
+2. White brush at 3–8% opacity on the dodge layer brightens; black at same
+   on burn darkens. Large soft brush, build in passes.
+3. Judge at arm's length every few strokes. Faces want cheekbone/brow-bridge/
+   jawline structure, not spotlights.
+4. Fully revisable forever; underlying pixels untouched.
+
+Pro variant: Curves adjustment layers masked with luminosity masks (section 9)
+— brighter/darker curve pairs whose masks confine them to highlights/shadows.
+
+** Frequency separation — full recipe
+
+Skin without rubber-stamping texture away. Work at 16-bit:
+
+1. Stamp visible ~Ctrl+Shift+Alt+E~ → duplicate twice → group them ("FS").
+2. Bottom copy: ~Filter → Blur → Gaussian Blur~ radius just above pore size
+   (zoom to 100%, try 4–8 px until pores vanish) — the *colour/tone layer*.
+3. Top copy: ~Image → Apply Image~ with Layer = blurred copy, Blending = Add,
+   Scale = 2, Offset = 0, check Invert — produces neutral-grey high-pass; set
+   layer mode *Linear Light*. Stack now looks identical to original.
+4. Heal/patch blemishes ONLY on the blur layer: tones fix while pore detail
+   rides untouched above.
+5. Optional: gentle Gaussian on the high-pass layer's trouble spots evens
+   blotchiness without losing pores.
+6. Group-flatten when done (or keep live).
+
+Cautions: colour banding risk at 8-bit (stay 16-bit); over-blurring the low
+layer makes skin translucent; edges/hair must not be healed through — mask
+them out of the working zone.
+
+** Liquify
+
+~Filter → Liquify~ (~Shift+Ctrl+X~): forward-warp pushes pixels (jawlines,
+waists, stray hair strands); reconstruct brush unwinds mistakes; face-aware
+mode detects features on people shots. Ethics clause is practical: geometry
+viewers subconsciously trust is sacred — straighten lines and calm flyaways
+freely, reshape bodies knowingly.
+
+** Perspective/Unified/Puppet transforms
+
+~Edit → Transform~ family: free ~Ctrl+T~ (scale/rotate/skew/distort/warp),
+Puppet Warp pins an object and bends it around the pins (limbs, fabric,
+flags). Transform applies to whole layers or selections; smart-object layers
+transform losslessly.
+
+** What generative AI would have done here
+
+For honesty's sake, since every tutorial now assumes it: sky replacement
+one-clicks, object synthesis into empty regions, expand-beyond-frame infill —
+all Firefly-cloud features, all dead without an account, all version-tagged
+27.x. Everything they do has manual equivalents above (sections 13, 10, this
+one); the manual routes take minutes longer, need taste, and produce results
+you can defend. Proceed accordingly.
+
+-----
+
+* 13. Four compositing jobs, step by step
+
+Complete procedures for the canonical pixel-editor jobs. All assume 16-bit
+sources (Lightroom round-trips deliver exactly that; §11 there).
+
+** Sky replacement
+
+1. Base image open. ~Select → Sky~ — one click, engine handles trees/wires.
+2. Refine in Select & Mask: Refine Edge brush along any horizon foliage;
+   feather 1–2 px; decontaminate if the old sky was bright.
+3. Paste the new sky as a layer *beneath* the subject layer (or into the
+   selection as mask). Transform to match scale/horizon height.
+4. *Match the light*: Curves-on-group over both layers (clip nothing) nudging
+   composite temperature/contrast until subject and sky agree — mismatched
+   colour temperature outsells every other tell. Check the subject's existing
+   reflections/shadows agree with the new sky's sun position; move the sky,
+   not physics.
+5. Optional realism: sample the new sky's haze at horizon and paint a whisper
+   of it across the subject-background junction with a soft low-flow brush.
+
+** Exposure blend (architecture/landscape two-frame)
+
+1. Open base (dark-exposed, protected highlights); place second frame
+   (bright-exposed, protected shadows) above as aligned layer (~Edit → Auto-
+   Align Layers~ if handheld).
+2. Add white mask to top; paint black with large low-flow brush through the
+   region where its strength lies (windows, interior detail), leaving the
+   boundary natural — gradients, not borders.
+3. Luminosity-mask variant: instead of painting, Alt-paste the base luminance
+   channel into the mask so each frame contributes where it exposed correctly.
+4. Stamp visible; gentle global Curves marries the halves.
+
+** Head swap in a group shot
+
+1. Donor frame open alongside base. Loose-lasso donor head+neck, copy
+   ~Ctrl+C~, paste into base ~Ctrl+V~ → lands as own layer.
+2. ~Ctrl+T~ transform: match scale via ear-to-chin distance, rotation via
+   shoulder line; position onto the blinked victim.
+3. Layer mask on pasted head: reveal head only, feathered generously through
+   hairline; align jaw seams into natural shadow boundaries.
+4. Clip Hue/Saturation + Curves to the head layer; harmonise skin tone and
+   grain level with neighbours (they never arrive agreeing).
+
+** Focus stacking (macro/product depth-of-field extension)
+
+1. ~File → Scripts → Load Files into Stack~ → select bracketed focus series;
+   tick "attempt auto-align".
+2. Select all layers → ~Edit → Auto-Blend Layers~ → Stack Images +
+   Seamless Tones. Engine builds masks per-layer taking sharp regions from
+   each — depth of field becomes the sum of the series.
+3. Inspect blend seams at 100% (halo-prone near high-contrast edges); patch
+   problem zones by hand-painting the auto-generated layer masks.
+4. Flatten on a duplicate when verified.
+
+*Panorama* lives next door: ~File → Automate → Photomerge~ → layout
+(usually "Auto" or "Spherical"), then crop, then the same blend inspection.
+
+-----
+
+* 14. Text, logos, borders, watermarks
+
+** Type that stays live
+
+~T~ click-type: font/size/tracking/kerning/colour re-editable forever via the
+Character panel (~Window → Character~). Click-drag creates a paragraph box.
+*Type on a path*: draw pen path, hover type tool until cursor changes, click
+the path. v27.x added dynamic text-to-shape behaviours (build-dependent).
+Rasterize only at final export; text layers are the original non-destructive
+layer and remain so.
+
+** Logo/watermark via linked smart objects
+
+1. Design once as its own file — PNG with transparency or SVG.
+2. Any composition: ~File → Place Linked~ → choose it; position/scale once
+   (transforms stay live on the smart object).
+3. Edit the source file anytime; every composition referencing it updates on
+   reopening. Batch-update watermarks across an archive of templates without
+   touching any of them again.
+
+** Borders and frames
+
+Canvas Size (~Ctrl+Alt+C~) with relative tick and symmetric anchor adds sheet
+around pixels; fill via Background-layer colour or bordered selection
+(~Select All → Modify → Border → fill on new layer beneath~). Classic gallery
+white: long-edge × 2–4%. Stroke-based frames (Edit → Stroke inside a
+selection) for graphic edges.
+
+** Bulk watermarking reality
+
+One-offs: here. Hundreds: Lightroom's export watermark tab or darktable's
+export module apply designed marks en masse; Photoshop's role is designing the
+mark (section 16 automates the rest).
+
+-----
+
+* 15. Sharpening, noise, upscaling
+
+** Output sharpening, done properly
+
+Sharpen three separate times for three purposes, never once for all:
+
+1. *Capture sharpening*: belongs in Camera Raw/Lr Detail panel (section 7) —
+   sensor-level deconvolution on raw data.
+2. *Creative/local*: high-pass technique — stamp visible → duplicate →
+   ~Filter → Other → High Pass~ (radius 1–3 px) → blend mode *Linear Light*
+   or Overlay; mask to eyes/foliage/architecture. Controllable local acutance
+   without global halos.
+3. *Output sharpening*: final step sized to destination — Smart Sharpen
+   (~Filter → Sharpen → Smart Sharpen~, remove: Lens Blur; amount higher for
+   matte print than screen). Judge at print size, not 100% abstractly.
+
+** Noise reduction order of operations
+
+Raw-domain (Camera Raw Denoise switch / LrC) before pixel work always.
+Pixel-stage residual NR: Camera Raw Filter's luminance slider at low values,
+masked away from detail-critical zones. Never stack multiple full-strength
+NR passes — watercolour skin is cumulative.
+
+** Upscaling
+
+- *Super Resolution*: the good one lives in Camera Raw/Lightroom (Enhance
+  feature): 2× linear upscaling via neural net, produces Enhanced DNG — local,
+  accountless. Right-click in ACR filmstrip/Bridge, or LrC's Photo menu.
+- *Preserve Details 2.0*: ~Image Size~ resample option with Reduce Noise
+  slider — the manual route for TIFF/JPEG sources.
+- Upscale *after* retouching, *before* output sharpening. Chain Super
+  Resolution with prior Denoise via Render-to-DNG when both are wanted.
+
+-----
+
+* 16. Actions and automation
+
+Photoshop batch-processing a folder of pixel edits while you make tea.
+
+** Recording actions
+
+*Actions panel* (~Alt+F9~) → new set ("My housekeeping") → new action → record:
+every menu command, tool setting and dialog entry records until stop. Design
+actions around *relative* operations (stamps, adjustments with fixed values,
+Canvas-relative borders), not absolute coordinates. The toggle column lets
+each run skip steps interactively; modal-control column (~□~) pauses that
+step for per-image input — essential for actions containing judgement calls.
+
+** Batch processing
+
+~File → Automate → Batch~: pick action + source folder + destination +
+naming convention. Errors logged to file rather than halving the run. For
+multi-format output: *Image Processor* (~File → Scripts~) converts a folder
+tree to JPEG/PSD/TIFF simultaneously with resize + ICC options — the client-
+delivery workhorse needing no recorded action at all.
+
+Droplets: drag-and-drop mini-apps wrapping an action onto the desktop;
+Windows treats them as icons files fall into.
+
+** What stays outside Photoshop
+
+Catalogue-wide develop consistency, culling, library export batches: raw
+editor territory (LrC §10/§12, darktable §13/§16). Automating tone across
+800 raws happens there in one preset, not here in eight hundred opens.
+
+-----
+
+* 17. Saving, exporting, delivering
+
+** The three saves
+
+- ~Ctrl+S~ / *Save*: PSD (or whatever format the doc is). *PSD is the master
+  format* — layers, masks, smart objects, all live. Tick "maximize
+  compatibility" (section 4) so other apps can read it.
+- ~Ctrl+Shift+S~ Save As: new PSD or switch to TIFF/JPEG/PSB. *PSB* exists for
+  documents beyond 2 GB or 30,000 px — same everything, bigger box.
+- ~Ctrl+Shift+E~? No — that's GIMP. Here: *File → Export → Export As* (~Alt+
+  Shift+Ctrl+W~): PNG/JPEG/WebP with per-format controls, resize, sRGB
+  conversion checkbox — the web-delivery dialog.
+- ~Ctrl+Alt+Shift+S~ legacy "Save for Web" still exists on many builds;
+  Export As supersedes it.
+
+** TIFF for print/labs
+
+Save As → TIFF: compression ZIP/LZIP lossless; 16-bit; embed ICC profile;
+layers only if the lab asks (flat otherwise — smaller, unambiguous).
+
+** Delivery colour discipline
+
+Web/social destinations: convert copies to sRGB at export (checkbox) and embed
+the profile. Print labs: their instruction sheet rules (usually AdobeRGB 16-bit
+TIFF, no sharpening beyond your output pass). Clients receiving masters: PSD +
+flattened sRGB JPEG preview pair.
+
+** Naming and versions
+
+Job-rooted versioning beats cleverness: ~client_job_v03_final.psd~ is a lie
+you'll tell twice; ~v01/v02/v03~ with dates survives contact with reality.
+Export As appends @1x/@2x automatically for size variants when asked.
+
+-----
+
+* 18. Printing and soft-proofing
+
+** Soft-proof before ink moves
+
+1. Obtain the printer/paper ICC profile (paper manufacturer or lab).
+2. Install: right-click .icc → "Install Profile" (goes to Windows colour
+   system folder; restart Photoshop).
+3. ~View → Proof Setup → Custom~: Device to Simulate = your profile;
+   rendering intent *Perceptual* for photographs (Relative Colorimetric for
+   punchier gamut-clipping behaviour); tick *Black Point Compensation*.
+4. ~Ctrl+Y~ toggles proofing on-canvas — the honest preview of what leaves
+   your monitor's world. Work adjustments between proof views; gamut-clipped
+   neon shows itself immediately.
+
+** Print dialog discipline (~Ctrl+P~)
+
+- *Photoshop Manages Colors* + the same ICC/intent as soft-proofing — never
+  let both Photoshop and driver manage colour (double-profiling prints grey-
+  green, the classic beginner's heartbreak).
+- Render at correct print resolution: Image Size without resample sets PPI so
+  dimensions ÷ PPI land where intended; resample up via Preserve Details 2.0
+  only below ~180 ppi effective.
+- Output sharpening pass (§15) after soft-proofed edits, sized to paper.
+- 16-bit printing checkbox where the driver supports it.
+
+** Lab submission recipe
+
+16-bit AdobeRGB TIFF · flattened · full resolution · no embedded output
+sharpening unless specified · soft-proof against *their* profile if published.
+
+-----
+
+* 19. Gotchas
+
+1. *The Background layer isn't normal.* Locked, transparency-less; double-click
+   converts. Half of "why can't I move this" questions die here.
+2. *Masks receive paint silently.* Brush strokes vanish because the mask
+   thumbnail was selected instead of pixels (or vice versa). Watch the thin
+   border on thumbnails; section 9's habit list.
+3. *Opacity vs Flow confusion* produces blotches or invisible progress. §9's
+   distinction; low-flow building is the pro default.
+4. *Colour-settings anarchy.* Opening files with mismatched profiles and
+   answering dialogs carelessly converts colours irreversibly. Section 4's
+   policy settings end the nagging honestly.
+5. *8-bit mode disables modern tools.* Some filters/gamma-aware operations
+   grey out; the fix is converting ~Image → Mode→ 16-bit~, not fighting in
+   8-bit.
+6. *Camera Raw cache bloat.* ACR caches previews aggressively; preferences →
+   Camera Raw → purge when disk vanishes mysteriously.
+7. *Smart-object child edits surprise people.* Double-click opens a child
+   document; forgetting to Ctrl+S inside it means "why didn't my edit commit".
+   Save-inside, then return.
+8. *History is shallow by default* (20 states); raise to 50+ (§4) and stamp-
+   visible at milestones regardless — history never crosses save/close.
+9. *PSD compatibility prompt fatigue.* Answer Always once in preferences;
+   stop being asked, stay readable everywhere.
+10. *Version-frozen AI features.* Every tutorial since 2023 assumes generative
+    fill works. Without an account it doesn't; sections 12–13 are the manual
+    equivalents, deliberately complete.
+
+-----
+
+* 20. Shortcuts
+
+The daily professional set (full map: ~Edit → Keyboard Shortcuts~, ~Alt+Shift+
+Ctrl+K~):
+
+| Key                     | Does                                          |
+|-------------------------+-----------------------------------------------|
+| ~V~ / ~M~ / ~L~ / ~W~   | Move / Marquee / Lasso / Quick-selection      |
+| ~B~ / ~E~ / ~G~         | Brush / Eraser / Gradient-paint               |
+| ~C~ / ~T~               | Crop / Free transform                         |
+| ~J~ / ~S~               | Healing / Clone                               |
+| ~[~ / ~]~               | brush smaller / larger                        |
+| ~X~ / ~D~               | swap colours / reset black-white              |
+| ~Alt+Backspace~         | fill with foreground                          |
+| ~Ctrl+J~                | duplicate layer                               |
+| ~Ctrl+Shift+N~          | new layer                                     |
+| ~Ctrl+G~                | group selected layers                         |
+| ~Ctrl+Alt+G~            | clip to layer beneath                         |
+| ~Ctrl+I~                | invert (selection/mask/layer contextually)    |
+| ~Q~                     | Quick Mask                                    |
+| ~Ctrl+Alt+2~            | load luminance selection                      |
+| ~Ctrl+Shift+Alt+E~      | stamp visible                                 |
+| ~Ctrl+0~ / ~Ctrl+1~     | fit screen / actual pixels                    |
+| ~Space-drag~            | pan                                           |
+| ~Ctrl+Y~                | soft-proof toggle                             |
+| ~Ctrl+S~ / ~Ctrl+Shift+S~ | save / save as                              |
+| ~Alt+Shift+Ctrl+W~      | Export As                                     |
+| ~F~ / ~Tab~             | screen modes / hide panels                    |
+
+Customise anything: the Keyboard Shortcuts editor searches by command name
+and exports sets to files worth backing up.
+
+-----
+
+* 21. Where to learn more
+
+- *Official help & release notes* — helpx.adobe.com/photoshop — the release-
+  notes pages document every 27.x feature precisely; use them to check what
+  your frozen build has before chasing a tutorial's premise.
+- *PiXimperfect (Unmesh Dinda)* on YouTube — the deepest free Photoshop
+ education in existence; blend modes, masks, curves explained at first-
+ principles level. Ignore video age for fundamentals; date-check AI features.
+- *Julieanne Kost* — Adobe's demonstrator; decades of concise workflow videos.
+- *Adobe in-app tutorials* — Help menu; account-gated portions aside, the
+  technique walkthroughs run locally.
+- *community.adobe.com* Photoshop board — where edge cases meet staff.
+
+-----
+
+-----
+
+* Appendix A. One composite, end to end
+
+The folder's running photograph again — the D7200 reception frame, developed
+in ~DARKTABLE-README.org~ §17, pixel-finished in ~GIMP-README.org~'s appendix.
+This is the same job as it would run *here*, with the choices Photoshop
+specifically earns. The brief grew: the couple wants a wall portrait, and the
+best expression of the groom exists only in a frame where the bride blinked.
+
+1. *Round trip in*: Lightroom ~Ctrl+E~ on the master (§11 there) — 16-bit
+   ProPhoto TIFF lands with develop settings baked. Advice: never composite
+   from raws directly; develop-side consistency first means compositing
+   decisions are the only decisions left.
+2. *The head swap.* Donor frame opened alongside (same import batch, same
+   light, ninety seconds apart). Loose lasso around donor head+neck, copy,
+   paste → own layer. ~Ctrl+T~, match scale ear-to-chin, rotate by shoulder
+   line. Layer mask: reveal head only, feathered through hairline; jawline
+   seam parked inside a natural shadow. Advice: seams fail where geometry is
+   visible and lighting is not — park them along boundaries the eye reads as
+   edges anyway (collars, hairlines), never across skin planes.
+3. *Harmonise the transplant.* Clip Hue/Saturation + Curves to the head layer:
+   donor face runs a half-step cooler than its new body — warmth nudged until
+   neck and jaw agree at the seam. Grain check: both frames ISO 3200, Denoise
+   upstream matched them already; without that, this is where texture
+   mismatch outsells every other tell.
+4. *The wall-portrait pass*: dodge/burn grey layers (§12) sculpting cheekbone
+   and separating bride from background; frequency separation on her forehead
+   where the exit-sign removal's second pass left tonal noise (§12 recipe,
+   blur layer healed only). Advice: frequency separation is a scalpel for
+   tone-without-texture problems; if you're reaching for it globally you've
+   missed an upstream fix.
+5. *Typography for the gift print*: their names and date, ~T~, live text in
+   Cormorant Garamond, tracking +40, placed bottom-left on the quieter
+   region; opacity 85% white. Advice: type on photographs lives where the
+   image is quietest, not where composition feels empty — different places
+   more often than not.
+6. *Output chain in order*: flatten duplicate → Super Resolution via Camera
+   Raw Enhance on the source first? No — decision stated plainly: wall print
+   at 60×90 cm from 24 MP needs upscaling ×2; do it *before* retouching next
+   time (plan ahead); here it goes now via ACR Super Resolution on a rendered
+   copy, then output sharpening sized for lustre paper after soft-proofing
+   against the lab profile (~Ctrl+Y~, §18).
+7. *Delivery*: layered .psd archived in the job folder (max-compatibility on),
+   flattened AdobeRGB 16-bit TIFF to the lab, sRGB JPEG proof back to the
+   couple. Three artefacts, three audiences, one naming scheme.
+
+Total time: forty minutes — tenfold the GIMP route for the equivalent edit,
+most of it spent on the head swap's finish quality and typography. That
+difference is the honest price of Photoshop: not capability (the free guides
+in this folder cover nearly everything) but finish polish, typography depth,
+and client-interchange gravity. Choose per job, not per ideology.
+
+-----
+
+-----
+
+* Appendix B. Every preference and option, explained
+
+The reference layer: preferences panes, Camera Raw controls, and the options
+bars of every tool a photographer touches — one line each.
+
+** Preferences → General
+
+- *color picker dropdown* — which picker ~Alt+backspace~-adjacent HUD uses; Adobe HUD square is the working choice.
+- *image interpolation default* — resampling for transforms; Bicubic Automatic suits most work.
+- *beep when done* — completion chime for long filters/exports.
+- *export clipboard* — whether quitting hands the OS your clipboard; off saves RAM.
+- *auto-show the Home screen* — launch behaviour; off drops you straight into Open.
+- *use legacy "Free Transform"* — pre-2019 transform UX; leave modern unless muscle memory is ancient.
+
+** Preferences → File Handling
+
+- *image previews (always/ask/never)* — embedded thumbnail saving in PSD/TIFF; Always keeps browsers fast.
+- *maximize PSD and PSB file compatibility* — writes flattened composite data inside PSDs so other apps can read them; Always (§4).
+- *save in background + autosave recovery interval* — crash insurance cadence.
+- *recent files list count* — home-screen history length.
+
+** Preferences → Performance
+
+- *memory usage* — RAM ceiling as percentage; 85% on a dedicated machine.
+- *performance cache tiles/cache levels* — screen-redraw caching granularity; defaults fine.
+- *history states* — undo depth (§4 says 50+).
+- *scratch disks* — spill-over drive order; fastest SSD first, never one disk alone.
+- *graphics processor: basic/normal/advanced* — GPU acceleration depth; step down if the canvas misbehaves.
+- *display: 8-bit vs 30-bit* — deep-colour output where hardware supports it.
+
+** Preferences → Cursor
+
+- *painting cursor* — full-size brush outline vs precise cross vs blend; full-size with crosshair inside is the mask-work standard.
+- *other cursors* — precision-tool appearance.
+
+** Preferences → Transparency & Gamut / Units & Rulers / Guides & Grid
+
+- *transparency grid colours* — what shows through transparent regions; cosmetic.
+- *gamut warning colour/opacity* — overlay tint for out-of-print-space colours (~Ctrl+Shift+Y~).
+- *ruler units* — document default measurement; pixels for screen, cm/mm for print jobs.
+- *column/pica sizes* — layout-legacy maths; ignore unless typesetting.
+- *guides/smart guides/grid colour and style* — alignment aid cosmetics; smart guides on.
+
+** Preferences → Plug-ins / Type / Tools
+
+- *allow extensions connect to internet* — panel telemetry; off fits this setup.
+- *additional plug-ins folder* — legacy plugin location pointer.
+- *type: show asian text options / missing glyph protection / font preview size* — typography safety rails; protection prevents silent font substitution damage.
+- *tools: show tooltips / snap vector tools / legacy free-transform* — behaviour toggles.
+
+** Camera Raw's own preferences (gear icon inside ACR)
+
+- *save image settings in sidecar .xmp files* — where ACR edits live beside raws; on for portability.
+- *JPEG/TIFF handling: open all supported / open only with settings* — whether non-raws route through ACR automatically.
+- *open as Smart Objects by default* — double-click raws land as editable capsules in documents; recommended for round-trip workflows.
+- *apply auto tone adjustments* — initial guess per image; off keeps neutral starts honest.
+
+** Camera Raw panels, control by control
+
+Same engine as Lightroom Develop (§7 there); the lines:
+
+- *WB: as-shot/auto/custom/temp/tint* — starting point, guess, or manual pair.
+- *exposure/contrast/highlights/shadows/whites/blacks* — identical semantics to LrC Basic.
+- *texture/clarity/dehaze* — micro-contrast, midtone punch, atmosphere cut.
+- *vibrance/saturation* — weighted vs blunt boost.
+- *curve* — point + parametric tone remapping with on-image targeting.
+- *color mixer HSL + point color* — per-band hue/sat/lum and single-colour surgery.
+- *color grading wheels* — shadow/mid/high/global chroma pushes.
+- *optics: remove chromatic aberration / defringe amount* — fringe cleanup.
+- *geometry: upright modes (off/auto/full/level/vertical/constrained)* — keystoning corrections.
+- *grain/vignette/dehaze mid-panel extras* — effects layer of the raw pipeline.
+- *detail: sharpening quartet + NR sliders + denoise switch + AI sharpen* — §7's detail doctrine verbatim.
+- *calibration* — raw-level primary tweaks; same blue-primary trick.
+
+** Tool options bars, line per option
+
+- *Move (~V~): auto-select / show transform controls / align+distribute row* — click-through selection, gizmo visibility, multi-layer arrangement maths.
+- *Marquee (~M~): feather / anti-alias / style (normal-fixed ratio-fixed size)* — edge softness set at selection time, stair-step smoothing, geometry locking.
+- *Lasso family (~L~): feather / anti-alias / width-contrast-frequency (magnetic)* — freehand refinement and magnetic snapping sensitivity.
+- *Object Selection (~W~): overlay options / mode rectangle-lasso* — candidate visualisation and hint-drawing shape.
+- *Quick selection: brush size-hardness-spacing / sample all layers / auto-enhance* — stroke engine tuning and edge polish.
+- *Magic wand: tolerance / contiguous / sample all layers* — similarity strictness, region connectivity, source depth.
+- *Crop (~C~): ratio presets / straighten tool / overlay cycle / delete cropped pixels* — composition aids, horizon tool, rule overlays, and the destructive-vs-not switch (untick it: crops stay recoverable outside frame).
+- *Eyedropper (~I~): sample size / sample layer dropdown* — point-vs-area reading and which layers feed it.
+- *Healing family (~J~): source sampled-pattern / aligned / sample all layers / diffusion* — donor mechanics and blending reach.
+- *Brush (~B~): mode / opacity / flow / smoothing / airbrush toggle / pressure buttons* — §9's painting doctrine lives in these six.
+- *Clone (~S~): aligned / sample dropdown / clone-source link* — offset tracking and source depth.
+- *Gradient (~G~): gradient picker / mode / opacity / dither / reverse / type* — the mask-gradient engine (§9).
+- *Pen (~P~): path-shape-pixels modes / rubber-band / magnetic* — vector intent switching and tracing assists.
+- *Type (~T~): family/style/size / anti-aliasing / colour / warp / paragraph vs point* — live-text controls (§14).
+
+-----
+
+* Setup checklist
+
+- [ ] Confirm build: Help → About / System Info; note which version-tagged
+      features above you have
+- [ ] Preferences: memory 85%, history 50+, scratch = fast SSD, GPU advanced
+      if stable
+- [ ] Edit → Color Settings: ProPhoto working space, preserve embedded,
+      ask-on-missing only
+- [ ] File handling: maximize PSD compatibility Always
+- [ ] Soft-proof ICC profile(s) installed for your printer/papers
+- [ ] Practice the §9 mask-painting keys until they're reflexes (~X~ ~[~
+      number-opacity)
+- [ ] Record one housekeeping action (e.g. border+sharpen+export) and batch it
+      over a test folder (§16)
+- [ ] Round-trip one file from Lightroom and back (§6) to verify the pipeline
+
+-----
+
+/Companions in this folder: ~/LIGHTROOM-GUIDE.org~ — the catalogue/develop half
+whose §11 hands off here; ~/DARKTABLE-README.org~ and ~/GIMP-README.org~ — the
+free-software twins of this entire division of labour, covering every job in
+this document without subscriptions; ~/D7200-GUIDE.org~ — everything upstream
+of the shutter./

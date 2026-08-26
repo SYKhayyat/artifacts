@@ -1,0 +1,1188 @@
+#+TITLE: Lightroom Classic: A Complete Tutorial
+#+SUBTITLE: Catalogue, cull, develop, export — the whole raw workflow, one program.
+#+AUTHOR: Shaul
+#+DATE: 2026-08-24
+#+STARTUP: content
+#+OPTIONS: toc:3 num:nil
+
+Written 24 August 2026, against *Lightroom Classic 15.x* (the mid-2026 releases
+were 15.4–15.5). Features are tagged with the version that introduced them, so
+an older build knows exactly what it is missing — nothing else in this document
+assumes any particular build.
+
+This guide assumes a working local install with *no Adobe account attached*.
+Section 2 states plainly what that costs you; every other section teaches the
+program proper, whose core has been stable for a decade.
+
+-----
+
+* Start here
+
+*What Lightroom Classic is.* Adobe's raw editor and catalogue: the same job
+darktable does — non-destructive development of raw files — wrapped in the most
+polished workflow in the industry. Import, organise, cull, develop, export,
+with a database keeping track of everything.
+
+*The naming trap, defused immediately.* There are two different programs both
+called "Lightroom":
+
+- *Lightroom Classic* — desktop program, files live in your folders, catalogue
+  on your disk, full feature set. This is what photographers mean when they say
+  Lightroom, and this entire guide is about it.
+- *Lightroom* (no qualifier) — the cloud-native sibling: photos sync to Adobe's
+  servers, simpler interface, fewer features, exists for phone/desktop/web
+  ecosystems.
+
+Everything that makes Lightroom worth using — folder control, tethering,
+masking depth, export power — lives in *Classic*. Without a cloud account the
+cloud version is not even a conversation. This guide says "Lightroom" and means
+Classic throughout.
+
+*The relationship to Photoshop.* Lightroom develops photographs; Photoshop
+edits pixels. Global tone/colour/cleanup stays here; composites, heavy object
+removal, typography go there. Section 11 covers the hand-off. Both guides live
+in this folder (~PHOTOSHOP-GUIDE.org~).
+
+*What the division of labour looks like.* If you also run darktable: these two
+programs are rivals for the same job, not teammates. Running both over one
+library invites sidecar arguments (section 14). Pick one as primary.
+
+-----
+
+* Contents
+
+1. [[*1. Why Classic and not something else][Why Classic and not something else]]
+2. [[*2. The shape of your installation][The shape of your installation]]
+3. [[*3. How Lightroom thinks: the catalog][How Lightroom thinks: the catalog]]
+4. [[*4. Setting up once][Setting up once]]
+5. [[*5. Importing: getting files in properly][Importing: getting files in properly]]
+6. [[*6. The Library module: organising and culling][The Library module: organising and culling]]
+7. [[*7. Develop, part I: the global edit][Develop, part I: the global edit]]
+8. [[*8. Develop, part II: masking][Develop, part II: masking]]
+9. [[*9. The AI features, honestly inventoried][The AI features, honestly inventoried]]
+10. [[*10. Presets, profiles, and consistency][Presets, profiles, and consistency]]
+11. [[*11. Round-tripping to Photoshop][Round-tripping to Photoshop]]
+12. [[*12. Export: making the actual picture][Export: making the actual picture]]
+13. [[*13. Housekeeping: backups and maintenance][Housekeeping: backups and maintenance]]
+14. [[*14. Coming from darktable][Coming from darktable]]
+15. [[*15. Performance][Performance]]
+16. [[*16. What will annoy you][What will annoy you]]
+17. [[*17. Shortcuts][Shortcuts]]
+18. [[*18. Where to learn more][Where to learn more]]
+19. [[*19. Photo Merge: panoramas and HDR][Photo Merge: panoramas and HDR]]
+20. [[*20. Tethered capture][Tethered capture]]
+21. [[*21. The Print module][The Print module]]
+22. [[*22. Book and Slideshow, briefly][Book and Slideshow, briefly]]
+23. [[*23. Soft proofing in Develop][Soft proofing in Develop]]
+24. [[*24. Catalogs across machines][Catalogs across machines]]
+25. [[*25. One photograph, end to end][One photograph, end to end]]
+26. [[*26. Troubleshooting][Troubleshooting]]
+27. [[*27. Every preference and slider, explained][27. Every preference and slider, explained]]
+28. [[*Setup checklist][Setup checklist]]
+
+-----
+
+* 1. Why Classic and not something else
+
+Honest positioning against the programs this folder already documents:
+
+- *Versus darktable*: Lightroom's strengths are workflow polish (import/export
+  machinery second to none), culling speed, the People-masking system, and a
+  decade of tutorial ecosystem. darktable's strengths are parametric masking
+  depth, zero cost, zero accounts, and file-format openness. Both are fully
+  non-destructive and scene-referred enough to produce identical-quality
+  output in skilled hands.
+- *Versus Capture One*: better colour science per some skins, worse everything
+  else per most. Not needed.
+- *Versus doing nothing*: the D7200's raws deserve a real developer, whichever
+  one you choose. The camera-side reasons are in ~D7200-GUIDE.org~.
+
+The case *for* paying Adobe someday, stated once and honestly: generative AI
+tools (section 9), phone-sync ecosystem, guaranteed current camera support.
+None are required for excellent photographs from a 2015 body.
+
+-----
+
+* 2. The shape of your installation
+
+One section of plain facts about running without an Adobe account, because
+every other guide assumes you have one.
+
+** Works entirely locally, forever
+
+- Everything in sections 3–8, 10–15: import, catalogue, culling, develop,
+  masking, presets, export, tethering. The actual photography workflow.
+- *AI Denoise*, *Super Resolution*, *Lens Blur* — the neural-network enhance
+  features run *on your GPU, locally*. No account involved at processing time.
+- Local AI masking (subject/sky/object/people detection) — likewise local.
+- Tethered capture, printing, book/Slideshow modules — local.
+
+** Does not work, and why
+
+Anything calling Adobe's servers:
+
+- *Generative Remove*'s generative mode, *Generative Expand*, Firefly anything
+  — need account authentication and credit servers. Dead.
+- *Cloud sync/mobile/ecosystem* — dead by definition. No phone mirroring, no
+  web gallery, no shared albums.
+- *Updates through Creative Cloud* — none arrive automatically. Your build is
+  frozen at whatever version it is (check ~Help → System Info~).
+- New *camera/lens profiles* ride on updates. A frozen build supports cameras
+  up to its release date — irrelevant for a D7200, decisive for a 2027 body.
+
+** Practical consequences
+
+1. Version-frozen means: learn your build's feature set. This guide tags
+   version-specific features precisely so you can check before feeling crazy.
+2. Scan whatever installer you ran — cracked installers are the classic
+   malware delivery vehicle, and photo libraries are years of irreplaceable
+   work to lose. One paranoid afternoon beats one ruined archive.
+3. Keep darktable installed alongside. It reads the same raws, its edits live
+   in XMP sidecars, and between the two programs every capability in this
+   folder is covered somewhere.
+
+-----
+
+* 3. How Lightroom thinks: the catalog
+
+The single concept everything else rests on.
+
+** Photos are not in Lightroom
+
+Lightroom never puts a photograph inside itself. Your NEFs sit in ordinary
+folders exactly where you put them. What Lightroom keeps is the *catalogue*:
+a database recording every file it has ever been shown plus everything you
+have ever done — ratings, keywords, crops, develop settings, collection
+membership. Open a catalogue and it re-renders your library from those notes.
+
+Consequences worth internalising:
+
+- Move/rename folders in Windows Explorer and the catalogue points at ghosts.
+  Do all file manipulation *inside* Lightroom's Library Folders panel, where
+  the database follows along.
+- The catalogue is replaceable; the photos are not. Back up photos first,
+  catalogue second (section 13).
+- A fresh catalogue can be pointed at existing folders anytime; worst case is
+  re-importing and losing metadata, not losing images.
+
+** What lives where
+
+- *Catalogue file*: ~<name>.lrcat~ wherever you chose at creation.
+- *~.lrcat-data~ beside it* (modern builds): pixel-level cache holding AI mask
+  geometry, Generative Remove repairs, Denoise/Super Resolution outputs-in-
+  progress. Recent versions can detect corruption here and offer repair — let
+  them. It matters: deleting it silently regenerates AI results differently.
+- *Previews folder*: rendered thumbnails and zoom previews.
+- *XMP sidecars* (if enabled, section 4): per-photo text files carrying
+  develop settings and metadata out where backup software and other programs
+  can see them.
+
+** Virtual copies: one photo, many edits
+
+Right-click → *Create Virtual Copy*: a second independent edit-history for the
+same file — colour and monochrome versions side by side, zero disk cost.
+Snapshots (Develop, left panel) do similar work within one history. Use both;
+they are free.
+
+-----
+
+* 4. Setting up once
+
+Twenty minutes, then never again. Preferences under ~Edit → Preferences~;
+catalogue-specific ones under ~Edit → Catalog Settings~.
+
+** Identity and interface
+
+- *Identity Plate*: top-left branding; put your name in. Cosmetic, pleasant.
+- Interface font size/panel ends: taste. *Lights Out* (~L~) dims everything
+  but the photo — try it during focused editing.
+
+** Preferences → General
+
+- Default develop setting applied at import: start with *Camera Settings*
+  (honours in-camera Picture Control look as a starting point — the D7200's
+  profiles render recognisably) or None for pure neutrality. Either is fine;
+  consistency matters more than choice.
+
+** Preferences → File Handling
+
+- *Reading Metadata*: set *Automatically import changes from XMP* OFF for a
+  dedicated-Lightroom machine (avoids foreign sidecars stomping your edits) —
+  ON only if co-habiting with other editors (see section 14's darktable
+  warnings).
+
+** Catalog Settings → Metadata
+
+- Tick *Automatically write changes into XMP*. Costs a little performance,
+  buys: metadata survives catalogue loss, travels with files, readable by
+  darktable/DigiKam/anything. For a no-cloud setup this is your portability
+  insurance. (Stars/labels/keywords ride along; develop settings too, marked
+  as Lightroom-rendered.)
+
+** Catalog Settings → File Handling
+
+- *Backup catalogue*: set *Once a week, when exiting Lightroom*. This backs up
+  the database only — not photos — but combined with sidecars it makes
+  catalogue loss a nuisance rather than tragedy.
+- Previews: *Standard preview size 2048px*, quality medium-high for a 24 MP
+  body; smart previews ON (they enable editing without originals attached —
+  laptop-travel magic, section 15).
+
+** Preferences → Performance
+
+- *Use Graphics Processor*: set to Auto. If the canvas misbehaves (artifacts,
+  flicker) step down to Off; the D7200-era files barely care either way.
+- *Import previews*: Embedded & Sidecar speed card imports at the cost of
+  initial grid sharpness; Standard renders true previews. Standard if patient,
+  Embedded if impatient.
+
+** External Editing tab
+
+Configure the Photoshop hand-off now even if unused yet: file format *TIFF*,
+16-bit, ProPhoto RGB, resolution 300. These settings govern what lands back
+when section 11 happens.
+
+-----
+
+* 5. Importing: getting files in properly
+
+Import (~Ctrl+Shift+I~, or Import button in Library) does three jobs at once:
+copies files, applies house rules, registers everything in the catalogue.
+
+** The three panels
+
+- *Left: Source*. Card reader or folder. Untick "exclude duplicates" only when
+  deliberately re-importing.
+- *Centre: previews + method*. Four methods across the top:
+  - *Copy as DNG* / *Copy* — from card to disk. Copy is correct for a D7200;
+    DNG conversion is optional religion (it embeds a checksum, slightly
+    compresses, standardises; loses nothing real either way).
+  - *Move* — relocate existing files. Rarely what you want.
+  - *Add* — register files already on disk in place. Correct for adopting old
+    archives.
+- *Right: destination + treatment*. File Handling panel: *Build Smart Previews*
+  ticked; *Don't import suspected duplicates* ticked. Rename panel: optional
+  pattern like ~2026-08-24_simcha_###~ — filenames are permanent identity;
+  renaming later confuses nothing in-catalogue but breaks outside references.
+  Apply During Import panel: *Develop Settings* (your baseline preset, section
+  10) and *Metadata* template (copyright/contact — fill this template once).
+  Destination panel: year/month folder tree, mirrored from card.
+
+** A folder structure that scales
+
+~Pictures\2026\2026-08-24 event-name\~ — physical folders by date/event.
+Inside Lightroom, *Collections* (next section) provide every view folders
+cannot. Never sort photos by subject in folders; that is collections' job.
+
+** After the import finishes
+
+Previews render in background (progress bar top-left). Culling on half-built
+previews judges softness wrongly — give it a minute, or work in Embedded-
+preview mode knowingly.
+
+-----
+
+* 6. The Library module: organising and culling
+
+** The four views
+
+- ~G~ Grid: thumbnails wall.
+- ~E~/double-click Loupe: single image.
+- ~C~ Compare: candidate vs selected, synchronised zoom — the sharpness judge.
+- ~N~ Survey: many selected images at once.
+
+** Culling routine that actually scales
+
+Hold *Caps Lock*. Now: arrow key advances automatically after each rating —
+~P~ pick, ~U~ unpick, ~X~ reject, ~0–5~ stars, ~6–9~ colour labels, each
+followed by auto-advance. Two passes over the filmstrip: pass one rejects
+broken frames; pass two stars keepers (three stars worth editing, five reserved
+for portfolio-grade). Speed comes from committing to one keystroke per
+decision; deliberation belongs in Compare view for genuine ties.
+
+New in 15.4+: *duplicate detection* (Library menu) finds exact copies and
+stacks them; *Assisted Culling* analyses faces with eyes-open/sharpness scores
+and auto-stacks near-dupes recommending the best — genuinely useful on people
+shoots, runs locally, takes time on first analysis.
+
+** Filters: finding things again
+
+The Library Filter bar (backslash ~\~ toggles it): filter by text, rating,
+label, flag, keyword, camera, lens, date... Save recurring filters as
+*Smart Collections* — saved searches that update themselves ("D7200 ≥3 stars
+untagged", "rejected but not deleted").
+
+** Collections: the real organisation
+
+Folders answer "where do files live"; collections answer "what is this a set
+of". Drag any grouping of filtered/grid-selected photos into a named
+collection; one photo may live in many. Collection sets nest (Weddings 2026 →
+Dana & Akiva). Target Collection + ~B~ key pins picks into a working set while
+culling.
+
+** Keywords
+
+Keyword panel right side; hierarchical (~people|family|dana~) via typing with
+pipes. Apply to selections in bulk; painter tool sprays onto thumbnails.
+Keywords embed into exports and round-trip via XMP. Modest effort here pays
+for decades; perfect taxonomies pay for nothing — start with twenty honest
+words, grow organically.
+
+** Map module
+
+Photos carrying GPS land on a map; drag untagged photos onto locations to tag
+them (D7200 has no GPS; phone JPEGs benefit).
+
+-----
+
+* 7. Develop, part I: the global edit
+
+Press ~D~ from Library: one photo, Develop module, panels stacked right in
+processing order. The panel order *is* the edit order — top to bottom, mostly.
+Panels collapse/expand by clicking headers; ~Alt~-clicking a header solos it;
+the little eye on each adjustment toggles before/after for that panel alone.
+
+** Profile (top of Basic panel)
+
+The rendering starting point applied before any slider. *Adobe Color* is the
+house default; *Adobe Landscape/Portrait/Neutral/Standard/Faithful/Vivid*
+flavour it; *Camera Matching* profiles mimic your D7200's Picture Controls so
+imports look like camera JPEGs did; *Adobe Adaptive* profiles analyse the
+image per-frame (15.2+). For raw work: Camera Matching profiles give familiar
+starting looks; Adobe Color gives Adobe's house interpretation. Neither is
+wrong; pick once per body and stay.
+
+** White balance
+
+Temp (blue↔amber) and Tint (green↔magenta) sliders, or the eyedropper (~W~)
+on something genuinely neutral — concrete, white paint, a grey card in frame.
+Skin is never neutral; don't ask. Auto WB is serviceable, not trustworthy;
+eyedropper-then-taste beats both. The D7200's tungsten frames arrive strongly
+amber — that's metadata honesty, not a problem.
+
+** The tone five
+
+Exposure, Contrast, Highlights, Shadows, Whites, Blacks — six, but they pair:
+
+- *Exposure*: overall, in stops. ±0.5 is a normal working move; the D7200
+  survives ±2 with grace at base ISO.
+- *Contrast*: midtone S-curve punch. Small values only (+15 is plenty) — the
+  rest of the contrast job belongs to curves and local work.
+- *Highlights/Shadows*: targeted recovery/lift at the extremes. Highlights −60
+  rescues skies; Shadows +40 opens faces. These sliders are why raw files
+  survive being pushed — the sensor recorded the detail, this retrieves it.
+- *Whites/Blacks*: the endpoints. Set Whites until just-before-clipping (hold
+  ~J~ to see clipping overlays while dragging), then Blacks for grounding.
+
+Order of operations within an edit: Exposure → Highlights/Shadows →
+Whites/Blacks → Contrast last, if at all.
+
+** Presence group
+
+- *Texture*: fine-detail micro-contrast. +10 on fur/foliage/architecture;
+  negative = gentle skin-friendly softening.
+- *Clarity*: midtone punch. +15 landscape, +5 portrait (more eats skin),
+  negative = dreamy soft-focus.
+- *Dehaze*: cuts atmospheric murk; also a dramatic-contrast sledgehammer.
+  +10–20 honest, beyond that it posterises skies.
+- *Vibrance*: saturation weighted toward muted colours, protecting skin tones.
+  Always prefer over Saturation.
+- *Saturation*: blunt global boost. Rarely the right tool.
+
+** Tone Curve
+
+The point-curve behind everything: click points, drag regions, per-channel
+tabs for colour grading via channel bends. The targeted adjustment widget
+(lower-left) drags directly on the image to move the curve region under the
+cursor. Region sliders below handle what most edits actually need. When Basic
+sliders feel blunt, the curve is the scalpel drawer.
+
+** Color Mixer & Point Color
+
+HSL controls: Hue/Saturation/Luminance per colour band (8 bands). Classic
+moves: orange luminance up = brighter faces; blue luminance down = deeper
+skies; green desaturation = tamed foliage. The targeted-adjustment dot lets
+you drag on the image itself. *Point Color* (newer builds): pick one exact
+colour and adjust it alone with feathering — surgical colour control that used
+to require masks.
+
+** Color Grading
+
+Three wheels (shadows/midtones/highlights) plus global: push hue+tint per
+tonal zone. Shadows-teal / highlights-warm at low opacity is the cinematic
+default; blending/slide balance controls the crossover. Subtlety: chroma
+values under 20 or it reads as Instagram filter archaeology.
+
+** Detail: sharpening and noise
+
+- *Sharpening*: Amount 40 default suits most output; Radius 1.0; Detail 25;
+  *Masking* slider is the pro move — hold ~Alt~ while dragging and the screen
+  shows the mask white-where-sharpened; push until flat areas (skin, sky) go
+  black and only edges stay white. Sharpening without masking sharpens noise.
+- *Noise Reduction*: Luminance slider for residual grain (after Denoise,
+  section 9, usually unnecessary); Color NR leave at defaults unless chroma
+  speckle shows (D7200 rarely).
+- *Denoise switch* (AI): section 9.
+
+** Effects
+
+Post-crop vignette (subtle darkening −10 draws eyes inward; never visible-as-
+vignette), Grain (amount/size/roughness — a whisper unifies digital smoothness
+in prints).
+
+** Calibration panel
+
+Bottom drawer, older than time. The blue-primary saturation trick (+15 blue =
+richer overall colour without touching any slider) survives every version.
+Camera calibration profiles for matching odd renders live here too.
+
+** Before/After discipline
+
+~\~ toggles original; ~Y~ shows side-by-side; history panel (left) jumps to
+any prior state. Every few minutes of editing, hit ~\~ and ask "is this
+actually better" — drift is the occupational disease of long sessions.
+
+-----
+
+* 8. Develop, part II: masking
+
+Local adjustments: every tool that touches part of a frame. Click the *Masking*
+icon (~Shift+W~ or the circle under the histogram) → *Create New Mask*.
+
+** The mask types
+
+- *Select Subject* — AI-detects the main subject(s), one click.
+- *Select Sky* / *Select Background* (background = inverse sky) — one click
+  each; improved edge detection in 15.4+.
+- *Select Objects* — paint roughly over any object, AI snaps to it.
+- *Select People* — the deep one: face skin, body skin, eyebrows, sclera
+  (eye-white), iris/pupil, lips, teeth, hair, clothing — each separately
+  maskable per detected person. Portrait retouching without Photoshop lives
+  here.
+- *Brush* — hand-painted, with size/feather/flow/auto-mask(edge-snap) controls;
+  hold ~Alt~ mid-stroke to erase.
+- *Linear Gradient* — drag a falloff across the frame; skies' best friend.
+- *Radial Gradient* — elliptical feathered zone, invertible.
+- *Color Range* — click a colour, adjust tolerance: everything of that colour.
+- *Luminance Range* — tones within a range only ("open shadows without
+  touching highlights").
+- *Depth Range* — available on photos carrying depth maps (from Lens Blur,
+  section 9): select by distance.
+
+** The combinatorics
+
+Masks are trees: add components with +, subtract with −, *Intersect* via the
+three-dot menu to require overlap ("Subject ∩ Luminance range = subject's
+shadowed side"). Every component has its own feather/flow. One mask carries
+one set of adjustment sliders affecting its whole tree; build separate masks
+per purpose rather than mega-masks.
+
+** Feather & Edge sliders (15.5+, August 2026)
+
+New refinement pair for AI-generated masks specifically: *Feather* (0–100)
+softens the boundary transition; *Edge* (−50/+50) grows/shrinks the boundary
+itself. This replaces most manual brush-fixing of AI edges — subject hairlines
+get feather 15–25 and a small positive edge, done.
+
+** Working discipline
+
+~O~ toggles mask overlay (red view); ~Alt+O~ inverts overlay display;
+auto-overlay while brushing can be set in preferences. Mask amount slider
+scales the whole mask's effect after the fact. Copy/paste adjustments between
+photos carries masks too (with sane geometry). Masks survive forever in
+history/virtual copies like everything else here.
+
+** Three recipes that cover 80% of local work
+
+- *Sky rescue*: Select Sky → exposure −0.5, highlights −40, dehaze +10,
+  saturation +8.
+- *Portrait pop*: Select Person → face skin mask → texture −15 (never more),
+  clarity +3, warmth via color grading shadow wheel; second component on
+  iris/pupil → clarity +20, exposure +0.15.
+- *Subject separation*: Select Subject → feather 20 → exposure +0.2, then
+  Inverted-subject background mask → exposure −0.4, clarity −10. The eye reads
+  the brighter subject against calmer surround as intentional composition.
+
+-----
+
+* 9. The AI features, honestly inventoried
+
+Lightroom bristles with AI. For an accountless install, which work matters:
+
+** Local — work regardless of account
+
+- *AI Denoise* (Detail panel switch): neural noise removal, runs on your GPU.
+  RAW files only; produces a new "Enhanced" DNG beside the original (a linear
+  DNG — still raw-editable, just pre-baked sensor math). Takes seconds-to-
+  minutes depending on GPU; batch-queueable since 15.3 runs in background.
+  Habit: apply to ISO ≥3200 keepers at cull time, continue working the
+  original; swap to the Enhanced file when it lands. Combining with Super
+  Resolution needs the newer *Render to DNG* trick (below).
+- *Super Resolution*: 2× linear upscaling (24 MP D7200 frame → ~96 MP).
+  Same mechanism as Denoise — new DNG, local, slow. Use for crops destined to
+  print large. Order with Denoise: historically either-or per pass; modern
+  builds chain via Render to DNG between passes.
+- *Lens Blur*: synthetic bokeh with a computed *depth map*: real distance-
+  graduated blur — the thing darktable explicitly cannot do. Bokeh quality
+  selector (modern/retro...), strength slider, depth-map refinement brush.
+  Convincing at moderate strengths; uncanny when maxed. RAWs and non-raws both.
+- *Local AI masking* (section 8): subject/sky/people/object detection — all
+  on-GPU, no cloud.
+- *Assisted Culling / duplicate detection* (6.x above): local analysis.
+- *Reflection Removal* (raw files): removes window-shoot reflections; local.
+- *AI Sharpen* (mid-2026 addition): Topaz-licensed sharpening model built into
+  Detail panel; local processing.
+
+** Cloud — dead without an account
+
+- *Generative Remove*'s generative mode and *Generative Expand* (Firefly:
+  synthesises content, costs credits, needs Adobe servers). Remove still has a
+  legacy *content-aware remove* checkbox mode that runs locally — tick it and
+  ordinary spot/litter removal works fine offline; unticked defaults to the
+  generative engine that will fail without account.
+- Mobile/web sync, shared albums, ecosystem anything.
+
+** Version-tagged extras you may not have
+
+Faces panel culling scores, keyword sync, WebP support (15.2+), Render to DNG
+and crop improvements (15.5+). Check Help → System Info before mourning.
+
+-----
+
+* 10. Presets, profiles, and consistency
+
+A professional's consistency machinery — same look across 800 frames without
+touching 800 frames.
+
+** Develop presets
+
+Any panel state saves as a preset (Develop module, Presets panel left side,
++ icon): tick *which* settings the preset carries — a WB-only preset, a
+tone-only preset, a full-look preset. Amount slider (top of panel) scales
+presets partially. Group them by job ("Headshots", "Receptions"). Import
+third-party .xmp/.lrtemplate packs through the same + menu.
+
+The killer variant: *ISO-adaptive presets* — noise-reduction and sharpening
+amounts that scale automatically with each photo's ISO. Build one: set NR/
+sharpening for high ISO in the preset dialog, enable "ISO-adaptive" on those
+settings; Lightroom interpolates per-frame. This is darktable's auto-denoise
+trick with different plumbing.
+
+Apply presets at import (section 5) or to selections after; copy/paste
+adjustments (~Ctrl+Shift+C~/V~ — with checkboxes choosing which settings move)
+handles one-to-many; *Sync Settings* button does selection-wide application;
+Auto-Sync toggles continuous group editing when you trust it.
+
+** Profiles vs presets, once cleanly
+
+*Profiles* are rendering starting points (section 7); *presets* are recorded
+edits. A profile changes how sliders behave; a preset applies slider values.
+Third-party "looks" usually ship as profiles; your own house style is a
+preset. Both stack.
+
+** The baseline style pattern
+
+One preset named "D7200 base": camera-matching profile, mild shadow lift,
+vibrance +8, your standard sharpening-with-masking, applied at import to
+everything. House consistency from frame zero; individual edits start from
+home base instead of zero.
+
+-----
+
+* 11. Round-tripping to Photoshop
+
+When an edit needs pixels GIMP-style — compositing, heavy object removal,
+typography — Classic hands off:
+
+- Select photo → ~Ctrl+E~ / Photo → *Edit In → Adobe Photoshop*. It renders
+  current develop settings into a 16-bit TIFF (per section 4's external
+  editing config), opens Photoshop, and registers the returned file beside
+  the original in the catalogue automatically.
+- *Edit a Copy* for rendered files (JPEGs); *Open as Smart Object* embeds the
+  raw so Photoshop edits re-open re-editable; *Open as Layers* merges multiple
+  selected photos into one layered document (exposure blending's front door).
+- Return path: save/close in Photoshop; the TIFF appears adjacent, original
+  untouched, both visible in the catalogue. Edit either anytime — develop
+  settings stay live on the original even after the round trip.
+
+What justifies the trip: anything with layers, masks-on-pixels, generative or
+manual synthesis removal beyond Remove tool competence, frequency-separation
+skin work, text. What doesn't: everything else — staying in Develop is faster
+and keeps the edit fully parametric. ~PHOTOSHOP-GUIDE.org~ covers the far side.
+
+-----
+
+* 12. Export: making the actual picture
+
+Select photo(s), ~Ctrl+Shift+E~. Everything below lives in one dialog; save
+the results as export presets (bottom-left) per delivery target and never
+think again.
+
+** File format decisions
+
+- *JPEG*, quality 80–90, sRGB: client galleries, email, web. 80 invisible at
+  viewing sizes, 90 archival-safe.
+- *TIFF* 16-bit, sRGB/AdobeRGB per lab instruction: print submissions.
+- *PSD*: only when a client demands layers.
+- *Original+Settings*: XMP-carrying sidecar bundles for archive transfer.
+- Resolution field: meaningless for screens; 300 ppi for labs that read it.
+- *Resize to fit*: Long Edge 2048 px for web/social; leave off for full-size.
+- *Sharpening*: output-specific — Screen/Standard for web, Matte/Glossy Paper
+  for print. Different math than Detail-panel sharpening; let it do its job.
+
+** Metadata & watermarking panels
+
+Metadata: strip location data for privacy-sensitive deliveries (checkbox);
+include copyright always. Watermark: simple text/logo placement, opacity,
+size — sufficient for attribution; elaborate marks are better designed in
+GIMP and placed via these controls anyway.
+
+** Export presets worth building immediately
+
+1. "Web 2048 sRGB q85" — the daily driver.
+2. "Client print TIFF 16-bit AdobeRGB full-res".
+3. "Instagram 1080×1350 crop-sharpened" (resize short edge, sharpen screen).
+4. "Archive JPEG q95 full metadata".
+
+** Publish Services vs plain export
+
+Publish collections (left panel): connect a folder/flickr-type target once;
+drag photos in; they export automatically and track re-publishing when you
+re-edit. For recurring client folders this beats manual exporting; for
+one-offs, ~Ctrl+Shift+E~ wins.
+
+** Render to DNG (15.5+) — the chaining trick
+
+Right-click → Render to DNG bakes the entire current edit stack into a new
+file (TIFF-in-DNG-clothing — not raw anymore). Primary use: enabling Super
+Resolution after Denoise has already produced an Enhanced DNG, or feeding
+Generative Expand-class tools a clean starting point. Beware: baked means no
+more highlight/shadow recovery from original sensor data. Archive the raw
+always.
+
+-----
+
+* 13. Housekeeping: backups and maintenance
+
+** The three-layer backup reality
+
+1. *Photos*: your folder tree, mirrored by any file-level backup (3-2-1:
+   working copy + external drive + one off-site). Non-negotiable; catalogue
+   loss is recoverable, photo loss is not.
+2. *Catalogue backups*: Catalog Settings schedules ~.lrcat~ copies on exit
+   weekly. Keep a couple generations; catalogues corrupt rarely but
+   spectacularly.
+3. *.lrcat-data*: the AI/masks/repairs cache beside the catalogue. Modern
+   builds detect corruption and offer repair on startup — accept. It is also
+   why catalogue backups alone don't capture everything: back up the whole
+   catalogue folder pair (~.lrcat~ + ~.lrcat-data~) for full fidelity.
+
+** XMP sidecars as belt-and-braces
+
+With section 4's auto-write enabled, every edit exists twice — in catalogue
+and sidecar. A dead catalogue costs you at most preview regeneration, not a
+single develop decision. Verify occasionally: sort by "modified" in Explorer,
+see fresh .xmp files.
+
+** Routine maintenance
+
+- Catalogue growing slow: ~File → Optimize Catalogue~ after big imports.
+- Previews bloat: discard 1:1 previews older than N days via Catalog Settings;
+  they rebuild on demand.
+- Major version upgrades: let it convert a COPY of the catalogue (it offers);
+  keep the old one until the new build proves itself.
+
+-----
+
+* 14. Coming from darktable
+
+The reverse dictionary — you know darktable's names; here is the mapping.
+
+** Vocabulary translation
+
+- Quick Access Panel ≈ Basic panel.
+- ~exposure~ ≈ Exposure slider. ~tone equalizer~ ≈ Highlights/Shadows sliders
+  plus Luminance-range masks. ~color balance rgb~ ≈ Contrast/Vibrance +
+  Color Grading wheels. *brilliance* ≈ nothing exact (Texture/Clarity
+  adjacent); miss it grudgingly.
+- ~retouch~ ≈ Remove tool (Heal mode); wavelet skin work has no direct
+  equivalent here (People masks approximate).
+- Styles ≈ Develop presets (names swapped relative to darktable, delightfully).
+- Auto-apply presets ≈ Import develop settings + ISO-adaptive presets.
+- Parametric masks ≈ Color/Luminance range masks (weaker but present).
+- Drawn masks ≈ Brush/Linear/Radial. AI object mask ≈ Select Subject/Object.
+
+** What transfers between them
+
+Keywords, ratings, colour labels travel via XMP sidecars both directions
+(darktable writes them if enabled — its guide §4; Lightroom reads on import
+with auto-XMP enabled). *Develop settings never transfer* — different
+pipelines entirely; expect to re-edit migrated keepers in whichever program
+owns them going forward.
+
+** The cohabitation rule
+
+Running both over one library works if each owns separate folders. Pointing
+both at the same raws invites two programs arguing through sidecars about who
+last touched what. Pick per-job ownership; migrate finished keepers as exports.
+
+-----
+
+* 15. Performance
+
+Catalogue speed is architecture more than hardware:
+
+- *Smart previews* (built at import): edit at full quality while originals sit
+  on a detached drive — laptop-travel editing without carrying terabytes.
+- Catalogue on SSD, photos wherever space lives; the database does tiny random
+  reads that HDDs punish.
+- Preview quality medium vs high: halving preview render cost across 50k
+  images is felt daily.
+- GPU: Auto usually right; Off fixes canvas weirdness on old drivers.
+- RAM: Lightroom takes what it needs; 48 GB means cache-size anxiety belongs
+  to other programs.
+- Background AI analysis (culling/faces) pauses when its panel is closed —
+  close panels you're not using on big libraries.
+
+-----
+
+* 16. What will annoy you
+
+1. *The catalogue is gravity.* Everything orbits it; ignore folders-in-
+   Explorer discipline and it drags you back to re-linking ghosts. Section 3's
+   rules are load-bearing.
+2. *Two programs named Lightroom.* Every tutorial online assumes you know
+   which one it means. You now do: Classic.
+3. *Cloud features ghost you.* Menus exist for sync/mobile/generative things
+   that fail without an account — some silently, some with sign-in nags.
+   Section 2's ledger tells you which is which.
+4. *Denoise/Super Resolution multiply storage.* Each Enhanced DNG roughly
+   doubles a frame's footprint. Cull before enhancing; archive originals
+   regardless.
+5. *Version freezing.* New cameras/lenses arrive via updates you don't get;
+   plan around your build's support horizon (a non-issue for D7200-era glass).
+6. *No brilliance slider.* darktable users arrive missing it immediately.
+7. *Import feels bureaucratic* until presets make it invisible. Build them
+   once (section 5), then it's two clicks per job forever.
+
+-----
+
+* 17. Shortcuts
+
+The professional's daily set (~H~-equivalent: Help menu → or just learn these):
+
+| Key              | Does                                              |
+|------------------+---------------------------------------------------|
+| ~G~ / ~E~ / ~D~  | Grid / Loupe / Develop                            |
+| ~C~ / ~N~        | Compare / Survey view                             |
+| ~R~              | Crop tool (Develop)                               |
+| ~W~              | White-balance eyedropper                          |
+| ~Shift+W~        | Masking panel                                     |
+| ~K~              | Masking (alternate binding)                       |
+| ~P~ / ~U~ / ~X~  | Pick / Unpick / Reject                            |
+| ~0–5~            | star rating                                       |
+| ~6–9~            | colour label red/yellow/green/blue                |
+| ~Caps Lock~      | auto-advance after rating                         |
+| ~B~              | add to Target Collection                          |
+| ~\~              | toggle Library filter bar / Before-After (Develop)|
+| ~Y~              | before/after side-by-side                         |
+| ~J~              | clipping overlays                                 |
+| ~L~              | Lights Out dimming                                |
+| ~Ctrl+'~         | create virtual copy                               |
+| ~Ctrl+Shift+C~/V~| copy/paste develop settings                       |
+| ~Ctrl+Shift+E~   | export dialog                                     |
+| ~Ctrl+E~         | edit in Photoshop                                 |
+
+Full map: Help → Shortcut panels, or the keyboard overlay on newer builds.
+
+-----
+
+* 18. Where to learn more
+
+- *The Lightroom Queen* (lightroomqueen.com) — Victoria Bampton's manuals and
+  the "What's New" pages are the industry reference; her missing-FAQ covers
+  exactly the catalogue questions this guide compresses.
+- *Official help* — helpx.adobe.com Lightroom Classic pages; release notes
+  document every version's features precisely (useful for checking what your
+  frozen build has).
+- *Julieanne Kost* video library — Adobe's own demonstrator; decades of
+  concise technique videos.
+- *community.adobe.com* Lightroom Classic board — where edge cases meet the
+  actual developers occasionally.
+
+-----
+
+* 19. Photo Merge: panoramas and HDR
+
+Both live under ~Photo → Photo Merge~ (or right-click selection), both output
+raw-format DNGs that continue developing like any raw — the reason to merge
+inside Lightroom rather than Photoshop.
+
+** Panorama merge
+
+1. Shoot the series: overlap frames 30–50%, lock exposure/WB/focus in M mode,
+   pivot around the lens' optical centre (a nodal/pano head if serious; body
+   pivot for casual work).
+2. Select frames → ~Photo Merge → Panorama~.
+3. Projection choice: *Spherical* suits most; *Cylindrical* for wide
+   horizontals; *Perspective* for architectural two-frames. *Auto Crop*
+   removes wavy edges; *Boundary Warp* rescues extreme aspect at slight
+   distortion cost.
+4. Merge produces a raw DNG: full develop flexibility afterwards, including
+   AI masking on the stitched whole.
+
+** HDR merge
+
+1. Shoot bracketed exposures (D7200: ±2 EV, 3 or 5 frames, tripod ideally).
+2. Select brackets → ~Photo Merge → HDR~. Engine aligns, de-ghosts motion
+   between frames (Auto is honest), and merges into a *raw DNG with real
+   dynamic range* — not the crunchy tone-mapped HDR of legend; it simply
+   gives Develop sliders more headroom than any single frame carried.
+3. Develop the result gently: the point was naturalism with detail.
+
+** When not to bother
+
+Single-frame D7200 files already hold 12+ stops; bracket only when windows
+vs interiors exceed that. Merging adds files and time — spend both when
+dynamic range genuinely demands it.
+
+-----
+
+* 20. Tethered capture
+
+Studio workflow: camera over USB, frames appearing on the monitor seconds
+after firing — client-visible, focus-verifiable at 100%, straight into the
+catalogue.
+
+1. ~File → Tethered Capture → Start Tethered Capture~: name the session
+   (it becomes a collection), choose destination folder and naming template,
+   optionally a develop preset to apply to every incoming frame.
+2. Connect the D7200 by USB, power on, shoot. Each frame lands in the tether
+   window full-size; ratings/flags apply live; the filmstrip builds beneath.
+3. Focus verification: double-click any frame for 100% zoom before the client
+   has left the mark.
+4. ~Ctrl+T~ hides/shows the window; session ends via the window's close —
+   imported photos remain as a normal job.
+
+Notes: mains-power the camera on long sessions; card storage continues in
+parallel (tether mirrors, doesn't replace); driver quirks on some Windows USB3
+chipsets resolve by trying another port/cable before blaming software.
+
+Where this earns its keep: product tables, headshots, anything with "let me
+see" said hourly. Card-reader workflow loses nothing else.
+
+-----
+
+* 21. The Print module
+
+Home/proof printing without leaving the catalogue. Select image(s) → ~Print~
+module (~Ctrl+R~ shortcut cycles to it from Library views).
+
+** Setup panels, left
+
+- *Print Job* panel (right side actually — the engine): *Print to: Printer*
+  for paper, *JPEG File* for lab-ready print-size exports at chosen PPI.
+- Draft Mode Printing uses cached previews (contact sheets); standard mode
+  renders full resolution.
+- *Print Resolution*: 240–300 ppi; sharpening type for media (Matte/Glossy).
+- *Color Management*: Profile = your printer/paper ICC (installed system-wide,
+  same files Photoshop soft-proofing uses, §23 there); Intent Perceptual.
+  The alternative "Managed by Printer" hands colour to driver profiles —
+  pick one master, never both.
+
+** Layout panels
+
+- *Image Settings*: zoom-to-fill, margins auto-fit.
+- *Layout*: margins/rulers/grid — contact sheets via multiple cells per page;
+  single-image fine-art printing wants generous even borders (2–3 cm).
+- *Guides/Rulers*: on while composing.
+- *Page*: identity plate/text overlays per cell, page numbers.
+
+** The workflow
+
+Soft-proof first in Develop (§23), output-sharpen via Print Job's built-in
+sharpening, print one test strip, adjust, commit. Save the whole arrangement
+as a *print preset* per printer/paper combination — repeat prints become
+two clicks. ~Ctrl+P~ inside Print bypasses further dialog and prints.
+
+-----
+
+* 22. Book and Slideshow, briefly
+
+Both modules turn selections into deliverables without other software:
+
+- *Slideshow*: templates + per-slide timing/transitions; exports PDF or video;
+  title/end plates pull from metadata. Client-preview workhorse.
+- *Book*: page-layout engine feeding Blurb's print pipeline (account-based
+  ordering) or PDF export. Multi-page auto-layout with manual drag refinement;
+  useful for portfolio drafts even if you never order.
+
+Neither is why you run Lightroom; both are pleasant discoveries when a job
+needs them. The Map module (§6) completes the minor-modules tour.
+
+-----
+
+* 23. Soft proofing in Develop
+
+The Develop-module toggle (~S~ inside the soft-proofing panel, bottom left of
+the histogram area — enable "Show Soft Proofing" there first): simulates how
+the current edit renders in a chosen printer/paper ICC profile *while you
+edit*, before any ink or lab submission.
+
+- Choose profile + intent (Perceptual default) from the panel.
+- The histogram switches to the destination gamut; out-of-gamut colours show
+  via the same clipping overlays ~J~ gives you.
+- Typical fix: vibrance/saturation eased 5–10%, highlights pulled a touch —
+  screen-punchy edits print dull or blotched without this pass.
+- Create virtual copy on enabling (it offers): proofed-print version beside
+  the screen master, both archived. This is the professional habit.
+
+Same ICC files Photoshop's §18 uses; install once system-wide, use everywhere.
+
+-----
+
+* 24. Catalogs across machines
+
+Desktop + laptop reality, accountless edition:
+
+** The portable-catalogue pattern
+
+1. Photos live on one external drive (or NAS) as the single truth.
+2. Catalogue + Previews + lrcat-data folder live on that same drive's root
+   (~\Catalogs\jobscat.lrcat~).
+3. Either machine opens the catalogue; paths resolve because the drive letter/
+   mount is consistent — use drive letters deliberately (assign a fixed letter
+   to the drive in Windows Disk Management; macOS users mount consistently
+   instead).
+
+Smart previews make editing fast even when raw files sit on slow external
+media; 1:1 previews regenerate as needed.
+
+** Merging work from two machines
+
+Avoid it by the pattern above. If two catalogues already exist:
+~File → Import from Another Catalog~ merges one into the other, bringing
+photos-by-reference or copy. Do it in one direction, once, then standardise.
+
+** What does NOT sync without cloud
+
+Nothing moves between machines by itself. No keyword edits appear remotely;
+the catalogue file is the state of the world and there is exactly one
+up-to-date copy at any moment. Back it up with the photos (§13).
+
+-----
+
+* 25. One photograph, end to end
+
+A real job narrated with the numbers and the reasoning. Frame: reception hall,
+D7200, 35 mm f/1.8, ISO 3200, mixed tungsten-and-window light, one subject
+against a bright window. Everything below is what I would actually do, and
+why.
+
+1. *Cull first, edit never.* Twelve near-identical frames; two minutes with
+   Caps Lock picks the one with open eyes and hands mid-gesture. Editing the
+   wrong twin is the classic wasted hour. Three stars, move on.
+2. *Denoise decision at cull time*: ISO 3200 → AI Denoise queued on this
+   keeper now (background, seconds-per-frame). Advice: batch-queue every
+   ≥3200 keeper at cull time rather than per-photo later; the queue drains
+   while you edit others.
+3. *White balance before anything.* Eyedropper on the tablecloth gets close;
+   then +5 tint toward magenta because window glass skews green and the cloth
+   was in its falloff. Advice: WB is the one slider worth getting right
+   immediately — every colour judgement downstream assumes it.
+4. *Exposure +0.3*, then Highlights −55 / Shadows +35. The window goes from
+   nuclear to bright-but-readable; her face opens. Advice: resist Contrast
+   here entirely — tone sliders already created local contrast; global
+   contrast now would double-count and harden skin.
+5. *Whites/Blacks endpoints* with ~J~ clipping held: Whites up until the
+   tablecloth just kisses clipping, Blacks down until the groom's suit just
+   clips. This anchors the histogram ends properly instead of letting
+   Highlights/Shadows do endpoint work they're bad at.
+6. *Presence, sparingly*: Vibrance +12, Texture +8 on the whole frame,
+   Clarity untouched. Advice: Clarity on people shots is how you get the
+   "HDR portrait" look nobody asked for. Faces get clarity only via masked
+   micro-doses if at all.
+7. *Masking, two masks, done*:
+   - Select Subject, Feather 20 (§8's sliders): exposure +0.15 — she pops a
+     quarter-stop off her background without looking lit separately.
+   - Linear gradient top-down over the window: highlights −30 more. Advice:
+     gradients beat brushes for architectural light whenever the light has a
+     direction, because it does.
+8. *Color Grading*: shadows wheel toward teal at chroma 8, highlights toward
+   amber at chroma 6. Advice: keep combined wheel chroma under ~15 total or
+   you're styling, not grading; the goal is temperature separation, not a
+   filter identity.
+9. *Sharpening*: amount 40, masking dragged with Alt held until skin and
+   backdrop go black, edges stay white — lands around 60–70 on this frame.
+   Advice: unmasked sharpening at ISO 3200 sharpens noise into texture-
+   looking grit you'll spend tomorrow un-doing.
+10. *Export twice*: web preset (2048 sRGB q85) for the album; full-size
+    AdobeRGB TIFF for the couple's print order, soft-proofed against their
+    lab's lustre profile first (§23) — vibrance eased 6% because proofing
+    showed the bouquet clipping.
+
+Total hands-on time once fluent: four minutes. Every step above remains live
+in history forever; the couple's taste changes next year, the edit changes
+with it.
+
+-----
+
+* 26. Troubleshooting
+
+The failures that actually occur, with the fixes that actually work:
+
+- *"File appears greyed-out / previews blank after moving folders."* The
+  catalogue points at ghosts. Fix: right-click the folder in the Folders
+  panel → Find Missing Folder → point at its new home; children re-link.
+  Prevention: never rename/move in Explorer, only in Lightroom (§3).
+- *"Catalog could not be opened because it is locked/in use."* A crashed
+  session left a ~.lock~ file beside the catalogue. Close all Lightroom
+  processes, delete the .lock file, reopen. Advice: this is why catalogue
+  lives on one machine at a time (§24).
+- *"Edits vanished on another machine."* They live in the other catalogue
+  and/or unsynced sidecars. With auto-XMP on (§4), Catalog Settings →
+  "Read Metadata from files" re-ingests them. This is the sidecar insurance
+  paying out — if you skipped it, the edits are still in whichever catalogue
+  edited them.
+- *"Denoise button greyed out."* Not a raw file (JPEG/TIFF), or build predates
+  it, or GPU unsupported. Version-tag check (§2); Super Resolution/Preserve-
+  Details alternatives for rendered files.
+- *"AI mask misses obvious subject."* Busy low-contrast scene; add Object
+  brush strokes as hints inside the same mask, or fall back to Brush +
+  Auto-Mask edge snapping. Advice: AI masks are drafts to refine, not
+  oracles — budget thirty seconds of refinement per keeper.
+- *"Import is glacial."* Embedded-preview mode + preview building + Denoise
+  queue all racing. Let imports finish before culling (§5's warning);
+  stagger heavy background work.
+- *"Everything suddenly monochrome/sliders greyed."* You're in Soft Proofing
+  with a grayscale profile, or a B&W treatment preset applied. Check profile
+  panel top-right of Basic; set Treatment back to Color.
+- *"Print comes out dull/green."* Double colour management — Photoshop/
+  Lightroom AND driver both applying profiles. Choose one manager (§21);
+  the driver's is usually labelled ICM/color management inside printer
+  preferences.
+
+-----
+
+-----
+
+* 27. Every preference and slider, explained
+
+The reference layer: one line per control. Pane labels occasionally shift
+between releases; nothing here is version-fragile.
+
+** Preferences → General
+
+- *language* — UI language.
+- *show welcome screen / splash* — cosmetic launch behaviour.
+- *play sounds* — completion chimes on imports/exports; off in shared spaces.
+- *reset all warning dialogs* — re-enables every "don't ask again" prompt you suppressed.
+- *default full-screen side panels behaviour* — how ~Shift+Tab~ panel hiding acts.
+
+** Preferences → Presets
+
+- *show partially compatible develop presets* — greys out presets whose controls this file type lacks; leave on.
+- *show amount slider on presets* — enables partial-strength preset application (§10); on.
+- *store presets with catalog vs. account* — local portability choice; with-catalog travels with your backups.
+- *make defaults camera-specific vs. ISO-specific* — scope of default develop settings per body/sensitivity.
+
+** Preferences → Interface
+
+- *font size* — UI scale.
+- *panel end marks / cell background* — cosmetic grid dressing; mid-grey cell background is the judging-neutral choice.
+- *filmstrip size, thumbnail padding* — density tweaks.
+
+** Preferences → File Handling
+
+- *read metadata interval ("every time catalog opens" etc.)* — how eagerly Lightroom re-ingests external XMP changes; matters only when co-editing (§14).
+- *default DNG creation settings at import* — embedded-preview size and compression if you Copy-as-DNG.
+- *treat JPEG files next to raws as separate photos* — off merges raw+JPEG pairs into one filmstrip entry; on shows both.
+
+** Preferences → Performance
+
+- *use graphics processor* — Auto recommended; Off cures canvas glitches.
+- *camera raw cache size/location* — scratch for Denoise/Super Resolution outputs; give it SSD room.
+- *standard preview quality* — medium/high render cost trade-off (§15).
+
+** Catalog Settings → File Handling
+
+- *preview size (2048 default)* — zoom depth of cached previews; match to screen height.
+- *discard 1:1 previews after N days* — disk-space valve; previews rebuild on demand.
+- *build smart previews* — import-time toggle mirrored from the dialog (§5).
+
+** Catalog Settings → Metadata
+
+- *automatically write changes into XMP* — §4's portability insurance; on.
+- *include Develop settings in XMP* — companion switch; on for full-fidelity sidecars.
+- *address lookup* — reverse-geocodes GPS into place names for display; network-dependent, cosmetic.
+
+** Basic panel sliders (one line each)
+
+- *profile browser* — rendering starting point (§7).
+- *WB: temp / tint / eyedropper / auto* — blue↔amber, green↔magenta, neutral-sample, guess.
+- *exposure* — whole-frame brightness in stops.
+- *contrast* — midtone S-curve punch.
+- *highlights / shadows* — endpoint recovery and lift, independently.
+- *whites / blacks* — true histogram endpoints; hold ~J~ while setting.
+- *texture / clarity / dehaze* — fine-detail micro-contrast, midtone punch, atmospheric cut respectively (§7 semantics).
+- *vibrance / saturation* — weighted vs. blunt colour boost.
+- *point curve + region sliders* — parametric tone remapping.
+- *color mixer (HSL): hue/saturation/luminance × 8 bands* — per-colour-family surgery; targeted dot drags on-image.
+- *point color* — single exact colour isolation with feathering.
+- *color grading wheels* — shadow/mid/high/global hue+chroma pushes.
+- *calibration: shadows tint + R/G/B hue-saturation primaries* — engine-level colour character; blue-primary trick lives here.
+
+** Detail panel
+
+- *sharpening: amount / radius / detail / masking* — strength, edge width, edge-vs-flat bias, and the Alt-viewed edge-only mask.
+- *noise: luminance / detail / contrast* — grain reduction and its structure preservation.
+- *noise: color / detail / smoothness* — chroma speckle removal.
+- *denoise switch* — AI neural denoise, RAW-only, new Enhanced DNG (§9).
+- *AI sharpen* — licensed Topaz model where present.
+
+** Effects panel
+
+- *post-crop vignette: amount / midpoint / feather / roundness / highlights* — edge darkening geometry and highlight protection within it.
+- *grain: amount / size / frequency / roughness* — film-grain synthesis parameters.
+
+** Masking tool options
+
+- *brush: size / feather / flow / density / auto-mask* — stroke geometry, deposition rate, opacity ceiling, edge-snapping respectively.
+- *linear/radial gradients* — drag placement, invertible, feathered by construction.
+- *Feather & Edge (AI masks)* — boundary softening and grow/shrink (15.5+, §8).
+
+** Export dialog fields
+
+- *format + per-format fields* — JPEG quality / TIFF compression+bit depth / PSD compatibility / original-with-settings.
+- *resize: long/short/width/height/Megapixels* — dimension limiting modes; long-edge is the daily driver.
+- *resolution (ppi)* — print-density metadata; labs read it, screens ignore it.
+- *output sharpening: screen/matte/glossy + low/standard/high* — destination-aware final pass (§12).
+- *metadata checkboxes* — strip location, remove person names, keep copyright.
+- *watermark: text/logo, position, size, opacity, offset* — attribution overlay mechanics.
+- *post-processing: after export do…* — handoff to another app or script; leave "do nothing" unless chaining.
+
+-----
+
+* Setup checklist
+
+- [ ] Confirm build number (Help → System Info); note which version-tagged
+      features above you have
+- [ ] Preferences → External Editing: TIFF 16-bit ProPhoto 300ppi
+- [ ] Catalog Settings: XMP auto-write ON, weekly catalogue backup, smart
+      previews at import
+- [ ] Fixed drive letter assigned to the photo/catalogue drive (§24)
+- [ ] Create folder-tree convention + import preset (§5)
+- [ ] Build "D7200 base" preset + ISO-adaptive NR/sharpening preset (§10)
+- [ ] Build the four export presets (§12)
+- [ ] Caps-lock culling pass on the last job; feel the speed
+- [ ] Queue Denoise on every ≥3200 keeper as standing policy (§25)
+- [ ] Soft-proof one image against a real print profile; compare to output
+- [ ] Verify backups cover photos + .lrcat + .lrcat-data (§13)
+
+-----
+
+/Companions in this folder: ~/PHOTOSHOP-GUIDE.org~ — the pixel-editor half of
+the round trip (its §18 picks up printing from §23 here);
+~/DARKTABLE-README.org~ — the free-software rival for this entire job, with
+§14 here explaining how they cohabit; ~/GIMP-README.org~ — Photoshop-shaped
+work without the subscription; ~/D7200-GUIDE.org~ — the camera side./

@@ -1,0 +1,1197 @@
+#+TITLE: GIMP: A Complete Tutorial for Photographers
+#+SUBTITLE: The pixel editor you open once or twice a month — and when you do, you know exactly what to do.
+#+AUTHOR: Shaul
+#+DATE: 2026-08-24
+#+STARTUP: content
+#+OPTIONS: toc:3 num:nil
+
+Written 24 August 2026. Covers GIMP 3.2 (released 14 March 2026) — the release
+that made GIMP genuinely usable for photo work. Feature claims checked against
+the official 3.2 release notes.
+
+Self-contained by design: everything needed lives here. The companion guides it
+names (~DARKTABLE-README.org~, ~LIGHTROOM-GUIDE.org~, ~PHOTOSHOP-GUIDE.org~,
+~D7200-GUIDE.org~) are optional context, never prerequisites.
+
+-----
+
+* Start here
+
+*What GIMP is.* A free, open-source pixel editor — the closest free equivalent
+to Photoshop. Layers, masks, selections, brushes, compositing, text, healing,
+content-aware fill. If a job requires manipulating individual pixels or stacking
+separate images, GIMP is the free tool that can do it.
+
+*What GIMP is not.* A raw editor. No catalogue, no raw develop module worth
+using, no batch library management, no link back to your original negative.
+Exposure, contrast, colour, white balance, dust spots, cropping — none of that
+belongs here; it belongs in darktable (or Lightroom Classic, which does the same
+job with more money involved). The moment an image enters GIMP, everything is
+flattened into pixels and editing becomes destructive-by-default. GIMP 3.2's
+non-destructive features soften that considerably, but the principle holds:
+*raw work happens upstream.*
+
+*How often you'll open it.* Once or twice a month, if that — when your raw
+editor hits a wall (section 2 lists exactly those walls). That frequency is
+correct, not a failure. This guide is mostly about recognising those moments
+and executing precisely once inside.
+
+*Time to set up: 15 minutes*, including the two plugins that make the whole
+installation worth having.
+
+-----
+
+* Contents
+
+1. [[*1. Concepts you need first][Concepts you need first]]
+2. [[*2. When to open GIMP, and when not to][When to open GIMP, and when not to]]
+3. [[*3. Install][Install]]
+4. [[*4. Preferences that matter][Preferences that matter]]
+5. [[*5. The interface in ten minutes][The interface in ten minutes]]
+6. [[*6. Getting images in and out][Getting images in and out]]
+7. [[*7. Save vs Export — read this before you lose work][Save vs Export — read this before you lose work]]
+8. [[*8. Layers, completely][Layers, completely]]
+9. [[*9. Non-destructive filters, and the adjustment-layer recipe][Non-destructive filters, and the adjustment-layer recipe]]
+10. [[*10. Selections, completely][Selections, completely]]
+11. [[*11. Colour and tone tools][Colour and tone tools]]
+12. [[*12. The retouching toolbox][The retouching toolbox]]
+13. [[*13. Five jobs, step by step][Five jobs, step by step]]
+14. [[*14. Text, logos, borders, watermarks][Text, logos, borders, watermarks]]
+15. [[*15. Plugins: the two worth installing][Plugins: the two worth installing]]
+16. [[*16. Exporting, printing, soft-proofing][Exporting, printing, soft-proofing]]
+17. [[*17. Gotchas][Gotchas]]
+18. [[*18. Shortcuts][Shortcuts]]
+19. [[*19. Where to learn more][Where to learn more]]
+20. [[*Appendix A. Brushes, gradients, and painting][Appendix A. Brushes, gradients, and painting]]
+21. [[*Appendix B. Channels, paths, and luminosity masks][Appendix B. Channels, paths, and luminosity masks]]
+22. [[*Appendix C. Script-Fu and batch processing][Appendix C. Script-Fu and batch processing]]
+23. [[*Appendix D. Working with PSD files][Appendix D. Working with PSD files]]
+24. [[*Appendix E. One composite, end to end][Appendix E. One composite, end to end]]
+25. [[*Appendix F. Every preference and option, explained][Appendix F. Every preference and option, explained]]
+26. [[*Setup checklist][Setup checklist]]
+
+-----
+
+* 1. Concepts you need first
+
+Seven ideas carry the entire program. Each takes a minute; together they make
+every later section obvious.
+
+** Pixels and resolution
+
+An image is a grid of coloured squares. "Resolution" talk confuses two
+independent things:
+
+- *Pixel dimensions*: how many pixels across × down (6000 × 4000).
+- *PPI setting*: a number stored in metadata claiming how densely those pixels
+  should print. It changes nothing on screen and nothing about the pixels
+  themselves.
+
+For screens, only pixel dimensions matter. For print, dimensions ÷ PPI = size
+(6000 px at 300 ppi prints 20 inches wide). Anyone who says "web images are 72
+dpi" has confused a default with a law.
+
+** Bit depth
+
+8 bits per channel = 256 levels each; enough for viewing, marginal for editing.
+16 bits per channel = 65,536 levels; edits land smoothly instead of banding.
+GIMP also offers *32-bit floating point* internal precision — headroom above
+white and below black so aggressive edits don't clip irreversibly.
+
+Rule: bring files in at 16-bit (export from darktable accordingly), leave
+~Image → Precision~ at its default high setting, and never let an 8-bit file
+near a curve.
+
+** Colour spaces
+
+sRGB: the universal space every screen and browser expects. Adobe RGB: wider
+gamut some print workflows want. A file tagged with one space shown as if it
+were another looks wrong (usually flat or oversaturated) — this is what colour
+management prevents. GIMP reads embedded profiles and converts on request;
+section 4 sets the defaults once.
+
+** Layers
+
+A layer is a transparent sheet with something painted on it; the stack composes
+top-down. Every non-destructive technique in this guide is layers wearing
+costumes: adjustments on their own layer, retouching on a separate sheet,
+composites as stacks of photographs. Section 8 is the full treatment.
+
+** Masks
+
+A mask is a greyscale transparency map attached to a layer: white reveals the
+layer, black hides it, grey partially shows it. Painting on the mask changes
+where the layer appears without ever touching its pixels. Reversible forever.
+This asymmetry — pixels sacred, mask disposable — is the whole trick of
+professional-looking work.
+
+** Selections
+
+A selection marks a region of the canvas; tools then act only inside it.
+Selections and masks are two views of one thing — ~Select → Save to Channel~
+stores one, right-click → *Add Layer Mask* → *from selection* converts one to
+the other. Fluent users convert between them constantly.
+
+** Destructive vs non-destructive
+
+Destructive: the operation rewrites pixels (painting, direct filter application
+on old GIMP). Non-destructive: the operation is stored as instructions
+re-applied live — adjustment layers elsewhere, *non-destructive filters* here,
+text/vector/link layers. GIMP 3.x made real progress on the second category
+(section 9); prefer it wherever possible, because future-you will want to
+change things, and future-you is the customer.
+
+-----
+
+* 2. When to open GIMP, and when not to
+
+The most useful thing this guide tells you is when to stay away.
+
+** Stay in your raw editor when...
+
+Exposure, contrast, colour, white balance, sharpening, noise reduction, dust
+spots, straightening, cropping, even local masking — all belong upstream in
+whatever develops your raws. Those edits are non-destructive, sensor-deep, and
+revisable years later. In GIMP the same operations flatten onto rendered
+pixels and lose all of that.
+
+- Global tone/colour moves — done upstream, better
+- Sharpening and noise reduction — raw editors tune these to your specific
+  sensor; GIMP's are generic
+- Dust, blemishes, small distractions — darktable's ~retouch~ handles these on
+  the raw, including frequency-separation skin work
+- Culling, rating, organising — not even remotely GIMP's job
+- Anything involving several photos' *library management*
+
+*The rule: if your raw editor can do it, do it there.*
+
+** Open GIMP for these
+
+- *Removing large objects* — people, cars, power lines across a sky. Raw
+  editors heal by sampling nearby patches; past a certain size that smears.
+  GIMP + Resynthesizer synthesises plausible new texture wholesale (section
+  13.1).
+- *Combining photographs* — sky replacement, exposure blending, swapping faces
+  in group shots. Raw editors process one image at a time; full stop.
+- *Adding text, logos, graphic elements* — typography is not a raw editor's
+  job at all.
+- *Pixel-precise mask work* — hand-painting an edge at 400% zoom. Raw-editor
+  masks are parametric/vector; excellent, but not per-pixel brushes.
+- *Anything needing a genuine layer stack* — raw editors have pipelines, not
+  layer stacks. Different model entirely.
+- *Heavy warping* — mesh warp and cage transforms live here (section 12).
+
+If you know Lightroom: GIMP is nothing like it, and darktable is. If you know
+Photoshop: GIMP 3.2 covers the photographer-relevant core of it — sections 8–13
+are the translation dictionary.
+
+-----
+
+* 3. Install
+
+*Download:* https://www.gimp.org/downloads/ — take the 64-bit Windows
+installer from gimp.org itself, not a mirror site dressed like one.
+
+1. Run installer, accept defaults.
+2. Launch. First start builds font caches — slower than subsequent ones.
+3. Note where plugins live for section 15: ~Edit → Preferences → Folders →
+   Plug-ins~ shows the folder list; the user-level one under your AppData is
+   where manual installs go.
+
+Version notes: 3.0 broke the plugin API (see section 15's warning); the 32-bit
+Windows build ended with 3.2 — irrelevant on modern hardware, but it explains
+old download links dying. Updates within 3.x install over the top cleanly;
+your settings survive.
+
+-----
+
+* 4. Preferences that matter
+
+Open ~Edit → Preferences~. Four changes, then done:
+
+- *System Resources → Tile cache size:* set 8–16 GB. The tile cache is
+  GIMP's working memory for image data; the default is timid. With 48 GB RAM
+  you afford generosity, and big layered files stop stuttering.
+- *System Resources → Number of threads:* set to maximum/available. No reason
+  to leave cores idle.
+- *Color Management → Monitor profile:* set to use the system profile ("from
+  display profile" / pick your monitor's). Otherwise GIMP and darktable show
+  you different colours for the same file and you lose an evening deciding who
+  lies. While there, note RGB workspace default (sRGB is correct for delivery;
+  leave it).
+- *Image Import & Export:* keep the 32-bit float preservation option enabled
+  where offered — protects headroom on round trips.
+
+Two non-preference settings worth doing once:
+
+- *Windows → Single-Window Mode* if panels ever float loose. Nobody wants
+  floating panels.
+- ~Image → Precision~ on any opened photo confirms bit depth. A 16-bit TIFF
+  should arrive as 16-bit integer or higher. If it says /8-bit/, something
+  upstream exported wrong — go back and re-export rather than edit a cripple.
+
+-----
+
+* 5. The interface in ten minutes
+
+Single-window mode assumed.
+
+- *Centre: canvas.* Zoom with ~+~/~−~ or Ctrl-wheel; ~Ctrl+0~ fits window,
+  ~Ctrl+1~ jumps to 100% (the only honest judging zoom). Hold *space* and drag
+  to pan.
+- *Left: toolbox* — the tool icons — with *Tool Options docked beneath*. The
+  options panel changes per tool and is half the program; glance at it every
+  time you switch tools, because defaults live there (feather edges! opacity!
+  brush size!).
+- *Right, upper: Brushes/patterns/fonts tabs.*
+- *Right, lower: Layers panel* with Channels, Paths and Undo history tabs.
+  You will live in Layers; the others matter (Channels for masks by colour,
+  Paths for precise selections, Undo because nobody is perfect).
+- *Top: menus.* Everything has a menu home; when lost, hunt menus before
+  hunting forums.
+- *Menus → Filters → Filters... / GEGL Filter browser (new in 3.2):* searchable
+  catalogue of every effect with parameters described — the discovery tool the
+  filter menu itself never was.
+
+Keyboard-first tip: pressing ~Tab~ hides docks for distraction-free viewing;
+~F11~ full-screens.
+
+-----
+
+* 6. Getting images in and out
+
+** The reliable way: export a TIFF from your raw editor
+
+1. Finish the edit completely upstream. Get it /right/ — nothing flows back
+   from GIMP to the raw side.
+2. Export *TIFF, 16-bit*, uncompressed or losslessly compressed (darktable:
+   section 16 of its guide; Lightroom: export dialog, format TIFF, 16-bit,
+   ProPhoto or sRGB per destination).
+3. Colour profile: *sRGB* if bound for screen/web, *Adobe RGB* if a print shop
+   asks for it. When unsure: sRGB.
+4. Open the TIFF in GIMP (drag onto the window works), work, then produce the
+   final via Export (section 7).
+
+*16-bit is not negotiable.* An 8-bit file bands visibly the first time a curve
+bends, and the camera's dynamic range was thrown away at export for nothing.
+
+** The convenient way: open raw files directly
+
+With *darktable* or *RawTherapee* installed, opening a raw (~.NEF~, ~.CR3~,
+~.ARW~) from GIMP auto-launches that program as the loader: develop there,
+close, and the processed result lands in GIMP. Genuinely slick when it works.
+
+It has broken across version updates before — documented history, repeatedly.
+If it stops working after an update, do not spend an evening debugging plugin
+plumbing; export a TIFF (above) and get on with your day.
+
+** One-way trip, stated plainly
+
+Whatever GIMP produces is a new, separate file. Nothing syncs back to the raw
+editor's library or history. To keep the result near its siblings, import the
+exported file alongside the original in your catalogue. This is why finishing
+the raw edit properly first matters: upstream mistakes cannot be fixed
+downstream, only papered over.
+
+-----
+
+* 7. Save vs Export — read this before you lose work
+
+This distinction confuses every single newcomer. Learn it now rather than at
+1 a.m. with a finished composite and no JPEG in sight.
+
+- ~Ctrl+S~ — *Save.* Writes ~.xcf~, GIMP's own layered working format. An XCF
+  is /not a photograph/: browsers can't show it, printers choke on it, your
+  family won't know what it is. What it is: the complete editable project —
+  layers, masks, text, filters.
+- ~Ctrl+Shift+E~ — *Export As…* Writes JPEG/PNG/TIFF/WebP/etc. *This is how an
+  actual image leaves GIMP.*
+- ~Ctrl+E~ — *Export.* Re-export over the last exported path/format — the
+  repeat button for iteration loops.
+- ~File → Overwrite~ appears after opening e.g. a PNG directly: writes back
+  over that exact file. Convenient; also the fastest way to clobber a source
+  image. Respect it.
+
+Working rhythm: save ~.xcf~ whenever the layer stack is worth keeping (it
+compresses well), export whenever you want a picture. Doing only the first and
+closing means you own a project file and no photograph. There is no built-in
+autosave; save early, save often.
+
+-----
+
+* 8. Layers, completely
+
+** Mechanics
+
+The Layers panel lists sheets top-down; the *top* layer paints over those
+beneath. Per-layer: visibility eye, opacity slider, mode drop-down, lock
+switches (pixels/position/alpha), name (double-click to rename — do rename;
+"Layer #47 copy" is how projects die). Right-click a layer for the full menu:
+duplicate, delete, flatten, mask operations.
+
+Drag layers to reorder. Drag onto the "create new layer" icon to duplicate.
+Ctrl-click several for group moves; ~Ctrl+G~ groups selected layers into a
+folder-within-the-stack.
+
+** Blend modes worth knowing
+
+Dozens exist; photographers need six:
+
+- *Normal* — plain stacking. 95% of work.
+- *Multiply* — darkens by combining: white passes through unchanged, black
+  wins. Classic use: multiply a texture/frame overlay onto a photo so only its
+  dark marks show.
+- *Screen* — multiply's opposite; black vanishes, light things lighten. Two
+  differently-exposed exposures screened together fake a brighter composite.
+- *Overlay / Soft Light* — contrast blending; the grey-layer dodge & burn in
+  section 12 runs on Overlay.
+- *LCh Lightness / LCh Color* (3.x additions) — blend only brightness or only
+  colour between layers; the honest way to steal one property without the
+  other.
+- *Pass through* — technically a group-mode: the group's internal blend modes
+  keep affecting layers below the group as if it weren't there. Essential to
+  the adjustment-layer recipe (section 9).
+
+Opacity is global per layer; note also the *Fill* vs *Opacity* distinction if
+you add layer effects later (fill scales content contribution, not effects).
+
+** Layer masks
+
+Right-click a layer → *Add Layer Mask* → initialise:
+
+- *White*: layer fully visible; paint black on the mask to hide regions.
+- *Black*: layer hidden; paint white to reveal. Better default for composites
+  (reveal gradually rather than hide accidentally).
+
+Painting rules: soft round brush, low hardness for organic edges; ~[~ and ~]~
+resize; press ~X~ to swap black/white as you work both directions; mistakes
+paint the opposite colour — nothing is permanent until you apply the mask.
+Grey = partial strength. Alt-click a mask thumbnail views it full-screen
+greyscale — the honest check of what your brush actually did. Shift-click a
+thumbnail disables/enables the mask for before/after comparison. Apply
+permanently via right-click → *Apply Layer Mask* only at the end, if ever;
+masks cost almost nothing to keep live.
+
+Masks can also be initialised *from selection* (section 10) — the standard
+bridge from "I selected the sky" to "this adjustment affects only the sky".
+
+** Non-destructive layer types (3.x)
+
+Four layer kinds now protect themselves from accidental pixel damage:
+
+1. *Text layers* — always re-editable text; font/size/spacing stay adjustable.
+2. *Link Layers* (~File → Open as Link Layer~) — like Photoshop's Linked Smart
+   Objects: points at an external file which auto-updates in place when that
+   file changes elsewhere. The reusable watermark/logo mechanism (section 14).
+3. *Vector Layers* (new in 3.2) — the Path tool now creates real vector shapes
+   with editable fill and stroke; scale, rotate, transform them losslessly,
+   drag-and-drop colours/patterns onto them, edit path nodes any time.
+4. Ordinary *pixel layers*, unprotected by design.
+
+All three protected types show a *Rasterize* command in ~Layer~ menu; painting
+on them requires rasterizing first (deliberate friction), and *Revert
+Rasterize* undoes even that. This killed the classic accident of brushing over
+text and losing editability forever.
+
+** Groups
+
+~Ctrl+G~ with layers selected. Groups nest, collapse, move as units, and take
+their own masks and filters. Set a group's mode to *Pass through* (next
+section) when stacking adjustments inside.
+
+** Merge and flatten, used sparingly
+
+*Merge down* combines one layer into the one beneath; *Flatten image*
+collapses everything (respecting a single visible composite). Both destroy
+editability of what they consume — useful for exporting steps or taming
+hundred-layer files, poisonous by habit. Duplicate the whole image first
+(~Image → Duplicate~, or save an .xcf checkpoint) whenever flattening feels
+convenient.
+
+-----
+
+* 9. Non-destructive filters, and the adjustment-layer recipe
+
+GIMP 3.0 introduced non-destructive filters; 3.2 made them genuinely useful.
+
+** How NDE filters behave
+
+Apply any GEGL filter (everything under ~Filters~) to a layer and it attaches
+to that layer instead of baking in:
+
+- An ~fx~ icon appears on the layer; clicking it lists every applied filter.
+- Re-open any filter to change parameters — no undo-history archaeology.
+- Toggle filters' eyes on/off for before/after; drag to reorder their math.
+- Filters apply to layer *groups* and even *channels*, not just single layers.
+- To bake permanently: *rasterize* the layer (or merge down). Until then,
+  everything stays live — including across save/close/reopen of .xcf files.
+
+** The adjustment-layer recipe
+
+Photoshop users live on adjustment layers — a recolourable, re-editable effect
+sitting above the artwork, affecting everything below. GIMP has no such layer
+type. 3.2 makes the workaround exact:
+
+#+begin_quote
+*The adjustment-layer recipe*
+
+1. Put your working layers inside a *layer group* (~Ctrl+G~).
+2. Set the group's mode to *"Pass through"*.
+3. Apply a non-destructive filter *to the group itself*.
+
+Because the group passes through, the filter sees everything beneath it —
+and because the filter is non-destructive, its settings remain editable
+forever. Stack several filters on the same group for compound treatments.
+This is an adjustment layer, constructed rather than granted.
+#+end_quote
+
+Concretely: group contains your photo; apply ~Curves~ to the group; the curve
+now grades the photo; reopen and retune it next week at will. Write this on a
+sticky note; it is completely undiscoverable from the interface and it is the
+single most valuable trick in GIMP 3.2.
+
+Two adjacent 3.2 features worth ten minutes:
+
+- *GEGL Filter Browser* (~Filters~ menu): searchable list of every filter
+  including ones absent from menus, with parameter docs.
+- *CMYK colour selector* with Total Ink Coverage readout — a selector only.
+  GIMP still cannot *edit* in CMYK; genuine CMYK output remains Scribus/print-
+  shop territory (section 16).
+
+-----
+
+* 10. Selections, completely
+
+Selections restrict where tools act. The craft is choosing the fastest tool
+that produces the needed precision — not the most precise tool that exists.
+
+** The tools, by job
+
+- *Free Select* (~F~) — lasso: freehand outline; also polygon mode and
+  magnetic-ish edge snapping. Fastest tool for rough organic regions.
+- *Rectangle / Ellipse Select* (~R~ / ~E~) — hold Shift to constrain square/
+  circle; the Tool Options' "Fixed" toggle makes exact ratios/ sizes.
+- *Fuzzy Select* ("magic wand", ~U~) — clicks a colour region by similarity;
+  *Threshold* slider in Tool Options is everything. Click-and-drag adjusts
+  threshold interactively before releasing.
+- *Select by Color* (~Shift+O~) — like Fuzzy but grabs *every* matching pixel
+  image-wide, not just contiguous ones. Sky across tree gaps: this one.
+- *Scissors* (~I~) — click vertices along an edge; it snaps to contrast.
+  Semi-automatic outlining of subjects against busy-but-contrasty backgrounds.
+- *Foreground Select* — paint roughly over subject, paint a line across
+  background, engine computes the matte. Underrated for people-shapes.
+- *Paths* (~B~ on the Paths context) — bezier curves; the precision instrument.
+  Convert any path to selection via right-click in Paths panel → *Path to
+  Selection*. Slowest, sharpest, never fooled.
+
+** Refining any selection
+
+The ~Select~ menu is where selections get finished:
+
+- *Feather* — softens edges (see the feathering gospel below).
+- *Grow / Shrink* — expands/contracts by pixels. Grow-by-5 before healing
+  work gives synthesis algorithms breathing room (section 13).
+- *Border* — converts selection to a ring of chosen width (frame/border jobs,
+  section 14).
+- *Invert* (~Ctrl+I~) — flip selected/unselected. Constantly used: select the
+  easy thing (sky), invert to have the hard thing (subject).
+- *None* ~Ctrl+Shift+A~ / *All* ~Ctrl+A~.
+
+** Quick Mask: paint your selection
+
+Press ~Q~: the image reddens except the selected zone; paint with black to
+*remove* from selection, white to add, soft brushes give feathered results
+directly. Press ~Q~ again to return to normal view with your painted selection
+active. For hand-built masks at high zoom this is faster and saner than any
+dialog. (Red overlay colour and its meaning are configurable in preferences.)
+
+** Feathering gospel
+
+#+begin_quote
+*A selection's default edge is one hard pixel wide, and it looks like a
+ransom note wherever it lands.* Feather every selection destined to be
+visible as an edge — 1–3 px for crisp product edges, 5–15 px for anything
+organic, more for glow-like blends. Antialiasing (Tool Options checkbox)
+smooths stair-stepping but does not blend; feather blends.
+#+end_quote
+
+** Selections become masks
+
+Right-click layer → *Add Layer Mask* → initialise from selection, or ~Select →
+Save to Channel~ to bank a selection for later recall (channels panel,
+right-click → channel to selection). Banked channels turn repeated complex
+selections into one-click recalls.
+
+-----
+
+* 11. Colour and tone tools
+
+All live under ~Colors~, all work through the NDE-filter mechanism when applied
+to layers/groups (section 9), so every one of these stays re-editable.
+
+- *Curves* — the master control. Drag points to remap input→output tones:
+  gentle S-curve = contrast; pull lower-mid down for richness; per-channel
+  tabs grade colour (blue-channel-down warms highlights classically). Click
+  two points to lock range while bending between them. If you learn one tool
+  here fully, make it this one.
+- *Levels* — curves reduced to three arrows (black point, gamma, white
+  point). Setting black/white points just inside the histogram's true ends is
+  the honest first tonal move on scans and flat exports.
+- *Exposure* — scene-referred-style stop-based brightness; matches how your
+  raw editor thinks.
+- *Color Balance* — three wheels (shadows/midtones/highlights): push shadows
+  slightly cool, highlights slightly warm for instant "graded" depth. Small
+  values only.
+- *Hue-Saturation* — per-primary-colour saturation/hue/lightness sliders.
+  Taming an oversaturated red jacket without touching the rest lives here.
+- *Saturation* and *Scale...* — global desaturation; for monochrome prefer
+  *Desaturate → Luminance* (perceptually even) over "lightness" modes.
+- *Brightness-Contrast* — exists, is blunt, has no place in finished work.
+  Curves does both, better, with control.
+- *Colour picker / sample points* — Windows → Dockable Dialogs → Pointer:
+  read exact pixel values while grading; trust numbers over eyes for
+  neutrality checks (RGB equal = neutral).
+
+Workflow order for photo finishing inside GIMP (rarely needed after good raw
+work, but when needed): Levels or Curves for tone → Color Balance/Hue-Sat
+for cast and pop → local work (next section) → sharpen last, lightly.
+
+-----
+
+* 12. The retouching toolbox
+
+** Heal (~H)
+
+Ctrl-click a clean source area, then dab the flaw. Heals transfer texture
+while blending colour/luminance with surroundings — blemishes vanish without
+the waxy smear cloning leaves. First choice for skin, sensor dust that made it
+past raw editing, small scratches. Size the brush barely larger than the flaw;
+oversized heals sample too much context and go mushy.
+
+** Clone (~C)
+
+Ctrl-click source, paint verbatim copy. For structure, not blending: removing
+something by extending real pattern (fence wires, brick rows). Watch alignment
+— clone stamp follows relative offset from your source pick; re-pick sources
+often to avoid visible tiling.
+
+** Dodge & burn, non-destructively
+
+The darkroom technique for shaping light on faces and landscapes:
+
+1. New layer, filled 50% grey (~Edit → Fill with~ after setting foreground to
+   #808080), mode *Overlay*. The layer turns invisible.
+2. Paint on it with a large soft brush at 3–8% opacity: *white brush lightens*
+   (dodge), *black darkens* (burn).
+3. Overshot? Paint back with 50% grey, or drop layer opacity. The underlying
+   photograph is untouched; the shaping remains adjustable forever.
+
+Judge at arm's length; dodge&burn at full strength looks like a bad spray tan.
+
+** Warp Transform (~W)
+
+Push/pull/twist pixels through a mesh — fix a bulging horizon, unstick a
+poking branch, gentle jawline adjustments. *Undo warp* button reverts strokes;
+*Remove dots* relaxes the mesh. Restraint is the skill: viewers feel warped
+geometry before they can name it. The *Cage* deform option wraps an object in
+a cage of control points — for deforming whole objects coherently rather than
+local smudges.
+
+** Perspective and Unified Transform
+
+~Tools → Transform Tools~: straighten keystoned buildings (perspective tool's
+guides onto known-verticals), free transforms with rotation/scale/shear in one
+gizmo (unified). Crop afterwards; transformed edges leave transparency to fill
+or crop away.
+
+-----
+
+* 13. Five jobs, step by step
+
+Complete walkthroughs of the five canonical "this is why GIMP exists" jobs.
+Each assumes a 16-bit TIFF arrived from darktable (section 6).
+
+** Remove a large object (Resynthesizer)
+
+Requires the Resynthesizer plugin installed (section 15).
+
+1. *Free Select* (~F~) a loose outline around the object — a person, car, or
+   power line. Go *wider* than the object, not tight to it.
+2. ~Select → Grow~ by 5–10 px. Synthesis needs surrounding context to sample.
+3. ~Filters → Enhance → Heal Selection~.
+4. In its dialog: *sampling radius* ≈50 px is a sane start; *fill order*
+   random for amorphous texture (grass, gravel), directional/inward for
+   structured surroundings. Run.
+5. Inspect at 100%. Residual ghosts: smaller second pass, then finish seams
+   with Heal (~H~) dabs and Clone (~C~) for structure.
+6. Expectations: grass/gravel/sand/water/foliage — excellent. Repeating
+   architecture — good if source pattern is regular. Faces and hands — do not;
+   heal manually from a donor region instead.
+
+** Sky replacement
+
+1. Base image open; select the old sky: *Select by Color* (~Shift+O~) on blue,
+   threshold-tuned, then Q-mask-paint fixes around trees/rooftops.
+2. Open replacement sky as new layer (~File → Open as Layers~); drag it
+   *beneath* the main layer in the stack.
+3. Add layer mask to the *main* layer from your sky selection (mask initialised
+   white, then paint the sky area black on the mask — or invert logic: mask
+   black, paint white; either way sky region of main layer becomes
+   transparent, revealing the new sky below).
+4. Scale/move the sky layer (unified transform) until light direction agrees
+   with the subject.
+5. *Unify the grade:* curves-on-group (section 9 recipe) over both layers —
+   nudge the composite's shadows toward one temperature until subject and sky
+   belong to the same planet. Mismatched colour temperature outsells every
+   other tell.
+6. Feather check at 200% around every tree twig; soften mask edges there.
+
+** Exposure blend (two frames, e.g. bright sky + dark ground)
+
+1. Open ground frame; ~File → Open as Layers~ the sky frame, perfectly aligned
+   (tripod shots align themselves; handheld needs ~Layer → Transform →
+   Offset~/warp nudging against a 50%-opacity ghost).
+2. Mask the top layer black-initialised; reveal its good half with soft white
+   strokes along the natural boundary (horizon, roofline).
+3. Vary mask opacity gradient instead of a hard seam; verify at multiple zooms.
+4. Optionally flatten and run a gentle global curve to marry the halves.
+
+** Head swap in a group shot
+
+One person blinked; a near-identical frame has them perfect.
+
+1. Both frames open; copy the good head (~Ctrl+C~ after selecting loosely
+   around head+neck in the donor).
+2. Paste into base (~Ctrl+V~); the paste lands as a floating selection —
+   ~To New Layer~ it immediately.
+3. Move/rotate/scale onto the sleeping victim; match scale via ear-to-chin
+   distance, rotate via shoulder line.
+4. Mask the pasted layer: reveal only the head, feathered generously through
+   hairline; align jawline seams along natural shadow boundaries.
+5. Grade-check: curves-on-group until skin tones agree (they rarely arrive
+   agreeing).
+
+** Clean up skin without destroying texture
+
+First resort: don't come to GIMP — darktable's ~retouch~ wavelets do frequency
+separation on the raw file (its guide, section 11). When the file is already
+here anyway:
+
+1. *Frequency separation*, manual: duplicate layer twice. Bottom copy:
+   ~Filters → Blur → Gaussian~, radius ≈ blur-out all pores (try 4–8 px).
+   Top copy: ~Colors → Components → Decompose~... simpler route: set top copy
+   mode to *Overlay/Linear light* after applying ~Filters → Enhance → High
+   Pass~ with same radius — GIMP's pragmatic approximation of the classic
+   technique.
+2. Heal (~H~) blemishes *on the blurred copy only*: colour/tones fixed, pore
+   detail in the high-pass copy rides through untouched.
+3. Merge when satisfied. Result: blemish-free skin that still shows real
+   texture — the difference between retouched and rubber.
+
+-----
+
+* 14. Text, logos, borders, watermarks
+
+** Text that stays text
+
+*Text tool* (~T~), click, type. The layer remains a live text layer: font,
+size, kerning, colour all re-editable forever (section 8). *Text along path*
+turns type onto any bezier curve; 3.2's vector-layer work also improved how
+type interacts with shapes and paths. For graphics destined for reuse,
+rasterize only at export.
+
+** Reusable logo/watermark via Link Layers
+
+The mechanism 3.2 added for exactly this job:
+
+1. Design the watermark once as its own small file (PNG with transparency or
+   SVG — SVG scales perfectly).
+2. In any composition: ~File → Open as Link Layer~ → pick it.
+3. Position/opacity once per composition. Edit the source file next month in
+   any editor; every composition using it updates live.
+
+** Borders and frames
+
+1. ~Image → Canvas Size~, unlock chain-link, add symmetric pixels
+   (~Ctrl+Resize by~ offsets centre) — canvas grows without resampling.
+2. Background colour shows through; or select-all → ~Select → Border~ of
+   chosen width → fill with white/black on a new layer beneath.
+3. Flatten at export. Classic white gallery border: 2–4% of long edge.
+
+** Watermarking exports in bulk
+
+GIMP is not a batch watermark engine — one-offs yes, hundreds no. For bulk:
+darktable's export module has a watermark tab (its guide, section 16);
+Lightroom's export dialog likewise. GIMP's role is designing the mark those
+tools then apply.
+
+-----
+
+* 15. Plugins: the two worth installing
+
+#+begin_quote
+*A warning that saves hours.* GIMP 3.0 broke the plugin API. Most plugins
+written for 2.10 do not work anymore, and the majority of GIMP plugin tutorials
+online predate the break and are now fiction. *Check dates on everything.* If
+it does not explicitly say GIMP 3, assume dead. Script-Fu scripts mostly
+survived; binary plugins did not.
+#+end_quote
+
+** G'MIC-Qt
+
+https://gmic.eu/download.html — take the *Windows EXE installer*, which locates
+your plugin folder automatically. Restart GIMP → new ~Filters → G'MIC-Qt~
+entry: hundreds of filters — effectively a second application bolted on. The
+photographer-relevant subset:
+
+- *Repair & denoise group*: several advanced denoisers beyond GIMP's own;
+  smooth-but-keep-detail variants worth an evening's comparison.
+- *Local contrast enhancement* — another clarity engine, different failures
+  than darktable's, useful as second opinion.
+- *Sharpening range*: including deconvolution-style sharpeners that genuinely
+  out-resolve naive unsharp masking on motion-soft images.
+- Film emulation / black&white conversion presets — taste-dependent; try with
+  restraint.
+
+Everything runs locally, preview-first, applied to the active layer (and via
+NDE when invoked on layers/groups).
+
+** Resynthesizer 3
+
+https://github.com/bootchk/resynthesizer — you need the *resynthesizer3 branch*,
+tagged v3.0+. Not the old 2.x most links still target.
+
+This is *content-aware fill* and the main reason GIMP stays installed:
+~Filters → Enhance → Heal Selection~ synthesises convincing new texture from
+surroundings — the thing spot-removal tools fundamentally cannot do (job 13.1).
+Windows installation is fiddlier than it should be: prebuilt 64-bit binaries
+circulate on GIMP Chat and the project's wiki installation page; drop them into
+the user plug-ins folder shown in preferences (section 3), restart. Reported
+working on 3.2.
+
+** Discipline clause
+
+*Install nothing else until a specific problem demands it.* A GIMP full of
+half-working plugins is worse than a bare one — crashes cost more time than
+features return.
+
+-----
+
+* 16. Exporting, printing, soft-proofing
+
+** Export formats, decided once
+
+- *JPEG* (~Ctrl+Shift+E~): quality 90+ for delivery; "optimize" and
+  "progressive" on; embed colour profile checked. Universal.
+- *PNG*: transparency or screenshot-sharpness needs; 8-bit fine for web.
+- *TIFF*: print-shop interchange or returning to a raw-editor library;
+  16-bit, lossless compression (LZW/Deflate — nobody still uses uncompressed).
+- *WebP*: smaller than JPEG at similar quality; use when destination is known
+  modern.
+- *PSD export* exists for handing layered files into Photoshop workflows —
+  improved layer-style import in 3.2, though round-trips are never perfect.
+
+Export dialog's *export as* filename field picks format via extension. The
+advanced options fold out per-format settings — the defaults are sane except
+JPEG quality, which defaults low-ish: raise it and GIMP remembers.
+
+** Scaling down properly
+
+~Image → Scale Image~ with *LoHalo*/NoHalo interpolation for downscaling
+photographs (visibly cleaner than the old cubic default). Scale in one step to
+target size, then export — repeated JPEG re-saves are what make web images
+look chewed.
+
+** Printing
+
+~File → Print~ hands off to Windows' print system with GIMP's colour management
+applied. For serious home printing: enable ~Image → Color Management → Soft
+Proofing~ against your printer/paper ICC profile first (~View → Color
+Management~ toggles), so you preview gamut loss before ink hits paper. Genuine
+CMYK separation remains outside GIMP (Scribus or the print shop handles it);
+sRGB TIFF + their profile request covers virtually every online lab.
+
+** Soft-proofing generally
+
+View → Color Management enables simulation of how the image renders under a
+chosen profile — proof-print look on an sRGB screen, and the honest answer to
+"why does my print look duller than my screen".
+
+-----
+
+* 17. Gotchas
+
+1. *Save is not Export.* Section 7. It gets everybody at least once; some
+   people twice.
+2. *The plugin API break of 3.0.* Pre-2025 plugins and tutorials alike are
+   suspect until proven current (section 15).
+3. *No real CMYK editing.* 3.2 has a CMYK selector with ink-coverage readout,
+   not a CMYK workflow.
+4. *The raw-loader hand-off can break on updates.* darktable/RawTherapee
+   auto-loading is lovely until it isn't; TIFF fallback always works (section
+   6).
+5. *8-bit files band under curves.* Check ~Image → Precision~ whenever
+   gradients posterise; the cure is upstream re-export, not here.
+6. *Unfeathered selections announce themselves.* Feather by default
+   (section 10); hard edges belong to graphic design, not photography.
+7. *Nothing flows back upstream.* GIMP output is a new file; finish raw edits
+   first (section 6).
+8. *Floating selections after paste.* ~Ctrl+V~ creates a floating selection
+   that must be anchored or promoted (~To New Layer~) before other tools behave.
+   Confusion here generates most "GIMP is frozen" reports.
+9. *PSD round-trips are lossy in both directions.* Layer styles/effects
+   translate imperfectly; keep originals in native formats.
+10. *Undo has memory limits.* Set generous tile cache (section 4); for huge
+    multi-layer files save .xcf checkpoints rather than trusting history depth.
+
+-----
+
+* 18. Shortcuts
+
+Full searchable customisable list: ~Edit → Keyboard Shortcuts~ (and it can
+list them all as HTML). The working set:
+
+| Key                    | Does                                                |
+|------------------------+-----------------------------------------------------|
+| ~V~ / ~M~              | Move tool                                           |
+| ~F~                    | Free Select (lasso)                                 |
+| ~U~                    | Fuzzy Select (magic wand)                           |
+| ~Q~                    | Quick Mask (paint-a-selection mode)                 |
+| ~H~                    | Heal tool                                           |
+| ~C~                    | Clone tool                                          |
+| ~W~                    | Warp Transform                                      |
+| ~T~                    | Text tool                                           |
+| ~[~ / ~]~              | brush smaller / larger                              |
+| ~X~                    | swap foreground/background colours                  |
+| ~D~                    | default colours (black/white)                       |
+| ~Ctrl+A~ / ~Ctrl+Shift+A~ | select all / none                                |
+| ~Ctrl+I~               | invert selection                                    |
+| ~Ctrl+C~ / ~Ctrl+V~    | copy / paste (paste floats — section 17.8)          |
+| ~Ctrl+Z~               | undo                                                |
+| ~Ctrl+S~               | Save (.xcf project — not a photo!)                  |
+| ~Ctrl+Shift+E~         | *Export As* — how photos leave GIMP                 |
+| ~Ctrl+E~               | re-export over last                                 |
+
+-----
+
+* 19. Where to learn more
+
+- *Official manual* — https://docs.gimp.org/3.2/en/
+- *GIMP 3.2 release notes* — https://www.gimp.org/release-notes/gimp-3.2.html —
+  worth one skim specifically for non-destructive filters/layers behaviour.
+- *Resynthesizer installation wiki* —
+  https://github.com/bootchk/resynthesizer/wiki
+- *G'MIC* — https://gmic.eu/
+- *discuss.pixls.us* — active, genuinely helpful, good GIMP section alongside
+  the raw-editor crowd.
+- *Official tutorials* — https://www.gimp.org/tutorials/ — mixed vintage; apply
+  the date filter from section 15's warning.
+
+-----
+
+-----
+
+* Appendix A. Brushes, gradients, and painting
+
+Mask-painting and retouching run on the brush engine; ten minutes here pays
+out across every other section.
+
+** Brush anatomy
+
+Tool Options for ~P~ (Paintbrush): *brush* (shape preset), *Size*, *Aspect
+ratio*, *Angle*, *Spacing* (stamps per stroke length — raise above 50% for
+dotted effects, lower for solid), *Hardness* (edge softness — 0.5 is the
+mask-painting sweet spot), *Force/Opacity* semantics per tool. Dynamics
+(size/opacity varying with pressure or velocity) matter on tablets only.
+
+Advice: build a personal top-five brush set (hard round, soft round, large
+soft for dodging, textured brush for masks, pencil-thin for cleanup) instead
+of browsing the hundred shipped presets you will never use again.
+
+** The three paint tools that matter
+
+- ~P~ Paintbrush — standard.
+- ~N~ Pencil — hard aliased pixels; pixel-art and one-px mask surgery.
+- ~E~ Eraser — same engine, removes to transparency (layer-bound; erasing a
+  mask thumbnail isn't a thing — paint black there instead).
+
+Airbrush (~A~) keeps depositing while held — GIMP's flow analogue; use it
+where Photoshop habits reach for flow.
+
+** Gradients
+
+~G~: drag on canvas to place. The shape family matters more than colours:
+
+- *Linear/Radial* — masks' graduated filters.
+- *Conical/Spiral/Starburst* — graphic work.
+- Shape variants (spherical, dimpling) — rarely photographic.
+
+*Fg→Bg (RGB)* with pure black/white is the mask gradient; *Fg→Transparent*
+paints colour fades over photos without obliterating them. Advice: gradient
+on a layer mask is GIMP's honest answer to raw editors' graduated filters —
+drag once, re-drag anytime by re-running from the mask edge.
+
+** Pattern fill and bucket
+
+~Shift+Ctrl+B~ fills with background; bucket ~Shift+B~ fills by region
+similarity (its threshold behaves like fuzzy-select). Patterns tile from the
+patterns dock; useful for textures behind cutouts, not for photographs.
+
+-----
+
+* Appendix B. Channels, paths, and luminosity masks
+
+The panels next door to Layers, and the techniques they unlock.
+
+** Channels panel
+
+One greyscale channel per stored selection plus R/G/B of the image itself.
+Ctrl-click any channel = load its luminance as a selection. This is the
+raw material of manual precision masking:
+
+- Ctrl-click *Red/Green/Blue* → selections keyed to that channel's brightness
+  (blue channel selects skies ruthlessly on daylight shots).
+- ~Select → Save to Selection~ banks any selection as a new channel — your
+  library of hard-won masks, recallable with one click forever after.
+- Advice: before hand-painting any complicated subject mask, spend thirty
+  seconds ctrl-clicking each RGB channel looking for one that nearly isolates
+  it already. Frequently one does, and painting shrinks to touch-up.
+
+** Luminosity masks, manually
+
+No plugins needed:
+
+1. ~Layer → Duplicate~ the base image twice.
+2. Top copy: ~Colors → Desaturate~ (Luminance) then ~Colors → Invert~;
+   blend mode *Multiply* — now darkens only what was bright (a shadows-
+   protecting darkening layer).
+3. Variants: skip the invert for brightening-brights; add a Gaussian-blurred
+   copy in Overlay for glow-free contrast.
+4. Mask further with channel-loaded selections from Appendix B.1.
+
+This is the whole trick professional "luminosity masking panels" automate.
+Three layers, no cost, fully inspectable.
+
+** Paths deep dive
+
+~B~ switches to Pen within the Paths context: click vertices (straight),
+click-drag for bezier handles. The Paths panel stores every path permanently —
+unlike throwaway selections. Right-click a path:
+
+- *Path to Selection* (also Enter) — with feather dialog via Select menu
+  afterwards.
+- *Stroke Path* — paint a chosen brush along it (hairline cleanup along
+  perfect curves).
+- *Fill Path*.
+
+Advice: paths are the only selection method that survives save/close/reopen
+with full fidelity. For recurring product/client shapes, path libraries beat
+re-selecting every time.
+
+-----
+
+* Appendix C. Script-Fu and batch processing
+
+GIMP's scripting is where photographers' patience usually ends and engineers'
+begins. The middle path:
+
+** The Script-Fu console
+
+~Filters → Script-Fu → Console~: a live REPL driving the whole program.
+Useful one-liners to feel it:
+
+#+begin_example
+(let* ((image (car (gimp-file-load RUN-NONINTERACTIVE "in.tiff" "in.tiff"))))
+  (gimp-image-flatten image)
+  (file-jpeg-save RUN-NONINTERACTIVE image (car (gimp-image-get-active-drawable image)) "out.jpg" "out.jpg" 0.92 0 1 1 "" 0 1 0 0))
+#+end_example
+
+Loads, flattens, exports at quality 92 — without dialogs. Every menu action
+has such a procedure; the *Procedure Browser* (~Help~) documents them with
+signatures.
+
+** Batch converting a folder without opening files
+
+Script-Fu server or console loops work; the pragmatic Windows route is the
+BIMP plugin (Batch Image Manipulation Plugin) — check its GIMP-3
+compatibility before installing (section 15's warning applies). For pure
+format conversion at scale, honest advice: ImageMagick from PowerShell beats
+any in-GIMP solution:
+
+#+begin_example
+# every TIFF in a folder to JPEG q92, full width preserved
+magick mogrify -format jpg -quality 92 *.tiff
+#+end_example>
+
+** When GIMP batch is genuinely worth it
+
+Operations needing layers/masks/selection logic per file (watermark placement
+relative to content, conditional framing). Otherwise: raw-editor export
+presets handle volume, ImageMagick handles conversion; GIMP scripting handles
+the structural middle case.
+
+-----
+
+* Appendix D. Working with PSD files
+
+Photoshop files arrive from clients/colleagues; GIMP 3.x opens them well and
+writes them imperfectly:
+
+- Opening: layer structure, masks, text (converted), blend modes mostly
+  survive; layer *styles* (strokes/shadows as live effects) import improved in
+  3.2 but never perfectly; adjustment layers flatten into their effect.
+- Saving back to PSD: possible (~File → Save As~ .psd); expect round-trip
+  drift on anything fancy. Advice: keep edits native-XCF while in your hands,
+  export PSD only at hand-back, flattened copy included for safety.
+- Smart objects import as raster snapshots (their live link is Adobe-side);
+  text layers become editable-but-reformatted. Budget re-typesetting for
+  type-heavy PSDs.
+
+The professional courtesy rule: tell Photoshop-using collaborators you're on
+GIMP *before* they send layered masters, not after.
+
+-----
+
+* Appendix E. One composite, end to end
+
+Continuing the exact photograph developed in ~DARKTABLE-README.org~ §17: the
+reception frame whose TIFF just arrived, 16-bit, fully graded — with one
+problem no raw editor should fix: a glowing green EXIT sign over the subject's
+head, and a blown-out window behind her worth improving.
+
+What I would actually do, in order, with reasons:
+
+1. *Precision pass before surgery*: zoom to 100% and walk the frame once.
+   Two sensor spots survived upstream (darktable healed three; these hide in
+   shadow), plus a waiter's elbow at frame edge. Heal ~H~ dabs, thirty
+   seconds. Advice: always do this sweep *before* big work — composites make
+   you forget dust until it's flattened in forever.
+2. *The exit sign.* Free Select (~F~) loosely around glow included,
+   ~Select → Grow~ 6 px, ~Filters → Enhance → Heal Selection~, sampling
+   radius 50, fill order random (wall texture is amorphous). Result: 90%
+   convincing. Advice: judge synthesis at 100% AND at arm's length — each
+   catches artefacts the other forgives. Residual ghosting: second smaller
+   pass, then two Heal (~H~) dabs sampling from clean wall.
+3. *The window.* Decision point, stated honestly: replacing this window's
+   view means sourcing a matching exposure — more work than value for an
+   album shot. What I would do instead: Curves adjustment-layer-recipe group
+   (§9) masked to the window via Select-by-Color + feathered quick-mask
+   touch-up, pulling highlights −0.4 and warming +200K equivalent. The
+   "improvement" is tonal, not synthetic — five minutes, invisible seams by
+   construction. Advice: prefer edits that can't seam to edits that must not.
+4. *Local finish*: 50%-grey Overlay layer (§12), white strokes at 5% opacity
+   lifting her face half a stop relative to the room; black at 4% calming the
+   tablecloth's hot fold. Arm's-length checks every few strokes.
+5. *Output sharpening last*: duplicate flattened copy, High Pass radius 1.5,
+   Linear Light, masked to eyes/jewellery only. Advice: on already-raw-
+   sharpened 16-bit files, less is almost always more — sharpen decisions,
+   not surfaces.
+6. *Export discipline*: ~Ctrl+S~ the .xcf first (the layered master lives in
+   the project folder beside the TIFF), then ~Ctrl+Shift+E~ JPEG q92 sRGB
+   2048px for the album, full-size TIFF back to darktable's folder where its
+   guide's workflow imports it beside the original raw as the delivered
+   variant.
+
+Total time: eleven minutes. Every layer named by intent, nothing flattened,
+master archived — future-you inherits an editable decision tree, not a
+flattened apology.
+
+-----
+
+-----
+
+* Appendix F. Every preference and option, explained
+
+The reference layer under §4: the full preferences tree, then every tool's
+options bar — one line each.
+
+** Preferences → System Resources
+
+- *minimal number of undo levels* — guaranteed undo depth per image (raise from 5).
+- *maximum undo memory* — RAM ceiling for history stacks; raise on 48 GB machines.
+- *tile cache size* — working memory for image data (§4's 8–16 GB).
+- *maximum new image size* — guard rail against accidental giant documents.
+- *number of threads* — CPU parallelism; max it.
+
+** Preferences → Color Management
+
+- *mode of operation* — none / display-managed / soft-proofing; leave managed.
+- *RGB workspace profile* — default document space (sRGB is right).
+- *monitor profile* — system-provided vs manual ICC pick (§4's honesty switch).
+- *display rendering intent* — perceptual default; relative colorimetric for punchier proofing.
+- *soft-proofing profile + intent + black point compensation* — printer-simulation trio for §16.
+
+** Preferences → Image Import & Export
+
+- *default export quality/format memory* — remembers last JPEG quality etc.
+- *metadata policies (EXIF/XMP/IPTC)* — which metadata rides along on export.
+- *32-bit float import/export where offered* — headroom preservation (§4).
+
+** Preferences → Tool Options / Default Image / Grid
+
+- *default interpolation* — transform resampling quality; NoneHalo/LoHalo best for photos, Cubic safe general.
+- *marching ants speed* — selection-dash animation rate.
+- *default new-image template/size* — what ~Ctrl+N~ opens.
+- *default grid spacing/colour* — canvas alignment grid cosmetics.
+
+** Preferences → Interface, Theme, Window Management
+
+- *theme / icon theme* — skin choices; dark themes flatter photo work.
+- *keyboard shortcut behaviour (save on exit)* — whether customised keys persist automatically.
+- *window hints/docking behaviour* — panel snapping style.
+- *use single-window mode by default* — §4's tidiness, settable as default.
+
+** Preferences → Display / Input Devices / Folders
+
+- *transparency type (checkerboard size/colours)* — how transparency renders on screen.
+- *display resolution (calibrate)* — DPI truthfulness for print-size views.
+- *extended input devices* — tablet configuration home.
+- *mouse-wheel controllers* — remappable wheel behaviours (zoom, opacity…).
+- *folders: plug-ins/scripts/brushes/patterns/gradients/palettes/fonts* — search paths §15 installs into.
+
+** Tool options bars, line per option
+
+- *Move (~V~): pick a layer/path toggle · move layer/selection/path* — what gets dragged when you drag.
+- *Rectangle/Ellipse (~R~/~E~): mode replace-add-subtract-intersect · feather edges+radius · antialiasing · rounded corners · expand from centre · fixed ratio/size · numeric position/size* — selection geometry discipline in one bar.
+- *Free Select (~F~): polygonal toggle · feather · antialiasing* — lasso refinement.
+- *Fuzzy Select (~U~): threshold · select-by channel · sample merged · diagonal neighbours · antialiasing/feather* — magic-wand sensitivity plumbing.
+- *Select by Color (~Shift+O~): same family minus contiguity* — image-wide colour grabbing.
+- *Scissors (~I~): interactive boundary display · feather* — edge-snapping outline controls.
+- *Paintbrush/Pencil (~P~/~N~): opacity · paint mode · brush picker · size · aspect ratio · angle · spacing · hardness · force · dynamics · incremental · jitter · smoothing* — Appendix A's engine, exhaustively.
+- *Eraser (~E~): anti-erase to background vs transparency · hardness family* — what erasing reveals.
+- *Airbrush (~A~): rate · flow* — continuous deposition tuning.
+- *Clone (~C~)/Heal (~H~): alignment none-aligned-fixed · source · sample merged · offset fields* — donor mechanics (§12).
+- *Blur/Sharpen: rate · convolve type toggle* — local focus effects.
+- *Smudge: rate · no-erasing option* — pixel smearing strength.
+- *Dodge/Burn (~Shift+B~): exposure · type shadows-midtones-highlights · mode dodge-burn* — zone-targeted lightening/darkening (grey-layer method preferred, §12).
+- *Gradient (~G~): FG-BG/FG-transparent etc. · shape linear-radial-conical-spiral-starburst · repeat policy · dithering · adaptive supersampling · instantaneous preview* — Appendix A's gradient machinery.
+- *Bucket Fill (~Shift+B~): fill similar-colours vs fill-selection · threshold · sample merged · fill transparent areas · supersampling* — region filling semantics.
+- *Text (~T~): font/style/size · antialiasing · hinting · justification · colour · box dynamic-vs-fixed* — live-text controls (§14).
+- *Paths (~B~): design vs edit mode · polygonal · create-selection/stroke/fill buttons* — Appendix B's precision instrument.
+- *Crop (~Shift+C~): current-layer-only · allow growing · expand from centre · fixed options · size fields* — framing mechanics.
+- *Unified Transform (~M~)/Rotate/Scale/Shear/Perspective: interpolation dropdown · clipping policy · show preview · guides options* — geometry suite defaults.
+- *Warp Transform (~W~): behaviour buttons (move-grow-shrink-swirl-erase-smooth) · size · strength · averaging · adaptive spacing* — §12's warp arsenal.
+- *Zoom (~Z~): direction · resize-window toggle* — navigation only.
+
+-----
+
+* Setup checklist
+
+- [ ] Install GIMP 3.2, 64-bit, from gimp.org
+- [ ] Preferences: tile cache 8–16 GB, threads maxed, monitor profile = system
+- [ ] Single-window mode confirmed
+- [ ] Install *G'MIC-Qt* (EXE installer)
+- [ ] Install *Resynthesizer 3* — resynthesizer3 branch specifically
+- [ ] Memorise ~Ctrl+Shift+E~ (Export As = photograph leaves here)
+- [ ] Write the pass-through-group adjustment-layer recipe somewhere visible
+      (section 9)
+- [ ] Verify a test TIFF arrives 16-bit (~Image → Precision~)
+- [ ] Return to your raw editor, which is where you actually live
+
+-----
+
+/Companions in this folder: ~/DARKTABLE-README.org~ — where every photo should
+start (raw development, retouching, masking); its §16 explains exporting the
+16-bit TIFF this guide's workflows assume. ~/LIGHTROOM-GUIDE.org~ and
+~/PHOTOSHOP-GUIDE.org~ cover the Adobe-shaped versions of the same division of
+labour. ~/D7200-GUIDE.org~ handles everything before the shutter pressed./

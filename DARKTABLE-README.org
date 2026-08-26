@@ -1,0 +1,1634 @@
+#+TITLE: darktable: A Complete Tutorial
+#+SUBTITLE: From empty install to finished photograph, on Windows, shooting a Nikon D7200.
+#+AUTHOR: Shaul
+#+DATE: 2026-08-24
+#+STARTUP: content
+#+OPTIONS: toc:3 num:nil
+
+Written 24 August 2026. Covers darktable 5.6 (June 2026), including its first
+AI features. Every setting name and menu path below was checked against the 5.6
+release notes and the official manual.
+
+This document is meant to be self-contained: everything you need to go from
+"just installed it" to "editing comfortably, and knowing why" lives here. You
+should not need another guide. Where another document helps, it is named, but
+nothing depends on it.
+
+-----
+
+* Start here
+
+*What darktable is.* A free, open-source raw photo editor. It takes the raw
+file off your camera and turns it into a finished photograph. It does the job
+that the Develop module of Adobe Lightroom Classic does — and several things
+that program cannot do — for zero money, with your files staying on your own
+disk.
+
+*The single most important property.* It is *non-destructive*. Your raw file is
+never modified. An edit in darktable is a list of instructions — "exposure
++0.7, shadows lifted, these spots healed" — stored beside the photo, not baked
+into it. You can reopen a photograph five years later, disagree with every
+decision you made, and change any of them. Internalise this, because half the
+program's design follows from it.
+
+*The workflow in one breath.* Import photos into the library (lighttable) →
+cull them down to the keepers → develop each keeper in the darkroom → export
+finished JPEGs/TIFFs. Four stages. Everything in this guide hangs off them.
+
+*The one honest warning before you start.* darktable does everything a raw
+editor should do and several things most cannot. But almost nothing is called
+what you would guess. Contrast lives inside ~color balance rgb~. Presets are
+called styles. Clarity is called ~local contrast~. This is the whole learning
+curve, and it is vocabulary rather than difficulty. Section 8 is the
+dictionary; read it once and the fog lifts.
+
+*Time budget.* Install plus settings: twenty minutes. Fluent with eight
+sliders: two weeks if you shoot regularly. Reading this document end to end:
+one evening, and it replaces most of that two weeks.
+
+*How to read this.* First time through: sections 1–12 in order, doing each step
+at your machine as you reach it. After that it is a reference — the contents
+links jump straight to any task.
+
+*Who this assumes you are.* A working photographer — exposure, colour, raw
+files and histograms need no explanation here. What is explained from zero is
+the program itself: every concept, term, menu path and click sequence, however
+basic. If you have never opened darktable before, nothing below assumes that
+you have.
+
+-----
+
+* Contents
+
+1. [[*1. What a raw file actually is][What a raw file actually is]]
+2. [[*2. Why darktable and not something else][Why darktable and not something else]]
+3. [[*3. Install][Install]]
+4. [[*4. Settings that matter][Settings that matter]]
+5. [[*5. A tour of the views][A tour of the views]]
+6. [[*6. Importing and the lighttable][Importing and the lighttable]]
+7. [[*7. Culling: choosing the keepers][Culling: choosing the keepers]]
+8. [[*8. What everything is called][What everything is called]]
+9. [[*9. The Quick Access Panel][The Quick Access Panel]]
+10. [[*10. How the darkroom thinks][How the darkroom thinks]]
+11. [[*11. The modules that matter, one by one][The modules that matter, one by one]]
+12. [[*12. Masking: the complete guide][Masking: the complete guide]]
+13. [[*13. Automatic everything: presets that apply themselves][Automatic everything: presets that apply themselves]]
+14. [[*14. Styles: presets for whole edits][Styles: presets for whole edits]]
+15. [[*15. Neural restore: AI denoise and upscaling][Neural restore: AI denoise and upscaling]]
+16. [[*16. Export: making the actual picture][Export: making the actual picture]]
+17. [[*17. One photograph, end to end][One photograph, end to end]]
+18. [[*18. Notes for the Nikon D7200][Notes for the Nikon D7200]]
+19. [[*19. Shortcuts][Shortcuts]]
+20. [[*20. Housekeeping: backups, databases, upgrades][Housekeeping: backups, databases, upgrades]]
+21. [[*21. What will annoy you][What will annoy you]]
+22. [[*22. If you are arriving from Lightroom][If you are arriving from Lightroom]]
+23. [[*23. Where to learn more][Where to learn more]]
+24. [[*Appendix A. Beyond sigmoid: filmic rgb and AgX][Appendix A. Beyond sigmoid: filmic rgb and AgX]]
+25. [[*Appendix B. color calibration, properly][Appendix B. color calibration, properly]]
+26. [[*Appendix C. Detail modules worth knowing][Appendix C. Detail modules worth knowing]]
+27. [[*Appendix D. Export variables reference][Appendix D. Export variables reference]]
+28. [[*Appendix E. When things go wrong][Appendix E. When things go wrong]]
+29. [[*Appendix F. Every setting, explained][Appendix F. Every setting, explained]]
+30. [[*Setup checklist][Setup checklist]]
+
+-----
+
+* 1. What a raw file actually is
+
+You do not strictly need this section to operate the software. You need it to
+understand why the software is shaped the way it is, which is what stops the
+vocabulary problem from feeling arbitrary. Ten minutes.
+
+** The sensor records three incomplete pictures
+
+A digital sensor is a grid of photosites. Each photosite measures one thing
+only: how many photons hit it during the exposure. It has no idea what colour
+anything is. Colour is faked with a mosaic: a filter sits over the sensor so
+that each photosite sees only red, green, or blue light — roughly one blue,
+one red, and two green sites per cluster, because human vision leans on green.
+This arrangement is called a *Bayer pattern*, and your D7200 uses one.
+
+So the raw file off the card is a single-channel mosaic of brightness numbers
+plus metadata (camera model, lens, ISO, shutter, aperture, whitebalance guess).
+It is not yet an image. It is the ingredients of one.
+
+** Demosaicing
+
+*Demosaicing* is the computation that invents full colour information at every
+pixel by blending each site's reading with its neighbours' readings. Different
+algorithms trade fine detail against artifacts:
+
+- *RCB* (*ratio-corrected bilinear*-family; darktable's default is RCD) — fast,
+  excellent detail, occasionally fabricates coloured fringes on repeating
+  patterns.
+- *VNG4* — older, softer, far more resistant to those fringes. This becomes
+  relevant for moiré on the D7200; see section 18.
+- Others exist (AMaZE, markesteijn for X-Trans); irrelevant for your Bayer
+  camera beyond these two.
+
+You change this in the ~demosaic~ module. Ninety-five percent of frames: never
+touch it.
+
+** Bit depth, and why your raw looks flat when you open it
+
+Each photosite number is stored with 12-bit precision on the D7200: 4,096
+levels of brightness per channel, concentrated on the shadow side (sensors
+are linear; half of those levels describe the darkest stop alone). A JPEG has
+8 bits: 256 levels, distributed the way a monitor expects them.
+
+When you open a raw file, darktable shows you a *neutral interpretation*: flat
+contrast, muted colour. That is correct behaviour — nobody has yet decided how
+to spend those 4,096 levels. Your job in the darkroom is largely to spend
+them: place the tones, choose the contrast curve, decide saturation. The
+flatness is headroom, not a defect. (Why raw files look flat before you touch
+them is covered from the capture side in ~D7200-GUIDE.org~.)
+
+** Non-destructive editing, precisely
+
+When you drag the exposure slider, darktable does not alter one byte of the
+raw file. It writes a parameter — exposure = +0.70 — into an *edit history*
+stored in two places: darktable's central database, and (if enabled, and it
+should be) a small text file next to the photo called an *XMP sidecar*, named
+like your raw but with an ~.xmp~ extension.
+
+Consequences worth having in your bones:
+
+- The original negative survives every edit forever. There is no such thing as
+  ruining a photo beyond recovery — reset the history and it is untouched.
+- Sidecar files make edits portable and backup-able. Back up the raw files
+  together with their sidecars and your entire body of work — images and all
+  decisions — survives any disaster, reinstall, or database loss.
+- Two programs can disagree about sidecars. If you ever run Lightroom over the
+  same folder, see section 22 before letting them near each other.
+
+** Scene-referred versus display-referred
+
+Two philosophies for how an editor should process your photo:
+
+- *Display-referred* (old way, most phone apps): assume the image starts out
+  looking right on a screen, then tweak from there. Simple, but it caps how
+  far highlights and shadows can be pushed before falling apart.
+- *Scene-referred* (darktable's native philosophy): treat the image as
+  measurements of light in the scene, do all corrections in that space, and
+  only at the very end compress the scene's enormous brightness range into
+  what a screen can show. That final compression is done by a *display
+  transform* module — for you, ~sigmoid~.
+
+You chose scene-referred in settings (next-but-one section) and will mostly
+never think about it again. What it buys you: highlight recovery and shadow
+lifting that behave like film, without the grey murk old HDR tools produced.
+
+** Colour management in three sentences
+
+Your camera tags files with a colour space; sRGB is the safe universal one.
+Your monitor has its own profile, which Windows stores centrally. darktable
+uses both to translate faithfully between them. The only thing you must do is
+make sure darktable reads the system monitor profile (section 4) so the same
+file shows the same colours in every program.
+
+-----
+
+* 2. Why darktable and not something else
+
+Four free raw editors are worth taking seriously. Here is why the other three
+lost, and when you should reconsider.
+
+** RawTherapee 5.13
+
+The best demosaicing and detail extraction of anything free, arguably of
+anything at any price. But its local editing never matured into a real masking
+system — "selective editing" exists, but it is limited compared to what
+darktable or ART offer. If your editing is mostly global adjustments and you
+chase maximum micro-detail, RawTherapee is defensible. For mask-driven work,
+disqualified.
+
+** Ansel
+
+A fork of darktable by Aurélien Pierre, who wrote several of darktable's best
+modules. His critique — darktable is over-engineered, drowning in options — is
+fair, and he stripped tens of thousands of lines to prove it. But there has
+been *no stable release since December 2023*; it forks the darktable 4.0
+codebase; and edit histories diverge from mainline darktable at 4.2+. Frozen
+at 4.0 means none of the recent years' work: no neural denoise, no AI object
+mask, no sigmoid refinements. A faster, leaner darktable from four years ago is
+still four years ago.
+
+** ART
+
+RawTherapee's pragmatic cousin: cleaner interface, genuinely good masks. Its
+AI denoising and masking are bolted on as shell scripts, each needing its own
+Python environment — on Windows that means MSys2 or WSL2. On paper strong, in
+practice a science project rather than a workflow.
+
+** The case for darktable, compressed
+
+The only free raw editor with a complete masking system *and* local AI, on a
+real release schedule, with a real development team, whose edits survive
+version upgrades.
+
+** When the honest answer is "pay Adobe"
+
+Three things darktable will not do, stated plainly so you never waste an
+evening hunting for them:
+
+1. *Depth-aware background blur.* Its lens blur is flat — see section 12.
+2. *Generative anything.* No sky replacement, no object insertion. This is
+   deliberate project policy ("AI may correct technical defects, but may not
+   change what was in front of the camera"), not a missing feature.
+3. *An ecosystem* — phone sync, cloud, social plumbing. Files stay local and
+   plain.
+
+If any of those become load-bearing for you, that is the moment to look at
+Adobe; ~LIGHTROOM-GUIDE.org~ in this folder covers that path thoroughly.
+
+-----
+
+* 3. Install
+
+*Time: 5 minutes.*
+
+1. Download darktable 5.6 for Windows from https://www.darktable.org/install/
+2. Run the installer. Nothing to decide inside it.
+3. Launch it once, click around, then quit. First launch creates your
+   configuration folder and database (where they live, and how to back them
+   up: section 20).
+
+*Updating between releases.* darktable edits are forward-compatible in
+practice; still, before a major upgrade (5.x → 6.x someday), let the program
+write all sidecars, copy the database file, then upgrade. Two minutes of
+paranoia, years of calm.
+
+** Optional but useful: Nikon NX Studio
+
+Free from Nikon's site. Do not edit in it — its editing tools are crude. Use
+it as a *reference renderer*: it is the only software that reproduces Nikon's
+Picture Controls exactly as the camera intended them. When an edit has drifted
+somewhere strange and you cannot tell which way is up, open the same raw in NX
+Studio, see what Nikon thinks the frame should look like, and re-anchor
+yourself.
+
+** OpenCL, or: why darktable feels slow until you flip one switch
+
+*OpenCL* is darktable using your GPU for image processing instead of the CPU.
+On a 24-megapixel body this is the difference between snappy and wading
+through mud. It is off by default on Windows.
+
+Enable it in preferences (section 4), then verify which GPU it actually grabbed
+— machines with two GPUs habitually get handed the wrong one, and nobody tells
+you. This laptop carries an Intel Iris Xe (the CPU's built-in graphics) and an
+NVIDIA T550 (4 GB). You want the T550 doing the work; the release notes'
+documented advice for low-memory GPUs like this one shapes several settings
+below.
+
+If darktable ever crashes on opening an image after enabling OpenCL, the fix is
+to turn it back off — a few drivers misbehave. The program is fully usable
+CPU-only; merely slower.
+
+-----
+
+* 4. Settings that matter
+
+*Time: 10 minutes.* Open preferences — gear icon, top right of the lighttable,
+or ~Preferences~ in the application menu. Every pane exists; these matter.
+
+** Processing pane
+
+Three decisions, two of which are confirmations:
+
+- *auto-apply pixel workflow defaults:* = scene-referred (sigmoid). This is
+  already the default in 5.x; confirm it. Sigmoid compresses the scene into
+  display range with minimal fuss. The alternatives — filmic rgb and AgX —
+  offer more controls for people who want to engineer their own highlight roll;
+  sigmoid gives you 90% of the result with none of the fighting. You can move
+  up later, or never.
+- *auto-apply chromatic adaptation defaults:* = modern. Also the default;
+  confirm. ("Chromatic adaptation" is the white-balance machinery; modern uses
+  a more accurate method than legacy.)
+- *pixel interpolator:* = bicubic. Safe choice for zooming/rotating previews.
+
+** Performance pane
+
+- Tick *OpenCL support*. Then check the log line or the OpenCL identification
+  sub-pane: confirm the device listed is the *T550*, not Intel graphics. If
+  both appear, force the NVIDIA one via the scheduling profile drop-down.
+- Under *darktable resources*, raise memory limits to generous. With 48 GB of
+  RAM there is no reason to be timid; the defaults assume machines from a
+  poorer age.
+
+** AI pane
+
+darktable 5.6 added local AI: interactive masking models and neural denoise/
+upscale. Fresh installs ship with AI switched off. Set-up, four steps:
+
+1. Tick *enable AI features*. Takes effect immediately, no restart. When
+   disabled, no ONNX runtime loads and nothing AI-related happens at all.
+2. Click *download/update default*. One click fetches the recommended model
+   set (~600 MB total; the individual files are listed with sizes and provenance
+   in the panel).
+3. *No GPU setup needed on Windows.* DirectML support comes bundled and runs
+   on any DirectX 12 GPU, including the T550. Ignore the CUDA install script
+   unless DirectML proves too slow — CUDA needs a separate ONNX Runtime
+   download and buys very little here. If a model ever exceeds what the GPU
+   can hold, darktable automatically falls back to CPU rather than failing.
+4. Set the object-mask model to *SAM 2.1 tiny*, not base-plus. Tiny is the
+   documented recommendation for low-memory systems and this one has 4 GB.
+   If tiny ever fails to cleanly separate a subject, try *small* next, and
+   only then base-plus. A third family, SegNext, exists as an alternative when
+   SAM behaves badly on some subject; ignore until needed.
+
+All inference runs locally. In the project's own words: *"Nothing leaves your
+machine. No cloud inference, no telemetry."*
+
+** Storage / XMP sidecars
+
+Search "xmp" in the preferences search box. Set sidecar writing so every edit
+is written to disk beside the photo, not just held in the database. Sidecars
+are your insurance policy (section 20) and your passport if you ever move to
+another library tool. While you are there, note the metadata options for
+embedding copyright/contact info into exports — worth filling in once.
+
+** Interface odds worth five minutes
+
+- *Font size* in darkroom/global: bump up if module labels feel cramped.
+- Everything under *shortcuts* is remappable; section 19 covers the ones worth
+  knowing first.
+
+-----
+
+* 5. A tour of the views
+
+darktable's top-right (or top-centre) view switcher shows five faces of the
+same program. Two you will live in; three you should know exist.
+
+** Lighttable
+
+The library. Photo grid, folders/collections on the left, tools along the top
+and right. Importing, culling, rating, comparing, batch operations, export —
+all here. Sections 6, 7 and 16 cover it.
+
+** Darkroom
+
+One photo, full attention, the editing modules. Sections 9–12.
+
+** Map
+
+Photos with GPS coordinates land on a map (the D7200 has no internal GPS, but
+phone-shot JPEGs and GPS logs do). Drag photos onto the map to tag locations by
+hand. Niche; pleasant when you want it.
+
+** Print
+
+A print-layout module feeding a system printer directly: images placed on
+paper definitions with margins, borders and per-image text, colour-managed via
+the same profiles as export. Workflow: select image(s) → print view → choose
+printer/paper in the left panel's printer settings → set media/profile to match
+→ layout panel sets size/margins/alignment. For controlled home printing
+without leaving the program; for lab submissions, export TIFFs instead
+(section 16). When you print seriously at home, revisit; the module is
+straightforward once the ICC profile of your paper exists.
+
+** Slideshow and tethering
+
+Slideshow needs no explanation.
+
+*Tethering* is studio capture: camera connected over USB, shots appearing on
+the monitor within seconds of firing — client-visible, focus-checkable at 100%,
+card-free. The D7200 tethers fine (Nikon's own hotends aside, darktable speaks
+PTP natively).
+
+A session, concretely:
+
+1. Plug USB into camera and machine; power the camera from mains if the shoot
+   is long (tethering drains batteries faster than shooting does).
+2. Camera dial to P/A/S/M as usual; *set the camera to its normal card-writing*
+   (tethering mirrors files, it does not replace storage).
+3. In darktable switch to the *tethering* view; it detects the body and shows
+   a live session workspace.
+4. Create a *session*: a named working folder (date+job pattern) where captured
+   frames land and auto-import into a filmstrip as they arrive.
+5. Shoot. Each frame appears within a second or two; click any to inspect at
+   100% for focus, or apply a quick style to preview the look live.
+6. Afterwards the session folder imports like any other job (section 6).
+
+Where this matters: product shots, headshots, anything with a client at your
+shoulder saying "let me see". Where it doesn't: everything else — the card
+reader workflow loses nothing except the live monitor.
+
+-----
+
+* 6. Importing and the lighttable
+
+** Getting files off the card
+
+Two routes:
+
+- *copy & import* — darktable copies from the card into your photo folder
+  structure and registers them in the library. Use this with the card reader.
+- *add to library* — registers files already sitting somewhere on disk. Use
+  this when you have copied files yourself (or are adopting an old archive).
+
+Either way the photos are not moved *into* darktable — there is no such place.
+The library is a database pointing at plain files in plain folders. Delete
+darktable tomorrow and your folder tree survives intact.
+
+** A folder structure that scales
+
+Keep it boring and physical: ~Pictures\2026\2026-08-24 <event>~ style — year
+folder, date-and-name subfolders. Boring survives contact with decades. Within
+darktable, use *collections* (next subsection) for the views you actually want;
+never reorganise folders by hand once imported, or the database loses track.
+
+** Collections: the views you actually want
+
+The left panel's *collect* module chooses what the grid shows: by folder, by
+date, by tag, by rating, by colour label... Stack multiple rules to narrow.
+This is how a flat folder of 900 frames becomes "four stars, tagged wedding".
+Save frequent combinations with the ≡ menu as *collections presets*.
+
+** Tags
+
+The *tagging* module (left panel): hierarchical tags like ~people|family|dana~
+create themselves into trees. Apply to selections of many photos at once. Tags
+embed into exported files' metadata and round-trip through other programs.
+
+** What happens at import
+
+Thumbnails build fast; larger previews build in background jobs (progress
+bottom-left). Culling on half-built previews misleads — give a fresh import a
+minute. Each photo gets an XMP sidecar as soon as edits exist (per section 4).
+
+-----
+
+* 7. Culling: choosing the keepers
+
+Raw shooting generates chaff; culling is deciding what deserves development
+time. darktable's culling is keyboard-first and fast once learned.
+
+** The rating pass
+
+In the lighttable grid:
+
+- Arrow keys move between photos; number keys ~0–5~ assign stars; ~R~ flags
+  reject.
+- ~F1–F5~ assign colour labels (red/yellow/green/blue/purple). Stars alone are
+  usually enough; labels earn their keep marking *states* — green = edited,
+  red = needs retouching, and so on. Pick meanings once, keep them forever.
+- The top tray filters the grid by rating/colour/text. Cull with "show all",
+  browse later with "≥ 3 stars".
+
+A workable scheme, honed by millions of photographers: first pass, reject the
+broken frames (blinked, blurred, duplicated). Second pass, three stars to the
+worth-editing. Third pass, four or five stars to the best of those. Never
+five-star generously; the stars are only useful if they stay scarce.
+
+** Zoomable view and culling mode
+
+- *Zoomable view* (~z~ or the second layout button): a canvas of thumbnails at
+  any size — good for judging similar frames side by side at magnification.
+- *Culling mode* (~x~ fixed layout, ~Ctrl+X~ dynamic): shows two or more
+  selected photos large, synchronised pan and zoom. Scroll-wheel zooms both in
+  lockstep — the honest test of "which of these two is sharper". Dynamic mode
+  advances the pair through the filmstrip as you arrow along; this is the
+  fastest serious comparison tool in the program.
+
+** The exit rule
+
+When culling feels finished, walk away and re-cull tomorrow before deleting
+anything permanent. Rejection is cheap to undo today; the trash bin is less
+sentimental. (darktable's reject flag hides photos; actual deletion happens
+only if you run the "delete originals" operation deliberately.)
+
+-----
+
+* 8. What everything is called
+
+darktable splits the adjustments most editors bundle into one "basic" panel
+into separate, single-purpose *modules*. More powerful — each module has room
+for real controls and masks — and, initially, bewildering: the thing you want
+exists, under a name you would not have guessed.
+
+Here is the dictionary. Left side: the intent, phrased the way you'd say it.
+Right side: where it actually lives. If you know Lightroom's Basic panel
+names, the mapping below doubles as a translation table.
+
+- Brighten or darken overall → ~exposure~
+- Lift shadows, pull highlights → ~tone equalizer~
+- Add overall contrast → ~color balance rgb~, contrast slider
+- Boost colour (vibrance/saturation) → ~color balance rgb~, vibrance/chroma
+- Perceived midtone brightness without touching exposure → *brilliance*,
+  also inside ~color balance rgb~
+- Punch up midtone detail (what others call clarity) → ~local contrast~
+- Bring out fine texture → ~diffuse or sharpen~
+- Sharpen (edge acutance) → ~sharpen~, normally left off — see section 18
+- Cut through atmospheric haze → ~haze removal~
+- Set the white point and black point → mostly ~sigmoid~ plus ~exposure~
+  working together
+- White balance / remove colour casts → ~white balance~ (simple) or
+  ~color calibration~ (powerful, modern)
+- Remove dust spots, blemishes, wires, small litter → ~retouch~
+- Reduce noise → ~denoise (profiled)~; hard cases → ~neural restore~
+- Select the subject automatically → *AI object mask*, available wherever a
+  mask can be drawn (section 12)
+- Blur a background → ~blurs~, lens-blur mode
+- Fix lens distortion, vignetting, colour fringes → ~lens correction~
+- Crop, straighten → ~crop and rotate~; fix leaning buildings →
+  ~rotate and perspective~
+- Save and reuse a whole look → *styles* (what other programs call presets);
+  per-module starting points are called *presets*
+- Simulate classic film stocks → ~film emulation~ (optional extra package)
+- Recover detail from scanned negatives → ~negadoctor~ (only if you scan film)
+
+One module deserves early acquaintance because it has no equivalent anywhere
+else: *brilliance*, inside ~color balance rgb~. It adjusts perceived
+brightness of tones without the exposure side-effects — brightening shadows
+with brilliance keeps their colour and contrast in a way the exposure slider
+cannot. You will reach for it constantly.
+
+There is deliberately no single "everything" panel by default. The next
+section builds you one.
+
+-----
+
+* 9. The Quick Access Panel
+
+Most raw editors hand you one column containing exposure, contrast, shadows,
+highlights, saturation, vibrance, texture, clarity. darktable scatters those
+across six modules, because each gets deeper controls that way. Fine — except
+for the first month, when you just want the damn sliders.
+
+The *Quick Access Panel* (QAP) is the answer: a strip at the top of the
+right-hand darkroom column that pulls chosen sliders out of many modules into
+one place. A fresh install populates it sensibly for your workflow setting —
+exposure, contrast via color balance, brilliance, vibrance, chroma, local
+contrast among them. It is the closest thing to muscle memory from any other
+editor's Basic panel.
+
+** Customising it
+
+Any of these work:
+
+- Right-click the QAP's icon in the module strip.
+- Right-click any module's name elsewhere and choose to add its sliders.
+- Open *manage module layouts* (search it in the module search box), tick
+  *show quick access panel*, then add with the *+* beneath a group name and
+  remove with the *x* beside any slider.
+
+** The rule that makes this work
+
+#+begin_quote
+*For your first two weeks, use only the Quick Access Panel and the crop tool.*
+
+Do not go browsing the module list. That list is where enthusiasm goes to die:
+people open every module on day one, conclude the software is hostile, and
+quit. It is not hostile; it simply refuses to hide anything from you. Get
+fluent in eight sliders. Then add modules one at a time, each only when a real
+photograph demands it.
+#+end_quote
+
+-----
+
+* 10. How the darkroom thinks
+
+Open a photo in the darkroom and the right column lists *modules*. Understand
+five behaviours and the darkroom stops being mysterious.
+
+** The pipeline has a fixed order
+
+Modules are not applied top-to-bottom as displayed; they execute along a fixed
+internal chain (the *pixelpipe*): geometry first, then exposure/tonality, then
+colour, then detail work like denoise and sharpening, then the display
+transform. The display order groups related modules, not execution order. You
+cannot break this order, which is liberating — there is no wrong place to put
+exposure, because exposure happens where exposure happens. Multiple instances
+of one module run where you slot them (next point).
+
+** Enable, disable, reset
+
+Every module header carries three controls: the power icon (on/off), the
+*reset* arrow (back to module defaults), and the hamburger ≡ menu (presets,
+multiple instances). A disabled module contributes nothing — toggling modules
+on and off to see what each contributes is half of learning to edit.
+
+** Presets and multiple instances
+
+The ≡ menu holds *presets*: named starting points for that one module. Store
+your own any time (section 13 turns them automatic).
+
+The same menu offers *new instance* — a second copy of the module in the same
+edit. This sounds exotic and is actually the beating heart of local editing:
+one exposure module globally, a second exposure module masked to brighten only
+the subject. Modules × masks = every local adjustment you have ever wanted.
+
+** History, snapshots, duplication
+
+- Left panel, *history*: every action as a stack. Click any earlier line to
+  time-travel; nothing is lost by exploring.
+- *compress history* button squashes the stack after long sessions.
+- ≡ on the history panel: *create style from history* — instant style from the
+  current edit (section 14).
+- *snapshots* module: bookmark the current look, keep editing, click to compare.
+
+** Copying edits between photos
+
+Select a developed photo, then Ctrl-click others (or shift-click a range).
+Top toolbar → *copy history* (or right panel's copy/paste icons): paste all,
+or expand to choose individual modules ("paste parts"). This is how one
+correctly-white-balanced frame becomes fifty. For folder-wide consistency,
+styles plus auto-apply usually beat pasting (sections 13–14).
+
+-----
+
+* 11. The modules that matter, one by one
+
+Twelve modules cover essentially all serious raw editing. Each entry: what it
+does, the controls that matter, starting points, mistakes to avoid. Order here
+is roughly the order your eye should meet them.
+
+** exposure
+
+What it does: sets overall brightness, and defines the black point via its
+black-level slider. The single most-used control in photography.
+
+- Start here on every frame. Push until highlights threaten, pull back.
+- Hold ~O~ over the image (or enable clipping preview) to see blown
+  highlights blink red and crushed blacks blue. Some blinking is fine if it is
+  a specular catchlight or the sun itself; large areas are not.
+- The white/black sliders of other editors live partly here and partly in the
+  display transform (~sigmoid~); between the two, all tonal placement is yours.
+
+Mistake to avoid: using exposure for local brightness problems — that is what
+masked instances or the tone equalizer are for.
+
+** white balance / color calibration
+
+Two modules, one job: making colours neutral-correct.
+
+- ~white balance~: the simple route — temperature and tint sliders, presets
+  (daylight, tungsten...), or click the eyedropper on something that ought to
+  be grey/neutral and let darktable compute.
+- ~color calibration~: the modern CAT-based route. Its *auto* button estimates
+  illuminance; its sliders go beyond temperature into full primaries. Learn the
+  simple module now; graduate when you want creative colour control.
+
+Eyedropper advice: aim at something genuinely neutral — concrete, white paint,
+a grey card. Skin is never neutral; do not ask it to be.
+
+** sigmoid
+
+The display transform: compresses the scene's huge range into screen range.
+You chose scene-referred defaults, so sigmoid sits near the pipe's end doing
+the heavy lifting quietly.
+
+- *contrast*: gentle overall punch. Small moves; ±0.2 is a lot.
+- *skew*: shifts midtones brighter/darker without moving extremes — often the
+  best "levels" control you own.
+- *latitude*: how aggressively highlights and shadows compress. Wider latitude
+  = more retained highlight/shadow detail but flatter look.
+
+At the start: leave it alone entirely except perhaps contrast. It is already
+doing correct work invisibly.
+
+** tone equalizer
+
+The shadows-and-highlights machine, and darktable's quiet superpower. It is a
+tone curve whose bands correspond to exposure zones — five sliders, each
+adjusting one brightness band independently: darkest, shadows, midtones,
+highlights, brightest.
+
+- Lift ~shadows~ +0.5 to +1.5 stops on almost any D7200 file; the sensor holds
+  the detail and this module pulls it out cleanly, far more controllably than
+  any single shadows slider.
+- Pull ~highlights~ down on skies and bright skin without dulling the whole
+  frame.
+- The underlying trick (it builds an internal mask per zone) occasionally
+  produces halos around extreme edges; drop its *masking iteration* quality
+  setting up, or ease off the slider, if you see light seams.
+
+This module is where the D7200's base-ISO dynamic range visibly earns its
+keep. Spend learning time here.
+
+** color balance rgb
+
+The colour and contrast Swiss Army knife. Three areas:
+
+- *Contrast* slider: the main global contrast control in a scene-referred
+  workflow. Prefer it over anything labelled "curves" while learning.
+- *Vibrance / chroma / saturation* group: vibrance boosts muted colours more
+  than loud ones (safe, natural); chroma is uniform boost; saturation is the
+  blunt instrument. Vibrance first, always.
+- *Brilliance*: perceptual midtone brightness — the sleeper hit described in
+  section 8.
+- Four-way colour wheels (global/shadows/midtones/highlights) for grading:
+  push shadows slightly teal and highlights slightly warm and photographs
+  start looking "graded". Subtlety pays; small values only.
+
+** local contrast
+
+Clarity, honestly named. Adds punch to medium-sized detail — faces, foliage,
+brickwork — without touching fine grain or global contrast.
+
+- Default strength is reasonable; overshoot produces crunchy halos.
+- Its *saturation protection* slider keeps colours from going electric.
+- Use after tone equalizer, before sharpening-type work.
+
+** diffuse or sharpen
+
+One engine with two personalities:
+
+- As *sharpener* (first tab): diffuses-inward enhancement of edge acutance.
+  Gentle settings only — the D7200 needs little sharpening (section 18).
+- As *blurrer* (diffuse mode): soft-focus diffusion that mimics large-format
+  lens rendering. Niche, lovely, ignore for now.
+
+When you crave more micro-texture: first tab, low iterations, small radius,
+and judge at 100% zoom.
+
+** denoise (profiled)
+
+The everyday noise reducer, and the anchor of section 13's automation.
+
+- *Auto* mode reads the camera model and ISO embedded in the file and loads
+  the matching measured noise profile — the D7200 is among 300+ cameras with
+  real lab-measured profiles, interpolated between neighbouring ISOs. You are
+  not on generic fallback math.
+- One *strength* slider. Auto-plus-a-nudge handles ISO 1600–6400 invisibly;
+  extreme ISO gets the neural treatment (section 15) layered on top.
+- Because it runs late-ish in the pipe, it cleans noise without smearing the
+  detail work you did upstream.
+
+** retouch
+
+Spot removal, healing, cloning — the surgery kit. Full sub-guide:
+
+1. Choose a shape: circle, ellipse, path, brush.
+2. *Ctrl-click the shape icon to lock the tool.* Without this, darktable
+   returns the mouse after every spot — with it, you click away ten dust spots
+   in ten seconds. Single most useful trick in the module.
+3. Click a blemish. darktable picks a nearby source region automatically and
+   shows it connected by a line; drag the source if it chose badly.
+4. Mode matters: use *heal*, not clone, by default. Heal blends the sampled
+   patch's texture with the destination's colour and lighting — invisible.
+   Clone stamps verbatim, seam included; reserve it for copying real structure
+   (removing a logo, doubling a flower).
+5. ~fill~ mode paints flat colour (rarely useful photographically);
+   ~blur~ mode blurs the patched area flat (useful for licence plates).
+6. The module also contains a wavelet decomposition — frequency separation.
+   That is the honest way to smooth skin while keeping pores: decompose the
+   image into layers of detail scale, blur only the coarsest layer of the
+   skin, leave the fine layers untouched. Overkill for dust; worth knowing it
+   lives here rather than needing GIMP.
+
+** lens correction
+
+Corrects your lens' optical sins automatically:
+
+- Open it, tick *auto-set* — darktable identifies body and lens from EXIF and
+  pulls the correction profile (distortion, vignetting, transversal chromatic
+  aberration) from its database. Your Nikon glass is covered.
+- Manual tabs exist for unlisted lenses; the geometric tab also fixes horizon
+  tilt independent of cropping.
+- Leave corrections subtle-by-default; the auto profile applies designed
+  amounts, which is exactly right.
+
+** crop and rotate
+
+Straightforward, with three notes:
+
+- Aspect-ratio presets live in a drop-down; freehand is default.
+- Composition guides (rule-of-thirds, golden spirals) overlay while dragging.
+- Rotation here is lossless-within-the-pipeline: pixels are re-rendered, the
+  negative untouched. Straighten confidently.
+- Keystoned buildings belong to ~rotate and perspective~ (vertical-lines
+  correction), not this module.
+
+** haze removal
+
+Dehazes atmospheric murk on landscapes. Two sliders, strong effects; easy to
+overdo into poster-looking results. Small doses on genuinely hazy frames only.
+
+** The ones deliberately missing from this tour
+
+~filmic rgb~ and AgX: alternative display transforms — sigmoid's ambitious
+siblings. Not needed. ~negadoctor~: film scans. ~framing~, ~watermark~: better
+handled at export (section 16). ~sharpen~: left off by design on this camera
+(section 18). The remaining two dozen modules: genuine uses, none required.
+Meet each when a photo demands it, not before.
+
+-----
+
+* 12. Masking: the complete guide
+
+Global adjustments get you 80% of a photograph. The last 20% — the part that
+separates competent from striking — is local: this sky darker, that face
+brighter, everything else untouched. Masking is how darktable does local, and
+its masking system is the strongest argument for the program. Every module
+accepts masks; four kinds combine freely.
+
+** The concept in one paragraph
+
+Any module can be limited to act on part of the frame. With the module open,
+click the *mask shape* icon (brush/circle/ellipse symbols beside the module's
+sliders), draw a shape, and the module's effect now applies only inside that
+shape — inverted, feathered, combined however you like. Because modules can be
+instantiated (section 10), "brighten the face" means: new exposure instance,
+mask over the face, raise exposure inside the mask. Nothing else in the frame
+is touched, and the mask remains editable forever.
+
+** Drawn masks
+
+Five tools, all vector-based and revisable:
+
+- *Brush* — paint the region. Flow vs opacity: build density with repeated
+  strokes (flow) rather than one heavy pass.
+- *Circle / Ellipse* — click-placeable radial zones; drag centre and rim.
+- *Path* — click vertices for precise polygons; nodes stay draggable forever.
+- *Gradient* — click start, drag end: linear falloff, perfect for sky
+  treatments. Rotate the gradient line to follow the horizon.
+
+Per-shape controls appear once drawn: *feather* (edge softness — generous on
+anything organic), *opacity* (partial-strength masks), *invert*, and the
+display toggle showing the mask as a red overlay while you edit it (~B~
+toggles display of drawn shapes).
+
+** Parametric masks
+
+The kind other programs barely attempt. Instead of drawing where, you declare
+*what*: mask by luminance range, by colour channel value, by hue. Sliders set
+the centre and tolerance of the targeted band, with smooth falloff.
+
+Examples that teach the idea:
+
+- Shadows-only lift: exposure instance, parametric mask targeting low L
+  values → the lift lands only on true shadow tones.
+- Blue-sky saturation: color balance instance, parametric mask on the blue
+  hue band → vibrance hits sky and nothing else.
+- Highlight protection: any module, parametric mask excluding high L → effect
+  fades out before the brightest tones.
+
+Parametric masks combine with drawn ones (intersection by default): "inside
+this painted area AND within these tones". That intersection is the entire
+skill, and it is learnable in an afternoon.
+
+** Combining masks
+
+Multiple shapes/forms on one module combine with set logic, chosen per form:
+
+- *union* (+): anywhere either covers.
+- *intersection* (∩): only where both agree.
+- *difference* / *exclusive or*: subtract or XOR regions.
+
+Plus a *raster mask* type: flatten-and-reuse a mask built elsewhere — handy
+when several different modules should share one complicated region.
+
+** AI object mask (new in 5.6)
+
+Click-to-select subjects, powered locally by the SAM 2.1 models configured in
+section 4. Wherever a drawn mask could go, choose the AI object shape, then:
+
+1. Click your subject. *The first click takes 1–10 seconds* — the image
+   encoder runs once per image (GPU-accelerated via DirectML when available)
+   and caches. Every subsequent click on that photo is interactive.
+2. The result converts to an ordinary vector path — nodes you can drag,
+   feathering you can adjust — not a locked black box.
+3. *Shift-click* adds negative prompts, carving away anything wrongly grabbed.
+4. *Right-click* commits. Optional refinement passes tighten edges
+   (DenseCRF-based boundary refinement exists for edge-critical work).
+5. Two post-controls matter: *smoothing* reduces node clutter on soft-edged
+   subjects; *refine boundary* runs the extra edge pass. For hair and fur, add
+   5–10 px feathering regardless — a vector path fundamentally cannot
+   represent individual strands, and feathering is the honest fix.
+6. The mask can be exported as PNG raster for external use if you ever need
+   pixel-perfect edges beyond the vectorisation.
+
+Limits, stated plainly: it segments *connected* regions — two separate people
+need two clicks/masks — and it selects objects, not materials ("all the grass"
+is parametric territory).
+
+** Background blur, and its honest limit
+
+Recipe: AI-mask the subject → invert the mask → apply ~blurs~ in *lens blur*
+mode, which simulates a real diaphragm (blade count and curvature configurable)
+for genuinely photographic bokeh.
+
+Now read darktable's own warning and believe it: *"the blurring process does
+not take scene depth and depth-of-field into account, but blurs the whole
+image as a flat object."*
+
+Translation: it is a beautifully-rendered flat cut-out blur. Convincing against
+walls, foliage masses, even soft street scenes at small apertures of blur.
+Unconvincing down receding streets or floors, where real depth-of-field
+progressively increases blur with distance and this cannot. If a specific
+photograph demands true depth-graduated bokeh, the only free tool that does it
+is RapidRAW (~20 MB, separate program, depth-map based). Keep it in the drawer
+for that one job; it is not part of this workflow.
+
+-----
+
+* 13. Automatic everything: presets that apply themselves
+
+*The highest-value trick in this guide.* darktable can auto-apply any module
+preset based on conditions embedded in the file itself: camera model, lens,
+ISO, shutter speed, aperture, focal length. Configure once; stop clicking
+forever. Most editors simply cannot do this.
+
+** The flagship recipe: automatic high-ISO denoise
+
+1. Open a high-ISO D7200 raw in the darkroom.
+2. Enable ~denoise (profiled)~. It reads camera and ISO from metadata and
+   loads the D7200's measured profile for that ISO automatically.
+3. Leave mode on *auto*; nudge strength to taste on this representative frame.
+4. Open the module's ≡ menu → *store new preset*. Name it clearly, e.g.
+   "D7200 high ISO denoise".
+5. In the preset dialog, tick *auto-apply this preset to matching images*, then
+   set the conditions:
+   - model: =NIKON D7200=
+   - ISO: =1600= to =102400=
+6. Save.
+
+From now on, every imported frame at ISO 1600+ opens in the darkroom with
+denoising already switched on and tuned. You never think about it again — and
+low-ISO frames remain untouched, because the condition excludes them.
+
+** Two more worth building immediately after
+
+- *Lens corrections per lens*: same procedure on ~lens correction~ after
+  confirming its auto-profile looks right — scope by lens name. One preset per
+  lens you own.
+- *Your baseline look*: once section 14's style exists, styles can also be
+  applied automatically at import via their own matching rules.
+
+** How auto-apply behaves
+
+Matching happens when an image enters the darkroom (and at import for
+styles). Edits land in the history like manual ones — fully removable. If a
+preset misfires on some frame, just toggle the module off for that photo;
+the rule stays for everything else.
+
+-----
+
+* 14. Styles: presets for whole edits
+
+A *preset* (previous section) stores one module's settings. A *style* stores
+an entire edit — every module, every mask, the whole look — as a reusable unit.
+Styles are what other programs call presets; darktable's naming is backwards
+relative to the world, and that is now your problem only until it isn't.
+
+** Building your first style
+
+Develop one photograph properly — white balance, tone equalizer, color
+balance, local contrast, the works, all global (no spot-specific masks).
+Then: history panel ≡ → *create style from history*, deselect any modules you
+want excluded, name it ("D7200 base v1").
+
+Applying: lighttable, select photos, right panel *styles* module, double-click
+the style. Or mid-edit from the darkroom's styles module.
+
+** What belongs in a baseline style
+
+Camera-and-taste-dependent settings only: white balance strategy (or leave WB
+out entirely — usually wise), gentle tone-equalizer shadow lift, mild
+vibrance, slight local contrast. Keep creative grading (colour wheels, heavy
+contrast) in *separate* styles so "base + optional look" composes cleanly:
+apply base to everything, layer a look onto winners.
+
+** Sharing and importing
+
+Styles export/import as small XML files through the same module's ≡ menus.
+The community shares them freely (discuss.pixls.us is full of them); import
+and they appear in the list. Version-name your own ("_v2") — you will iterate.
+
+-----
+
+* 15. Neural restore: AI denoise and upscaling
+
+Section 6 of the AI story: the models are configured (section 4); here is what
+the machine actually does for you. The ~neural restore~ module lives in the
+lighttable's right sidebar by default (also available darkroom-left).
+
+** The thing to understand before anything else
+
+Unlike every module so far, neural restore is *not part of the pipeline*. It
+runs a neural network over the image and *writes a new file back into the
+library* — grouped beside the original, inheriting its tags and rating,
+original untouched. So the order of operations inverts:
+
+#+begin_quote
+Ordinary denoising: /edit, with denoise as one slider among many./
+Neural denoising: /produce a clean file first, then edit that./
+#+end_quote
+
+Plan sessions around it: extreme-ISO keepers get neural treatment first, then
+normal development of the result.
+
+** The three tabs
+
+- *raw denoise* — works on the sensor mosaic *before demosaicing*: denoise and
+  demosaic fused into one inference pass. For extreme ISO this is the deepest
+  cut available anywhere, free or paid. Output: a DNG (Bayer CFA preserved),
+  ready for normal development.
+- *denoise* — RGB-domain cleanup for noise that survived editing; strong at
+  ISO 6400+. Output: 16-bit TIFF carrying the colour profile. Strength slider
+  blends texture recovery against smoothness (DWT-based texture restoration).
+- *upscale* — 2× or 4× super-resolution as a *last step before delivery*.
+  Default model (RealPLKSR) is faithful — preserves detail without inventing
+  plastic texture. Alternative BSRGAN model suits sources that are already
+  noisy or compressed (it denoises while scaling). 2× is convincing; treat 4×
+  as situational.
+
+** Workflow details
+
+- Click inside the small preview window to pick the region the preview
+  computes; use the built-in before/after split slider to judge honestly.
+- Batch: select multiple images in the lighttable and run once — tiled
+  inference keeps memory sane.
+- Model swapping (preferences → AI): NAFNet as alternate denoiser (tuned for
+  small-sensor noise patterns), plus the BSRGAN/RealPLKSR choice above. Task
+  slots and models are decoupled — switching active model is one click and no
+  module changes.
+- GPU OOM or unsupported operations fall back to CPU automatically rather than
+  erroring; slow-but-done beats failed.
+
+** Which denoiser when
+
+- ISO ≤ 3200: ~denoise (profiled)~, automated per section 13. Done.
+- ISO 6400–12800 ordinary shots: profiled denoise at higher strength.
+- Extreme ISO, or noise visible after everything else: neural raw-denoise
+  first, redevelop, then judge whether profiled denoise is still wanted on top.
+- Deliverable too small/cropped too tight: neural upscale last.
+
+-----
+
+* 16. Export: making the actual picture
+
+Everything so far produced instructions. *Export* renders them into an actual
+image file — JPEG for sharing, TIFF for GIMP hand-off, PNG where needed.
+Module: lighttable, right sidebar (~export selected~); applies to all selected
+images.
+
+** Format decisions
+
+- *JPEG*, quality 90–95: the universal answer for web/mail. sRGB profile
+  (below).
+- *TIFF*, 16-bit: the interchange format — maximum quality, huge files. This
+  is the format for handing a developed frame to GIMP (see
+  ~GIMP-README.org~'s round-trip recipe).
+- *PNG*: screenshots-with-photography, transparency needs, otherwise skip.
+- *WebP/AVIF*: smaller web files; use only where the destination is known to
+  handle them.
+
+** The settings that actually matter
+
+- *quality* (JPEG): 90 invisible, 95 archival-ish, below 85 visibly chewy.
+- *max size*: set long edge in pixels (e.g. 2048 for screens) or leave empty
+  for full resolution. Upscaling belongs to section 15, not here.
+- *colour profile*: *sRGB* for anything screen-bound — non-negotiable, or
+  colours break on other devices. AdobeRGB only for print-house workflows that
+  explicitly ask. *display profile* means "whatever my monitor uses" — wrong
+  choice for delivery, right choice for test exports.
+- *intent*: relative colorimetric is the safe default.
+- *bit depth*: 16-bit for TIFF, 8-bit for web JPEG/PNG.
+- *path/filename*: variables build tidy pipelines, e.g.
+  =~/Pictures/export/$(YEAR)/$(FILE_NAME)-exported.jpg=. A few minutes with
+  the variables list pays off permanently.
+- *metadata*: flags control which EXIF/tags/XMP ride along. Keep copyright.
+- *watermark*: text or SVG overlay with placement/opacity/scale controls —
+  covers simple attribution without opening GIMP.
+
+** Style-on-export
+
+The export module can apply any *style* to exported copies *without altering
+your stored edit* — e.g. keep masters neutral, but export a punchy-look JPEG
+batch alongside. Selecting multiple styles stacks them. This separation of
+"master edit" from "delivery rendering" quietly enables versioned outputs
+(colour, monochrome, social-crop) from one developed file.
+
+** Round-trip note
+
+Exports are new, separate files. They never feed back into darktable's edit
+history. To bring a finished composite home (e.g. from GIMP), import the
+returned file as a new image alongside the original.
+
+-----
+
+* 17. One photograph, end to end
+
+Everything above, compressed into one worked pass with concrete numbers.
+Frame: indoor reception, D7200, 35 mm f/1.8, ISO 3200, tungsten-ish mixed
+light, one person against a window.
+
+1. *Import* (section 6): card reader, copy & import into
+   ~Pictures\2026\2026-08-24 simcha~. Previews build; wait a minute.
+2. *Cull* (section 7): first pass rejects the blinked frames (~R~); second
+   pass three-stars this one among twelve near-duplicates.
+3. *Open in darkroom.* Auto-applied already: lens correction (per-lens
+   preset), denoise profiled at strength 1.2 (high-ISO preset, section 13).
+   Half the work happened before you touched anything.
+4. *White balance:* eyedropper on the white tablecloth → close. Tint nudged
+   +5 toward magenta because the window light was greenish.
+5. *Exposure:* +0.3, watching the ~O~ clipping overlay — window stays blown,
+   acceptable, it is the sun's fault.
+6. *Tone equalizer:* shadows +0.8, highlights −0.7. The face emerges; the sky
+   outside stops screaming.
+7. *color balance rgb:* contrast 0.15, vibrance 0.10, brilliance 0.05 on the
+   face via a second instance masked parametrically to midtones (section 12).
+8. *retouch* (Ctrl-locked circle, heal mode): three sensor spots, one waiter's
+   elbow at frame edge. Ninety seconds total.
+9. *AI object mask* on the subject inside a fresh exposure instance: first
+   click 4 seconds (encoder runs), shift-click to release her shoulder from
+   the mask, right-click commits, feather +6 px. Exposure +0.2 inside the
+   mask. She now separates from the background the way the eye remembered her.
+10. *Crop and rotate:* horizon levelled against the doorframe, 3:2 kept.
+11. *Export twice* (section 16): JPEG q92, sRGB, long edge 2048, filename
+    pattern ~(FILE_NAME)-web~ → family album; TIFF 16-bit sRGB full-size →
+    ~GIMP-README.org~'s workflow for the one thing darktable cannot fix: the
+    exit sign glowing over her head gets removed there, and the finished TIFF
+    imports back beside the raw.
+
+Total hands-on time, once fluent: under five minutes. Every step remains
+revisable forever, including the ones darktable did automatically.
+
+-----
+
+* 18. Notes for the Nikon D7200
+
+Body-specific facts that change how darktable should be used.
+
+** No optical low-pass filter
+
+Nikon shipped this sensor without an anti-aliasing filter: maximum sharpness
+and genuine moiré risk in the same transaction. Consequences:
+
+- *Do not stack sharpening.* Scene-referred defaults ship with ~sharpen~
+  switched off. Leave it off. For extra bite use ~diffuse or sharpen~, gently,
+  and judge at 100%.
+- *If moiré appears* — fabric weaves, brick courses, window screens producing
+  rainbow shimmer — switch ~demosaic~ to *VNG4*. It trades a little fine
+  detail for far fewer artifacts than the default RCD. Change it per-problem-
+  frame, not globally; VNG4's softness is real.
+- In-camera there is nothing to do about this; it is a develop-side property.
+
+** Exceptional base-ISO dynamic range
+
+This sensor holds enormous shadow detail at ISO 100–800. The ~tone equalizer~
+pulls it out with more control than any shadows slider ever gives you. This is
+where darktable visibly earns its keep on your files — underexposed-by-a-stop
+frames are not emergencies, they are starting points. (Shooting side:
+~D7200-GUIDE.org~ explains why raw files arrive looking flat and why that is
+the camera behaving correctly.)
+
+** Above ISO 3200
+
+Where section 13's automatic denoise preset earns *its* keep, and beyond
+roughly ISO 6400 where neural raw-denoise becomes worth its detour (section
+15). The D7200's noise is well-behaved chroma grain; both tools handle it.
+
+** Picture Controls are not coming with you
+
+In-camera Picture Control settings (Standard, Vivid...) shape the JPEG preview
+embedded in the raw but carry no authority in darktable — you develop from
+sensor data. If a frame's embedded preview looks better than darktable's
+neutral start, NX Studio (section 3) shows you Nikon's intent; steal it with
+sliders rather than chasing it with confusion.
+
+** 1.3× crop mode files
+
+Frames shot in the D7200's crop mode import as smaller raws and behave
+normally; nothing special needed, just expect fewer megapixels.
+
+-----
+
+* 19. Shortcuts
+
+Learn exactly one first:
+
+#+begin_quote
+*~H~ shows every shortcut that applies wherever you are.* Pressed in the
+lighttable it lists culling keys; in the darkroom, editing keys. More reliable
+than any cheat sheet, this table included.
+#+end_quote
+
+The daily set:
+
+| Key          | Does                                           |
+|--------------+------------------------------------------------|
+| ~H~          | show shortcuts for the current view            |
+| ~0–5~        | star rating                                    |
+| ~R~          | reject flag                                    |
+| ~F1–F5~      | colour label: red/yellow/green/blue/purple     |
+| ~X~ / ~Ctrl+X~ | culling mode, fixed / dynamic                |
+| ~Z~          | zoomable lighttable layout                     |
+| ~B~          | toggle display of drawn masks while editing    |
+| ~O~          | clipping overlay (blown/ crushed indicators)   |
+
+Everything is remappable under preferences → shortcuts → shortcutter; the
+search box filters by action name.
+
+-----
+
+* 20. Housekeeping: backups, databases, upgrades
+
+** What exists where (Windows)
+
+- *Photos*: wherever your folder structure puts them (~Pictures\...~). Plain
+  files, no lock-in.
+- *XMP sidecars*: beside each photo once edits exist. Plain text. The portable
+  half of your work.
+- *Database*: under ~%LOCALAPPDATA%\darktable~ — library.db plus data.db
+  (ratings/collections cache etc.) and the thumbnail cache alongside.
+- *Styles*: stored in the database; export any style to XML to keep file
+  copies (do this after creating each one worth keeping).
+
+** The backup rule
+
+Back up two things and you can survive anything: *the photo folders including
+sidecars*, and an XML export of your styles. The database itself is rebuildable
+— point darktable at your photo folders after a loss and it re-imports, reading
+every sidecar back into place. Ratings, tags, edits: all inside those little
+files. This is why section 4 told you to enable sidecar writing.
+
+** Upgrades
+
+Minor releases (5.6 → 5.7): just install. Major ones: export styles, let
+darktable write all sidecars, copy the database files aside, then upgrade.
+Ten minutes of ceremony against years of history.
+
+-----
+
+* 21. What will annoy you
+
+Known, enumerated, survivable:
+
+1. *Nothing is called what you would guess.* Sections 8–9 exist precisely for
+   this. Fades within two weeks of regular use.
+2. *Background blur is flat.* Depth-blind by design (section 12). RapidRAW is
+   the free escape hatch for the rare frame that truly needs depth-graduated
+   bokeh.
+3. *Neural restore is a detour, not a slider.* It writes new files (section
+   15). Order operations accordingly or wonder where disk space went.
+4. *First AI click per image is slow.* Encoder analysis runs once and caches;
+   afterwards interactive. On a cold session over many images, budget the wait.
+5. *No dedicated moiré tool.* The fix is swapping demosaic algorithms
+   (section 18), which is either charming or barbaric depending on your day.
+6. *No generative features at all.* Deliberate policy: correction yes,
+   synthesis no (section 2). When sky replacement becomes non-negotiable,
+   that is Adobe-shaped work.
+7. *The module list is a cliff for newcomers.* Mitigated entirely by the QAP
+   discipline (section 9); unmitigated enthusiasm has ended more darktable
+   trials than any bug.
+
+-----
+
+* 22. If you are arriving from Lightroom
+
+/Skip this section entirely if you are not. Nothing later depends on it./
+(The reverse journey — Lightroom habits explained from zero, for someone who
+ends up running both — lives in ~LIGHTROOM-GUIDE.org~, section "Coming from
+darktable".)
+
+** What transfers
+
+Keywords, star ratings, colour labels and captions *can* move via XMP
+sidecars. In Lightroom: enable *Automatically write changes into XMP*
+(Catalog Settings → Metadata), then select everything and ~Ctrl+S~ to force
+writes. darktable reads those sidecars at import — but only at import time,
+and only for raws without an existing darktable sidecar, so migrate before
+editing anything in darktable, not after.
+
+** What does not transfer, ever
+
+Develop settings. The two programs process images through fundamentally
+different pipelines; no translation exists, and attempted translations would
+render differently anyway. Your edits stay in Lightroom.
+
+#+begin_quote
+*Therefore: export all finished work as TIFF/JPEG before cancelling any Adobe
+subscription.* Once the subscription lapses, existing edits are locked in a
+program you cannot open. Exported files are yours forever regardless.
+#+end_quote
+
+** Habits worth keeping
+
+Culling with stars/flags maps one-to-one (section 7). Collections ≈ darktable
+collections presets. Presets ≈ styles, with the names swapped (section 14).
+The Basic panel ≈ Quick Access Panel. Everything else is sections 8 through 12
+with better vocabulary than you have been given credit for.
+
+-----
+
+* 23. Where to learn more
+
+- *Official manual* — https://docs.darktable.org/usermanual/development/en/
+  Unusually good for an open-source project. After this guide, read the pages
+  for ~retouch~, ~tone equalizer~ and ~color balance rgb~ specifically.
+- *AI overview page of the manual* — how models/tasks/preferences fit together:
+  https://docs.darktable.org/usermanual/development/en/special-topics/ai/overview/
+- *Release announcements* — https://www.darktable.org/news/ — the 5.6 posts
+  ("Meet the new AI tools") are hands-on tours written by the implementers.
+- *Bruce Williams, "darktable from A to Z"* on YouTube — methodical,
+  module-by-module video course.
+- *"Mastering Darktable"* — https://www.darktable.info/ — community book.
+- *discuss.pixls.us* — the forum where developers themselves answer questions.
+  Its *Play Raw* threads hand you someone's raw file to edit against a dozen
+  others' attempts: the fastest known method for learning taste rather than
+  buttons.
+
+-----
+
+-----
+
+* Appendix A. Beyond sigmoid: filmic rgb and AgX
+
+Section 4 told you to take scene-referred (sigmoid) and stop reading. This
+appendix is for the day you wonder what the other buttons do — or the day a
+specific photograph outgrows the defaults.
+
+** What the display transform is actually doing
+
+Every scene-referred edit ends with compressing ~14 stops of scene brightness
+into your monitor's ~7. The transform decides *how*: where highlights roll
+off, whether midtones shift, how saturated colours survive compression.
+Sigmoid's answer: mathematically smooth, conservative, few controls. It fails
+visibly only on extreme scenes — direct sun, stage lights against black,
+long-exposure water at sunset.
+
+** filmic rgb: the engineer's transform
+
+The older, more controllable sibling. Its philosophy: you declare what white
+is and what black is (via its *white/black relative exposure* sliders), and it
+designs a tone curve honouring those boundaries while preserving midtone
+contrast and hue. Extra controls: *latitude* (how much of the range compresses
+vs clips), *balance* (highlight-vs-shadow bias), per-channel saturation
+preservation settings.
+
+What it buys: highlight roll-offs you can art-direct — sunsets that keep
+colour bands instead of going pastel, stage shots where the spotlight stays a
+spotlight.
+
+What it costs: setup time per extreme frame; enough rope to produce grey
+murk if fed nonsense values. Advice: switch to filmic rgb *per-photograph*
+(via the module's preset menu, replacing sigmoid in that edit's pipeline)
+when highlights carry the photograph. Never stack both transforms — pick one
+per edit; they are mutually exclusive views of the same job.
+
+** AgX: the film-stock emulator
+
+Newest of the three, modelled on how film negative actually handles
+saturation-under-brightness (bright things desaturate like film, not like
+monitors). Neon signs and fire keep their hue identities instead of clipping
+to yellow/white. Advice: try AgX on colour-critical night work after sigmoid
+disappoints; leave it otherwise — its midtone rendering reads slightly muted
+for everyday work unless that's the look you're chasing.
+
+** The decision rule
+
+Default sigmoid · highlights-are-the-story → filmic rgb · neon/fire/night
+colour identity matters → try AgX · never two at once.
+
+-----
+
+* Appendix B. color calibration, properly
+
+The ~white balance~ module (§11) is the training-wheels version. Its sibling
+~color calibration~ is the honest instrument, and worth twenty minutes once.
+
+** What it does differently
+
+Instead of temperature/tint approximations, it models the *illuminant* — the
+actual light that lit the scene — and computes the transform from that light
+to standard daylight using the modern CAT (chromatic adaptation transform)
+you confirmed in §4. More accurate under mixed and unusual light, and its
+sliders speak physics rather than convention.
+
+** The workflow
+
+1. Disable ~white balance~ if enabled (they stack; one master at a time).
+2. In ~color calibration~, tab *illuminant*: choose the type — *camera* trusts
+   the shot's embedded WB (usually close), *dropdown of standard lights*
+   (tungsten, fluorescent, D65...), or *custom*: click a neutral patch in
+   frame and darktable solves for the illuminant directly.
+3. The second tab adjusts the observer's adaptation; leave alone until you
+   know you want it.
+
+** Gamut tools in the same module
+
+Beyond neutrality: the *primary* tabs let you push/squeeze R/G/B primaries —
+gentle primary compression rescues out-of-gamut LED-lit colours before they
+clip to neon mush. Niche, occasionally frame-saving.
+
+Advice: use ~white balance~ day-to-day (it's faster); reach for
+~color calibration~ when mixed lighting fights back or when colour accuracy
+matters more than speed — product shots, art reproduction.
+
+-----
+
+* Appendix C. Detail modules worth knowing
+
+Three modules §11 waved through; here is the full treatment.
+
+** chromatic aberration
+
+Fixes colour fringing on high-contrast edges (purple/green halos) that lens
+profiles didn't fully correct. Two modes: *linear* for lateral CA (zoom-
+dependent, slider-driven) and the newer structure-aware pass for stubborn
+cases. Advice: zoom to 200–400% on backlit branches and architectural edges
+once per new lens; if fringing shows, fix once, save a per-lens preset
+(§13), never think about it again.
+
+** rotate and perspective
+
+Beyond ~crop and rotate~'s simple levelling: this module straightens
+*keystones*. Workflow: tick *rotation*, dial verticals plumb against its grid
+overlay → switch to perspective correction, drag guides onto two known-
+vertical lines (building edges, door frames) → darktable re-projects.
+*Aspect* correction compensates the resulting squash. Advice: correct
+verticals almost always (leaning buildings read as error); correct
+horizontals selectively — full two-point correction on interiors can feel
+clinical. Auto-crop after, then fine-tune in crop.
+
+** tone curve
+
+The classic curve, available when ~tone equalizer~ + QAP sliders don't express
+a specific idea: L-channel curves for pure tonal remapping, per-channel RGB
+curves for cross-tone colour grading (the blue-down-warm move lives here too).
+Advice: in scene-referred workflow, prefer tone equalizer for zone work and
+color balance rgb for contrast — reach for raw curves only for looks those
+can't produce, e.g. a matte fade via raised black point.
+
+-----
+
+* Appendix D. Export variables reference
+
+The export module's path/filename fields accept variables — the difference
+between hand-naming four hundred exports and typing one pattern once.
+The working set:
+
+| Variable          | Expands to                                   |
+|-------------------+----------------------------------------------|
+| ~$(YEAR)~         | capture year, from EXIF                      |
+| ~$(MONTH)~        | two-digit month                              |
+| ~$(EXIF_YEAR)~ etc. | explicit EXIF-date forms                   |
+| ~$(FILE_NAME)~    | original filename without extension          |
+| ~$(SEQUENCE)~     | per-export counter                           |
+| ~$(JOBOUVERT)~ / job codes | tethering session name, if used      |
+| ~$(TAGS)~         | tags, joined                                 |
+| ~$(STARS)~/~(RATING)~ | rating-derived naming                     |
+| ~$(IMAGE_ID)~     | darktable's internal database ID             |
+
+Pattern examples that earn their keep:
+
+- =~/Pictures/export/$(YEAR)/$(FILE_NAME)-web.jpg= — mirrors your archive
+  tree; exports always land beside their era.
+- =~/Pictures/export/$(YEAR)/$(FILE_NAME)-$(SEQUENCE).jpg= — variant-safe
+  batch exports without collisions.
+
+Advice: build *one* canonical export path preset (§16) containing the year
+structure and never type a destination again. Full variable list lives in the
+export module's help tooltip — the table above covers what photographers
+actually use.
+
+-----
+
+* Appendix E. When things go wrong
+
+Crashes, corruption, and the recovery paths that work:
+
+- *darktable crashes opening a specific image.* Suspect OpenCL first: disable
+  it (§3), retry — if the image opens, your GPU driver choked on that
+  pipeline; update drivers or stay CPU for stability. If CPU-only also
+  crashes, delete that image's sidecar and let darktable rebuild its edit.
+- *Thumbnails gone / grid empty after moving folders externally.* The
+  database points at ghosts. Fix: in lighttable, re-import the moved folder —
+  darktable recognises existing images by path+content and restores their edit
+  histories from sidecars. Prevention: move files inside darktable, not via
+  Explorer (same rule as Lightroom; §6).
+- *Edits vanished after reinstall.* Database replaced but photos intact?
+  Point a fresh import at your archive with sidecar reading enabled (§4) —
+  every edit rides home inside the .xmp files. This is §20's backup rule
+  paying out.
+- *OpenCL renders differently than CPU.* Slight per-pixel differences are
+  normal (different math paths); *gross* differences mean a broken GPU path —
+  force CPU for that module via preferences' per-module OpenCL exclusion
+  list.
+- *AI features greyed out.* AI disabled in preferences (§4.3), models not yet
+  downloaded, or build predates 5.6. Check the AI pane's status line.
+- *Neural restore output looks wrong/flat.* You ran it on an already-
+  flattened export instead of raws (§15's order-of-operations), or strength
+  slider at extremes. Re-run from the original raw.
+
+Advice generally: darktable's failure mode is almost always recoverable
+because edits live in sidecars and originals are sacred. The unrecoverable
+failures are hardware ones — which is what the backup rule is for.
+
+-----
+
+-----
+
+* Appendix F. Every setting, explained
+
+One line per option — the reference layer under the tutorial. Preferences are
+grouped by what they affect; exact pane labels shift slightly between
+releases, the search box finds any of them by name.
+
+** Interface and general
+
+- *theme* — dark or light UI skin; dark suits photo judging (surroundings stop biasing tone perception).
+- *font size* — scales all module labels; raise it if sliders feel cramped.
+- *GUI controls size / DPI scaling* — overall widget scale for high-resolution screens.
+- *single application instance* — launching darktable again focuses the running copy instead of starting a second.
+- *number of folder levels to show in film-roll names* — shortens how rolls display in collections.
+- *send deleted images to the trash bin instead of erasing* — safety net for deletions; leave on.
+- *ask before deleting/moving images* — confirmation dialogs; personal taste, on is safer.
+
+** Lighttable behaviour
+
+- *initial rating filter mode* — what the grid shows on launch (all photos vs. rated-only).
+- *thumbnail size / zoom levels* — grid density steps when scrolling zoom.
+- *show scrollbars / image tooltips* — cosmetic aids.
+- *sort order defaults* — initial filename/date/rating sort of new collections.
+- *copy/paste history dialog behaviour* — whether paste-all skips the per-module chooser.
+
+** Darkroom behaviour
+
+- *pen pressure control for brush opacity/size* — tablet support; maps stylus pressure onto mask painting.
+- *crop guides* — which composition overlay (rule-of-thirds, golden…) appears by default while cropping.
+- *hide built-in presets* — declutters module ≡ menus down to your own presets only.
+- *show loading screen for full preview* — placeholder blur while a zoomed render computes; off feels snappier, on is more honest.
+- *scroll behaviour around image edges* — whether panning bounces at frame borders.
+- *middle-click colour picker mode* — what sample size the spot probe uses (point vs. averaged area).
+
+** Processing
+
+- *auto-apply pixel workflow defaults* — scene-referred (sigmoid) vs display-referred vs filmic/AgX families; §4's headline choice.
+- *auto-apply chromatic adaptation defaults* — modern CAT vs legacy white-balance math.
+- *pixel interpolator* — resampling quality for zoomed previews and geometry (bilinear fast, bicubic balanced, Lanczos finest).
+- *module order layouts* — which grouping of the right-hand panel you use (default vs. search-friendly flat list).
+
+** CPU / GPU / memory
+
+- *OpenCL support* — none / on: GPU acceleration for the whole pipeline; §3's biggest speed lever.
+- *OpenCL scheduling profile* — default / very-fast-GPU / multiple-GPUs / custom: how work is dispatched across devices.
+- *per-module OpenCL exclusion list* — force specific modules CPU-side when one misbehaves on your driver.
+- *host memory limit* — ceiling on RAM darktable may claim for tiling; raise on 48 GB machines.
+- *minimum memory for tiling / buffers* — thresholds below which images process in tiles rather than whole-frame.
+- *number of worker threads* — CPU parallelism; max it.
+
+** Storage and locations
+
+- *xmp sidecar writing strategy* — never / on import / on change / both import-and-change; §4 says set it writing.
+- *cache directory* — where thumbnails and preview renders live; move to an SSD if the system disk is small.
+- *database directory* — where library.db lives; include this path in backups if you skip sidecar reliance.
+- *temporary directory* — scratch space for pipeline intermediates.
+
+** AI pane (5.6+)
+
+- *enable AI features* — master switch; off means no ONNX runtime loads at all.
+- *download/update default model set* — fetches recommended models in one click.
+- *object-mask active model* — SAM 2.1 tiny/small/base-plus or SegNext; tiny for 4 GB GPUs.
+- *denoise active model* — NIND (default) vs NAFNet alternative tuned for small sensors.
+- *upscale active model* — RealPLKSR (faithful) vs BSRGAN (denoising-while-scaling).
+- *model repository URL* — where model updates come from; leave default unless self-hosting.
+
+** The core modules' controls, line by line
+
+- ~exposure~: *exposure* slider — whole-frame brightness in stops · *black level* — where pure black begins, lifting or sinking the floor.
+- *white balance*: *temperature* — blue↔amber · *tint* — green↔magenta · *presets* — standard illuminants.
+- ~color calibration~: *illuminant tab* — choose/solve the scene light · *adaptation tab* — observer adjustment (leave) · *primaries tabs* — R/G/B gamut pushes for exotic light.
+- ~sigmoid~: *contrast* — midtone S-punch · *skew* — midtone brightness without moving extremes · *latitude* — compression aggressiveness at the ends.
+- ~tone equalizer~: five band sliders (*darkest/shadows/midtones/highlights/brightest*) — independent gain per exposure zone · *masking iterations* — internal mask quality vs. cost.
+- ~color balance rgb~: *contrast* — main global contrast · *vibrance/chroma/saturation* — three saturation philosophies, gentlest first · *brilliance* — perceptual midtone brightness · four wheels — hue shifts per tonal zone with chroma strength.
+- ~local contrast~: *strength/detail/coarseness* — clarity effect depth and scale · *saturation protection* — keeps colours from going electric.
+- ~diffuse or sharpen~: *mode* — sharpen vs diffuse personality · *iterations/radius* — reach of the diffusion · *anisotropy* — edge-following strength.
+- ~denoise (profiled)~: *mode* — auto (metadata-matched profile) vs manual · *strength* — reduction amount · *preserve colours* — chroma-noise handling bias.
+- ~retouch~: shape selector (circle/ellipse/path/brush) · *mode* — heal/clone/fill/blur semantics from §11 · *opacity/blend* — patch strength · wavelet sub-panel — frequency-separation decomposition levels.
+- ~lens correction*: *auto-set* — profile lookup from EXIF · manual tabs — distortion/vignetting/TCA sliders for unlisted glass · *geometric* — rotation independent of crop.
+- ~crop and rotate~: aspect drop-down · angle dial + straighten tool · guides overlay toggle.
+- ~rotate and perspective~: rotation grid · perspective line guides (two verticals minimum) · *aspect* — post-correction squash compensation.
+- ~haze removal~: *strength* — dehaze amount · *edge sensitivity* — halo resistance near strong edges.
+- ~neural restore~: task tabs (raw denoise/denoise/ upscale) · *strength* — blend between source and result · preview picker — compute region · batch button — run over selection.
+
+Anything not listed here is either covered in §11–12 or genuinely safe never
+to touch.
+
+-----
+
+* Setup checklist
+
+- [ ] Install darktable 5.6; launch once; quit
+- [ ] Preferences → processing: confirm *scene-referred (sigmoid)* + *modern*
+- [ ] Enable *OpenCL*; confirm it grabbed the T550, not Intel graphics
+- [ ] Preferences → AI: enable, download default models, object mask =
+      *SAM 2.1 tiny*
+- [ ] Set XMP sidecar writing to on-change (section 4)
+- [ ] Build the auto high-ISO denoise preset (section 13)
+- [ ] Build a per-lens lens-correction preset (section 13)
+- [ ] Populate/customise the Quick Access Panel; live in it two weeks
+- [ ] Create and export-as-XML your baseline style once it settles (section 14)
+- [ ] Press ~H~ whenever lost, forever
+
+-----
+
+/Companions in this folder: ~/D7200-GUIDE.org~ for the camera side — what to
+set before pressing the shutter and why raws arrive flat; ~GIMP-README.org~
+for the pixel-level jobs darktable cannot do (large-object removal, compositing,
+layers) — rare visits only; ~LIGHTROOM-GUIDE.org~ and ~PHOTOSHOP-GUIDE.org~
+for when Adobe-shaped work or machines enter the picture./
