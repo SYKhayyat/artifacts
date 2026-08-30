@@ -829,27 +829,35 @@ them all — the fastest way to clean up after a long session.
 
 *** Tabs and workspaces
 
-Two independent tab systems, which is confusing until you see the split:
+There is *one* tab system, not two. Emacs' built-in *tab-bar* is the whole of
+it, and in this config every tab is a /workspace/: a complete window layout.
+Split the frame however you like inside one workspace; switching to another
+swaps the whole arrangement at once. (There used to be a per-buffer
+*centaur-tabs* strip above it; that was removed on 2026-08-30 in favour of this
+single workspace tab-bar.)
 
-- *centaur-tabs* — the strip at the top showing /buffers/, grouped by project.
-- *tab-bar* — Emacs' built-in /workspaces/, each holding its own window layout.
+The tab strip is always visible across the top, even when you only have one
+workspace, and a fresh Emacs starts with exactly one. It stays one until you
+make more — every workspace is one =C-x t n= away.
 
-| Key         | Does                                            |
-|-------------+-------------------------------------------------|
-| =C-c <=     | Previous buffer tab (in the strip)              |
-| =C-c >=     | Next buffer tab                                 |
-| =C-<tab>=   | Next workspace                                  |
-| =C-S-<tab>= | Previous workspace                              |
-| =C-x t n=   | New workspace                                   |
-| =C-x t k=   | Close workspace                                 |
-| =C-x t r=   | Rename workspace                                |
-| =C-c T=     | *The tabs hydra* — everything above in one menu |
+| Key                     | Does                                            |
+|-------------------------+-------------------------------------------------|
+| =C-x t n=               | New workspace (also =C-c T= then =n=)           |
+| =C-<tab>=               | Next workspace                                  |
+| =C-S-<tab>=             | Previous workspace                              |
+| =C-x t r=               | Rename the current workspace                    |
+| =C-x t k=               | Close the current workspace                     |
+| =1=–=9=                 | Jump straight to workspace 1–9                  |
+| =C-c T= =s=             | Open a project in a brand-new workspace         |
+| =C-c T=                 | *The tabs hydra* — all of the above in one menu |
 
-=C-c T= is the one to remember; it covers both systems and stays open while you
-work (it's a "pink" hydra, meaning repeated presses keep working). Inside it,
-=1=–=9= jump straight to a workspace, =d= kills the current buffer, =o= kills all
-the others, and =s= opens a project in a brand-new workspace *named after the
-project* — which is the actual reason to use workspaces at all.
+=C-c T= is the one to remember; it stays open while you work (a "pink" hydra —
+repeated presses keep it active). Inside it: =n= makes a new workspace, =x=
+closes one, =r= renames it, =[= /=] / steps through workspaces, =1=–=9= jumps
+straight to one, =b= switches buffers, =d= kills the current buffer, =o= kills
+all the other buffers, =K= kills a buffer and its window in one step, =g= opens
+*ibuffer*, and =s= opens a project in a workspace /named after the project/ —
+which is the real reason to reach for workspaces at all.
 
 *** Projects
 
