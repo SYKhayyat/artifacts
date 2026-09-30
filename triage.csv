@@ -1,0 +1,6 @@
+number,title,url,D,R,why,risk
+1,Add a navigable catalog provenance and build instructions for authored materials,https://github.com/SYKhayyat/artifacts/issues/1,3,2,Index + canonical-source docs across works; wrong docs mislead only,Docs mislead
+2,[Medium/bug] Math README pins Windows Typst path,https://github.com/SYKhayyat/artifacts/issues/2,1,1,Use PATH typst+version; doc-only,Doc-only
+3,[Low/bug] print.css th nowrap forces overflow,https://github.com/SYKhayyat/artifacts/issues/3,1,1,normal+hyphens; cosmetic print overflow,Cosmetic
+4,[Low/bug] No Org build command recorded,https://github.com/SYKhayyat/artifacts/issues/4,1,2,Record export header+batch cmd; reproducibility metadata only,Metadata only
+5,[Low/bug] 7.2MB PDF tracked without freshness check,https://github.com/SYKhayyat/artifacts/issues/5,2,2,Canonical-source note + CI check; stale binary risk only,Stale binary
