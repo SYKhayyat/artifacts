@@ -170,18 +170,21 @@ If nobody handles the error, the debugger shows `CONTINUE` with the report strin
 
 `continue`, `abort`, `muffle-warning`, `use-value` and `store-value` are functions #emph[and] restart names — the standard vocabulary. Each function invokes the restart of the same name if it exists:
 
-#table(
-  columns: (2.0fr, 2.2fr, 3.8fr),
-  inset: (x: 6pt, y: 4pt),
-  stroke: 0.3pt + luma(200),
-  align: left,
-  table.header([Function], [Invokes restart], [Established by]),
-  [`continue`], [`CONTINUE`], [`cerror`],
-  [`abort`], [`ABORT`], [the implementation, always],
-  [`muffle-warning`], [`MUFFLE-WARNING`], [`warn`],
-  [`use-value`], [`USE-VALUE`], [`restart-case`, your code],
-  [`store-value`], [`STORE-VALUE`], [`restart-case`, your code],
-)
+#[
+  #set par(justify: false)
+  #table(
+    columns: (2.0fr, 2.2fr, 3.8fr),
+    inset: (x: 6pt, y: 4pt),
+    stroke: 0.3pt + luma(200),
+    align: left,
+    table.header([Function], [Invokes restart], [Established by]),
+    [`continue`], [`CONTINUE`], [`cerror`],
+    [`abort`], [`ABORT`], [the implementation, always],
+    [`muffle-warning`], [`MUFFLE-WARNING`], [`warn`],
+    [`use-value`], [`USE-VALUE`], [`restart-case`, your code],
+    [`store-value`], [`STORE-VALUE`], [`restart-case`, your code],
+  )
+]
 
 `with-simple-restart` is the lightweight `restart-case` — one restart, no condition machinery in the common case:
 

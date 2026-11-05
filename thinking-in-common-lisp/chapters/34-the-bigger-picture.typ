@@ -25,30 +25,33 @@ Two habits worth adopting early:
 
 A short field guide, by task. All load with `ql:quickload`. The list isn't exhaustive — it's the "first choice" by category, the libraries you'd find in most modern Lisp projects.
 
-#table(
-  columns: (2.0fr, 2.5fr, 3.5fr),
-  inset: (x: 6pt, y: 4pt),
-  stroke: 0.3pt + luma(200),
-  align: left,
-  table.header([Task], [Library], [Note]),
-  [Files and paths], [uiop], [ships with ASDF; portable path & OS ops],
-  [Command-line args], [unix-opts, clingon], [typed options, subcommands, help],
-  [JSON], [jonathan, cl-json], [read and write JSON],
-  [CSV], [cl-csv], [quoted fields, embedded newlines],
-  [Regular expressions], [cl-ppcre], [compiled to Lisp code; fast],
-  [Web servers], [hunchentoot, clack], [the veteran \/ the server abstraction],
-  [Web framework], [caveman2], [routing, templates, sessions on clack],
-  [HTTP client], [dexador, drakma], [requests with headers, forms, SSL],
-  [HTML templating], [djula, cl-who], [Django-style \/ s-expressions],
-  [Databases (Postgres)], [postmodern, mito], [native protocol \/ ORM],
-  [Databases (SQLite)], [cl-sqlite], [embedded, file-based],
-  [Threads], [bordeaux-threads, lparallel], [thin portable \/ parallel map-car],
-  [Dates and times], [local-time], [timestamps, formatting, arithmetic],
-  [Iteration], [iterate, series], [loop alternative \/ fused pipelines],
-  [Pattern matching], [trivia, optima], [destructuring `match`],
-  [Common data structures], [fset, cl-containers], [immutable sets \/ heaps, queues],
-  [Utility belt], [alexandria], [small correct helpers, everywhere],
-)
+#[
+  #set par(justify: false)
+  #table(
+    columns: (2.0fr, 2.5fr, 3.5fr),
+    inset: (x: 6pt, y: 4pt),
+    stroke: 0.3pt + luma(200),
+    align: left,
+    table.header([Task], [Library], [Note]),
+    [Files and paths], [uiop], [ships with ASDF; portable path & OS ops],
+    [Command-line args], [unix-opts, clingon], [typed options, subcommands, help],
+    [JSON], [jonathan, cl-json], [read and write JSON],
+    [CSV], [cl-csv], [quoted fields, embedded newlines],
+    [Regular expressions], [cl-ppcre], [compiled to Lisp code; fast],
+    [Web servers], [hunchentoot, clack], [the veteran \/ the server abstraction],
+    [Web framework], [caveman2], [routing, templates, sessions on clack],
+    [HTTP client], [dexador, drakma], [requests with headers, forms, SSL],
+    [HTML templating], [djula, cl-who], [Django-style \/ s-expressions],
+    [Databases (Postgres)], [postmodern, mito], [native protocol \/ ORM],
+    [Databases (SQLite)], [cl-sqlite], [embedded, file-based],
+    [Threads], [bordeaux-threads, lparallel], [thin portable \/ parallel map-car],
+    [Dates and times], [local-time], [timestamps, formatting, arithmetic],
+    [Iteration], [iterate, series], [loop alternative \/ fused pipelines],
+    [Pattern matching], [trivia, optima], [destructuring `match`],
+    [Common data structures], [fset, cl-containers], [immutable sets \/ heaps, queues],
+    [Utility belt], [alexandria], [small correct helpers, everywhere],
+  )
+]
 
 The pattern across all categories: small, composable, standard-loving libraries rather than frameworks that own your program. You assemble; nothing assembles you.
 

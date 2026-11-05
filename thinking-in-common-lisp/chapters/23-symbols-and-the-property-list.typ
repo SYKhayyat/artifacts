@@ -72,16 +72,19 @@ The signature tells you which you want: `(get symbol indicator)` when the symbol
 
 You now hold all three dictionary shapes Lisp offers natively: the alist (Chapter 7), the hash table (Chapter 13), and the plist. The differences are about #emph[where the pairs live] and what operations are natural:
 
-#table(
-  columns: (1.0fr, 2.2fr, 2.5fr, 2.2fr),
-  inset: (x: 6pt, y: 4pt),
-  stroke: 0.3pt + luma(200),
-  align: left,
-  table.header([Structure], [Pairs live on], [Natural operations], [Costs]),
-  [plist], [the symbols themselves], [`get`, `remprop`], [linear scan per lookup],
-  [alist], [one list you own], [`assoc`, `acons`, `push`], [linear scan],
-  [hash table], [a table object you own], [`gethash`, `remhash`, `maphash`], [O(1) average],
-)
+#[
+  #set par(justify: false)
+  #table(
+    columns: (1.2fr, 2.2fr, 2.5fr, 2.0fr),
+    inset: (x: 6pt, y: 4pt),
+    stroke: 0.3pt + luma(200),
+    align: left,
+    table.header([Structure], [Pairs live on], [Natural operations], [Costs]),
+    [plist], [the symbols themselves], [`get`, `remprop`], [linear scan per lookup],
+    [alist], [one list you own], [`assoc`, `acons`, `push`], [linear scan],
+    [hash table], [a table object you own], [`gethash`, `remhash`, `maphash`], [O(1) average],
+  )
+]
 
 The real distinction: a plist #emph[smears] the association across all symbols that carry the property — `(get name 'location)` across every room symbol is the data, and no single object owns it. An alist is #emph[one list] that can be passed, rebound, saved and rebuilt. That's why the game used alists for `*item-locations*` — state you save and restore — and why plists fit #emph[attributes that belong to named things]:
 

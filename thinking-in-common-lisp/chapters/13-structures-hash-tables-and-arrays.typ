@@ -114,16 +114,19 @@ A field can have a default, given as a slot option:
 
 The rooms of the game are alists of fields, or lists reached with `third` and `caddr`. Structures replace both with names:
 
-#table(
-  columns: (4.4fr, 3.6fr),
-  inset: (x: 6pt, y: 4pt),
-  stroke: 0.3pt + luma(200),
-  align: left,
-  table.header([List version], [Structure version]),
-  [`(third room)`], [`(room-description room)`],
-  [Comments to remember the order], [The field names say it],
-  [One wrong `cadr` and data is misread], [The accessor checks the type],
-)
+#[
+  #set par(justify: false)
+  #table(
+    columns: (4.4fr, 3.6fr),
+    inset: (x: 6pt, y: 4pt),
+    stroke: 0.3pt + luma(200),
+    align: left,
+    table.header([List version], [Structure version]),
+    [`(third room)`], [`(room-description room)`],
+    [Comments to remember the order], [The field names say it],
+    [One wrong `cadr` and data is misread], [The accessor checks the type],
+  )
+]
 
 When data has a fixed shape that you'll never change at runtime, a structure is the natural home for it.
 
@@ -202,18 +205,21 @@ Only `eq`, `eql`, `equal` and `equalp` are valid tests. Numbers as keys need `(m
 
 === Hash table vs alist
 
-#table(
-  columns: (3.2fr, 2.4fr, 2.5fr),
-  inset: (x: 6pt, y: 4pt),
-  stroke: 0.3pt + luma(200),
-  align: left,
-  table.header([], [Alist], [Hash table]),
-  [Lookup], [Walk, slow on big lists], [One step],
-  [Insert at the front], [`push`, fast], [`setf gethash`, fast],
-  [Keep an order], [Yes], [No, order is unspecified],
-  [Readable in your source], [Yes, quoted], [No, built at runtime],
-  [A key with two values (history)], [Yes], [No, one value per key],
-)
+#[
+  #set par(justify: false)
+  #table(
+    columns: (3.2fr, 2.4fr, 2.5fr),
+    inset: (x: 6pt, y: 4pt),
+    stroke: 0.3pt + luma(200),
+    align: left,
+    table.header([], [Alist], [Hash table]),
+    [Lookup], [Walk, slow on big lists], [One step],
+    [Insert at the front], [`push`, fast], [`setf gethash`, fast],
+    [Keep an order], [Yes], [No, order is unspecified],
+    [Readable in your source], [Yes, quoted], [No, built at runtime],
+    [A key with two values (history)], [Yes], [No, one value per key],
+  )
+]
 
 Use an alist for small tables you want to read in your code, a hash table for lookups that grow, and switch when an alist starts to feel slow. The game's tables stay alists: they are small, and being visible in the source has been worth more than speed.
 
@@ -249,17 +255,20 @@ A one-dimensional array is called a #emph[vector]. Strings are vectors of charac
 
 Arrays have a fixed size. An array of 3 stays 3; to grow, make a bigger one and copy, or use `adjustable-array-p` territory, which this guide leaves for later reading. Lists and vectors cover different needs:
 
-#table(
-  columns: (3.3fr, 2.0fr, 2.7fr),
-  inset: (x: 6pt, y: 4pt),
-  stroke: 0.3pt + luma(200),
-  align: left,
-  table.header([], [List], [Vector]),
-  [Grow at the front], [`push`, fast], [No],
-  [Reach element `n`], [Walk, `nth`], [One step, `aref`],
-  [Fixed or growing], [Grows], [Fixed],
-  [Printed as], [`(...)`], [`#(...)`],
-)
+#[
+  #set par(justify: false)
+  #table(
+    columns: (3.3fr, 2.0fr, 2.7fr),
+    inset: (x: 6pt, y: 4pt),
+    stroke: 0.3pt + luma(200),
+    align: left,
+    table.header([], [List], [Vector]),
+    [Grow at the front], [`push`, fast], [No],
+    [Reach element `n`], [Walk, `nth`], [One step, `aref`],
+    [Fixed or growing], [Grows], [Fixed],
+    [Printed as], [`(...)`], [`#(...)`],
+  )
+]
 
 Reach `push` for collections that grow; `aref` for collections you index by number.
 

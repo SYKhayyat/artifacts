@@ -75,7 +75,7 @@ Changing a number by a little is common enough to have its own operators:
 
 `incf` adds (1 by default), `decf` subtracts. Both change the variable and return its new value. They're like Java's `score++` and `score +` `10`.
 
-Run that twice in a fresh session and the result is different: the `defparameter` resets `*score*` to `0`, then the rest counts up again to `7`. Keep this in mind for the next section.
+Run the `incf` lines a second time, without the `defparameter`, and you get different numbers: `*score*` keeps the value it had. The `defparameter` is what resets it to `0`. Keep this in mind for the next section.
 
 == `defvar`: define once, keep the value
 
@@ -101,15 +101,18 @@ The second `defvar` did nothing, because `*lives*` already had a value. With `de
 
 When to use which:
 
-#table(
-  columns: (1.0fr, 7.0fr),
-  inset: (x: 6pt, y: 4pt),
-  stroke: 0.3pt + luma(200),
-  align: left,
-  table.header([Use], [When]),
-  [`defparameter`], [Settings and data you want reset each time you re-run the code],
-  [`defvar`], [State you build up while the program runs, and don't want lost if you re-run the file],
-)
+#[
+  #set par(justify: false)
+  #table(
+    columns: (1.4fr, 6.6fr),
+    inset: (x: 6pt, y: 4pt),
+    stroke: 0.3pt + luma(200),
+    align: left,
+    table.header([Use], [When]),
+    [`defparameter`], [Settings and data you want reset each time you re-run the code],
+    [`defvar`], [State you build up while the program runs, and don't want lost if you re-run the file],
+  )
+]
 
 When you're not sure, use `defparameter`. Its behaviour is easier to predict.
 

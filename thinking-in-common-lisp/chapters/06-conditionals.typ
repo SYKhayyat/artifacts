@@ -91,16 +91,19 @@ Both return `nil` when the body doesn't run.
 
 How to choose:
 
-#table(
-  columns: (1.0fr, 7.0fr),
-  inset: (x: 6pt, y: 4pt),
-  stroke: 0.3pt + luma(200),
-  align: left,
-  table.header([Use], [When]),
-  [`if`], [You need both a "then" and an "else"],
-  [`when`], [Only a "then", especially with several steps],
-  [`unless`], [Only something to do when the test fails],
-)
+#[
+  #set par(justify: false)
+  #table(
+    columns: (1.0fr, 7.0fr),
+    inset: (x: 6pt, y: 4pt),
+    stroke: 0.3pt + luma(200),
+    align: left,
+    table.header([Use], [When]),
+    [`if`], [You need both a "then" and an "else"],
+    [`when`], [Only a "then", especially with several steps],
+    [`unless`], [Only something to do when the test fails],
+  )
+]
 
 == `not`, `and`, `or`
 
@@ -261,20 +264,23 @@ Like `case`, `member` works for symbols, numbers and characters, but not for str
 
 == Choosing the right tool
 
-#table(
-  columns: (6.2fr, 1.8fr),
-  inset: (x: 6pt, y: 4pt),
-  stroke: 0.3pt + luma(200),
-  align: left,
-  table.header([Situation], [Use]),
-  [Two choices], [`if`],
-  [Do something only when true], [`when`],
-  [Do something only when false], [`unless`],
-  [Three or more choices with different tests], [`cond`],
-  [Three or more choices by exact value], [`case`],
-  [Combine tests], [`and`, `or`, `not`],
-  [A default value], [`or`],
-)
+#[
+  #set par(justify: false)
+  #table(
+    columns: (6.2fr, 1.8fr),
+    inset: (x: 6pt, y: 4pt),
+    stroke: 0.3pt + luma(200),
+    align: left,
+    table.header([Situation], [Use]),
+    [Two choices], [`if`],
+    [Do something only when true], [`when`],
+    [Do something only when false], [`unless`],
+    [Three or more choices with different tests], [`cond`],
+    [Three or more choices by exact value], [`case`],
+    [Combine tests], [`and`, `or`, `not`],
+    [A default value], [`or`],
+  )
+]
 
 == Common mistakes
 

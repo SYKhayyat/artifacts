@@ -175,17 +175,20 @@ Positions are always counted from the start of the whole sequence, even with `:s
 
 You've used `eq` for symbols and `string=` for strings. Common Lisp has four general equality functions. Each one is looser than the one above it:
 
-#table(
-  columns: (0.6fr, 7.5fr),
-  inset: (x: 6pt, y: 4pt),
-  stroke: 0.3pt + luma(200),
-  align: left,
-  table.header([Function], [True when]),
-  [`eq`], [Both are the very same object. Use it for symbols.],
-  [`eql`], [Like `eq`, and also equal numbers of the same type, and equal characters. The default for `find`, `member`, `assoc` and the rest.],
-  [`equal`], [Like `eql`, and also lists and strings with the same contents. Case matters.],
-  [`equalp`], [Like `equal`, ignoring case in strings, and comparing numbers by value.],
-)
+#[
+  #set par(justify: false)
+  #table(
+    columns: (1.0fr, 7.0fr),
+    inset: (x: 6pt, y: 4pt),
+    stroke: 0.3pt + luma(200),
+    align: left,
+    table.header([Function], [True when]),
+    [`eq`], [Both are the very same object. Use it for symbols.],
+    [`eql`], [Like `eq`, and also equal numbers of the same type, and equal characters. The default for `find`, `member`, `assoc` and the rest.],
+    [`equal`], [Like `eql`, and also lists and strings with the same contents. Case matters.],
+    [`equalp`], [Like `equal`, ignoring case in strings, and comparing numbers by value.],
+  )
+]
 
 ```lisp
 (list (eql #\a #\a)               ; T
@@ -354,22 +357,25 @@ Most of these functions have a destructive twin, such as `delete` for `remove`. 
 
 == Choosing the right function
 
-#table(
-  columns: (4.2fr, 3.8fr),
-  inset: (x: 6pt, y: 4pt),
-  stroke: 0.3pt + luma(200),
-  align: left,
-  table.header([You want], [Use]),
-  [A result for every element], [`mapcar`, `map`],
-  [Only some elements], [`remove-if-not`, `remove-if`],
-  [The first matching element], [`find`, `find-if`],
-  [Where it is], [`position`, `position-if`],
-  [How many match], [`count`, `count-if`],
-  [Yes or no for all or any], [`every`, `some`],
-  [One value from all elements], [`reduce`],
-  [A new order], [`sort`, `stable-sort`],
-  [Each element once], [`remove-duplicates`],
-)
+#[
+  #set par(justify: false)
+  #table(
+    columns: (4.2fr, 3.8fr),
+    inset: (x: 6pt, y: 4pt),
+    stroke: 0.3pt + luma(200),
+    align: left,
+    table.header([You want], [Use]),
+    [A result for every element], [`mapcar`, `map`],
+    [Only some elements], [`remove-if-not`, `remove-if`],
+    [The first matching element], [`find`, `find-if`],
+    [Where it is], [`position`, `position-if`],
+    [How many match], [`count`, `count-if`],
+    [Yes or no for all or any], [`every`, `some`],
+    [One value from all elements], [`reduce`],
+    [A new order], [`sort`, `stable-sort`],
+    [Each element once], [`remove-duplicates`],
+  )
+]
 
 Write a recursive function when none of these fits, for example when you walk a tree as in `count-atoms`. These functions walk only the top level of a sequence.
 

@@ -193,7 +193,7 @@ That's the whole step. In the next chapter, the rooms become data.
 ]
 
 #exercise("1.4")[
-  Print the line `Welcome, traveller.` without quotes. How do you make the printed line — rather than the value — the thing you see?
+  Print the line `Welcome, traveller.` without quotes. Which printing function earns that, and what does the REPL show you in return?
 
 ]
 

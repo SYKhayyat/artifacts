@@ -148,18 +148,21 @@ Taking the car of the cdr is so common that it has its own name:
 
 The letters between `c` and `r` say what to do, read from #strong[right to left]. `cadr` is "cdr, then car". Some more:
 
-#table(
-  columns: (1.1fr, 3.2fr, 2.3fr, 1.3fr),
-  inset: (x: 6pt, y: 4pt),
-  stroke: 0.3pt + luma(200),
-  align: left,
-  table.header([Name], [Means], [On `(a b c d)`], [Same as]),
-  [`cadr`], [car of cdr], [`B`], [`second`],
-  [`cddr`], [cdr of cdr], [`(C D)`], [],
-  [`caddr`], [car of cdr of cdr], [`C`], [`third`],
-  [`caar`], [car of car], [(error here)], [],
-  [`cdar`], [cdr of car], [(error here)], [],
-)
+#[
+  #set par(justify: false)
+  #table(
+    columns: (1.1fr, 3.2fr, 2.3fr, 1.3fr),
+    inset: (x: 6pt, y: 4pt),
+    stroke: 0.3pt + luma(200),
+    align: left,
+    table.header([Name], [Means], [On `(a b c d)`], [Same as]),
+    [`cadr`], [car of cdr], [`B`], [`second`],
+    [`cddr`], [cdr of cdr], [`(C D)`], [],
+    [`caddr`], [car of cdr of cdr], [`C`], [`third`],
+    [`caar`], [car of car], [(error here)], [],
+    [`cdar`], [cdr of car], [(error here)], [],
+  )
+]
 
 `caar` and `cdar` need a list whose first element is itself a cons, such as `((a . 1) (b . 2))`: `caar` gives `A`, `cdar` gives `1`.
 

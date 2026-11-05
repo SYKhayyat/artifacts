@@ -205,17 +205,20 @@ When an unhandled error opens the debugger in SLIME or SLY (Appendix C), you see
 
 The restarts you'll actually use:
 
-#table(
-  columns: (1.8fr, 6.2fr),
-  inset: (x: 6pt, y: 4pt),
-  stroke: 0.3pt + luma(200),
-  align: left,
-  table.header([Restart], [Meaning]),
-  [`ABORT`], [Give up this attempt, back to the REPL (`q`)],
-  [`USE-VALUE v`], [Pretend the failing expression produced `v`],
-  [`STORE-VALUE v`], [Like `USE-VALUE`, for places rather than values],
-  [`RETRY`], [Run the failing form again],
-)
+#[
+  #set par(justify: false)
+  #table(
+    columns: (1.8fr, 6.2fr),
+    inset: (x: 6pt, y: 4pt),
+    stroke: 0.3pt + luma(200),
+    align: left,
+    table.header([Restart], [Meaning]),
+    [`ABORT`], [Give up this attempt, back to the REPL (`q`)],
+    [`USE-VALUE v`], [Pretend the failing expression produced `v`],
+    [`STORE-VALUE v`], [Like `USE-VALUE`, for places rather than values],
+    [`RETRY`], [Run the failing form again],
+  )
+]
 
 `USE-VALUE` is the one worth knowing by name. When a lookup fails deep in a long computation, you don't restart the computation: you supply the missing value and continue. In your own code, you can offer exactly that restart with `restart-case` and `:report "Use a replacement value."`, and the debugger menu grows a choice tailored to the problem.
 

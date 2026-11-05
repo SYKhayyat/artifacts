@@ -30,50 +30,56 @@ Everything you type at the REPL, everything in your `.lisp` files, everything `r
 
 Most of this you know; the point is to see it as one table, one system. The reader's notations:
 
-#table(
-  columns: (1.9fr, 5.2fr, 0.9fr),
-  inset: (x: 6pt, y: 4pt),
-  stroke: 0.3pt + luma(200),
-  align: left,
-  table.header([Syntax], [Produces], [Met in]),
-  [`123`, `-1.5`], [numbers], [3],
-  [`1/3`], [a ratio], [3],
-  [`1.0d0`], [a double float], [3],
-  [`"text"`], [a string (`\` escapes inside)], [3],
-  [`#\a`, `#\Space`], [a character], [3],
-  [`foo`, `Foo`], [a symbol (upper-cased by default)], [3],
-  [`:key`], [a keyword], [3],
-  [`'x`], [`(quote x)`], [2],
-  [`(a ,b ,@c)`], [quasiquote], [14],
-  [`(a . b)`], [a cons cell], [7],
-  [`nil`, `t`], [the two constants], [2],
-  [`#'fn`], [`(function fn)`], [9],
-  [`#:sym`], [an uninterned symbol], [14],
-)
+#[
+  #set par(justify: false)
+  #table(
+    columns: (1.9fr, 5.2fr, 0.9fr),
+    inset: (x: 6pt, y: 4pt),
+    stroke: 0.3pt + luma(200),
+    align: left,
+    table.header([Syntax], [Produces], [Met in]),
+    [`123`, `-1.5`], [numbers], [3],
+    [`1/3`], [a ratio], [3],
+    [`1.0d0`], [a double float], [3],
+    [`"text"`], [a string (`\` escapes inside)], [3],
+    [`#\a`, `#\Space`], [a character], [3],
+    [`foo`, `Foo`], [a symbol (upper-cased by default)], [3],
+    [`:key`], [a keyword], [3],
+    [`'x`], [`(quote x)`], [2],
+    [`(a ,b ,@c)`], [quasiquote], [14],
+    [`(a . b)`], [a cons cell], [7],
+    [`nil`, `t`], [the two constants], [2],
+    [`#'fn`], [`(function fn)`], [9],
+    [`#:sym`], [an uninterned symbol], [14],
+  )
+]
 
 The `#` (sharp-sign) dispatch family deserves its own look, because each following character is a different notation:
 
-#table(
-  columns: (2.0fr, 5.4fr, 0.6fr),
-  inset: (x: 6pt, y: 4pt),
-  stroke: 0.3pt + luma(200),
-  align: left,
-  table.header([Syntax], [Produces], [Met in]),
-  [`#'foo`], [the function `foo`], [9],
-  [`'(1 2)`], [`(quote (1 2))`], [2],
-  [`#x1F`, `#o17`, `#b1010`], [hex \/ octal \/ binary numbers], [new],
-  [`#c(1 2)`], [the complex number 1+2i], [new],
-  [`#p"/tmp/x"`], [a pathname object], [new],
-  [`#.expr`], [#emph[evaluate expr while reading]], [new],
-  [`#+feature`, `#-feature`], [read the next form only if a feature is (not) present], [new],
-  [`#\Newline`], [named characters], [3],
-  [\#], [...], [`#`],
-  [`#;`], [comment out the next #emph[form]], [new],
-  [`#:sym`], [uninterned symbol], [14],
-  [`#S(room ...)`], [a structure literal], [new],
-  [`#(...)`], [a vector literal], [new],
-  [`#n`, `#n#`], [label and reference (circular structure)], [new],
-)
+#[
+  #set par(justify: false)
+  #table(
+    columns: (2.0fr, 5.1fr, 0.8fr),
+    inset: (x: 6pt, y: 4pt),
+    stroke: 0.3pt + luma(200),
+    align: left,
+    table.header([Syntax], [Produces], [Met in]),
+    [`#'foo`], [the function `foo`], [9],
+    [`'(1 2)`], [`(quote (1 2))`], [2],
+    [`#x1F`, `#o17`, `#b1010`], [hex \/ octal \/ binary numbers], [new],
+    [`#c(1 2)`], [the complex number 1+2i], [new],
+    [`#p"/tmp/x"`], [a pathname object], [new],
+    [`#.expr`], [#emph[evaluate expr while reading]], [new],
+    [`#+feature`, `#-feature`], [read the next form only if a feature is (not) present], [new],
+    [`#\Newline`], [named characters], [3],
+    [\#], [...], [`#`],
+    [`#;`], [comment out the next #emph[form]], [new],
+    [`#:sym`], [uninterned symbol], [14],
+    [`#S(room ...)`], [a structure literal], [new],
+    [`#(...)`], [a vector literal], [new],
+    [`#n`, `#n#`], [label and reference (circular structure)], [new],
+  )
+]
 
 The new ones, in action:
 

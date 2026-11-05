@@ -59,33 +59,39 @@ For exercises where the answer is a single expression, the check is simply runni
 ]
 
 #soln("1.5")[
-  #table(
-    columns: (1.4fr, 5.1fr, 1.5fr),
-    inset: (x: 6pt, y: 4pt),
-    stroke: 0.3pt + luma(200),
-    align: left,
-    table.header([Wrong], [Problem], [Fixed]),
-    [`(5 * 3)`], [The operator must come first], [`(* 5 3)`],
-    [`(+2 3)`], [`+2` reads as the number 2. A space is needed], [`(+ 2 3)`],
-    [(+ 1 `(* 2 3)`], [Missing a closing parenthesis], [`(+ 1 (* 2 3))`],
-    [`(* 2, 4)`], [Commas don't separate arguments], [`(* 2 4)`],
-  )
+  #[
+    #set par(justify: false)
+    #table(
+      columns: (1.3fr, 5.2fr, 1.5fr),
+      inset: (x: 6pt, y: 4pt),
+      stroke: 0.3pt + luma(200),
+      align: left,
+      table.header([Wrong], [Problem], [Fixed]),
+      [`(5 * 3)`], [The operator must come first], [`(* 5 3)`],
+      [`(+2 3)`], [`+2` reads as the number 2. A space is needed], [`(+ 2 3)`],
+      [(+ 1 `(* 2 3)`], [Missing a closing parenthesis], [`(+ 1 (* 2 3))`],
+      [`(* 2, 4)`], [Commas don't separate arguments], [`(* 2 4)`],
+    )
+  ]
 
 ]
 
 == Chapter 2
 
 #soln("2.1")[
-  #table(
-    columns: (1.6fr, 0.9fr, 5.5fr),
-    inset: (x: 6pt, y: 4pt),
-    stroke: 0.3pt + luma(200),
-    align: left,
-    table.header([Expression], [Result], [Why]),
-    [`'(+ 2 3)`], [`(+ 2 3)`], [Quoted, so not evaluated],
-    [`(list '+ 2 3)`], [`(+ 2 3)`], [`list` builds the same list from its arguments],
-    [`(+ 2 3)`], [`5`], [A normal call],
-  )
+  #[
+    #set par(justify: false)
+    #table(
+      columns: (1.6fr, 0.9fr, 5.4fr),
+      inset: (x: 6pt, y: 4pt),
+      stroke: 0.3pt + luma(200),
+      align: left,
+      table.header([Expression], [Result], [Why]),
+      [`'(+ 2 3)`], [`(+ 2 3)`], [Quoted, so not evaluated],
+      [`(list '+ 2 3)`], [`(+ 2 3)`], [`list` builds the same list from its arguments],
+      [`(+ 2 3)`], [`5`], [A normal call],
+    )
+  ]
 
   The first two give the same list in two different ways. This is the point of the exercise: code and data look the same in Lisp.
 
@@ -127,17 +133,20 @@ For exercises where the answer is a single expression, the check is simply runni
 ]
 
 #soln("2.5")[
-  #table(
-    columns: (2.9fr, 0.7fr, 4.5fr),
-    inset: (x: 6pt, y: 4pt),
-    stroke: 0.3pt + luma(200),
-    align: left,
-    table.header([Expression], [Result], [Why]),
-    [`(listp nil)`], [`T`], [`nil` is the empty list],
-    [`(null '(nil))`], [`NIL`], [A list holding one element is not empty],
-    [`(length '((a b) (c d e)))`], [`2`], [Two elements, each of which is a list],
-    [`(rest '(only))`], [`NIL`], [Nothing after the first element],
-  )
+  #[
+    #set par(justify: false)
+    #table(
+      columns: (2.9fr, 0.8fr, 4.3fr),
+      inset: (x: 6pt, y: 4pt),
+      stroke: 0.3pt + luma(200),
+      align: left,
+      table.header([Expression], [Result], [Why]),
+      [`(listp nil)`], [`T`], [`nil` is the empty list],
+      [`(null '(nil))`], [`NIL`], [A list holding one element is not empty],
+      [`(length '((a b) (c d e)))`], [`2`], [Two elements, each of which is a list],
+      [`(rest '(only))`], [`NIL`], [Nothing after the first element],
+    )
+  ]
 
   The second one catches many people. `(nil)` is a list with one element, which happens to be `nil`. It isn't empty.
 
@@ -172,17 +181,20 @@ For exercises where the answer is a single expression, the check is simply runni
 ]
 
 #soln("3.2")[
-  #table(
-    columns: (1.2fr, 0.7fr, 6.0fr),
-    inset: (x: 6pt, y: 4pt),
-    stroke: 0.3pt + luma(200),
-    align: left,
-    table.header([Expression], [Result], [Why]),
-    [`(/ 10 4)`], [`5/2`], [Integer division is exact and reduces 10\/4 to 5\/2],
-    [`(/ 10 4.0)`], [`2.5`], [One float makes the result a float],
-    [`(mod 10 4)`], [`2`], [10 = 2 × 4 + 2],
-    [`(isqrt 50)`], [`7`], [7 × 7 = 49 fits in 50. 8 × 8 = 64 doesn't],
-  )
+  #[
+    #set par(justify: false)
+    #table(
+      columns: (1.3fr, 0.8fr, 5.9fr),
+      inset: (x: 6pt, y: 4pt),
+      stroke: 0.3pt + luma(200),
+      align: left,
+      table.header([Expression], [Result], [Why]),
+      [`(/ 10 4)`], [`5/2`], [Integer division is exact and reduces 10\/4 to 5\/2],
+      [`(/ 10 4.0)`], [`2.5`], [One float makes the result a float],
+      [`(mod 10 4)`], [`2`], [10 = 2 × 4 + 2],
+      [`(isqrt 50)`], [`7`], [7 × 7 = 49 fits in 50. 8 × 8 = 64 doesn't],
+    )
+  ]
 
 ]
 
@@ -229,17 +241,20 @@ For exercises where the answer is a single expression, the check is simply runni
 ]
 
 #soln("3.6")[
-  #table(
-    columns: (3.1fr, 0.7fr, 4.2fr),
-    inset: (x: 6pt, y: 4pt),
-    stroke: 0.3pt + luma(200),
-    align: left,
-    table.header([Expression], [Result], [Why]),
-    [`(eq 'Apple 'APPLE)`], [`T`], [Symbol names become upper case when read],
-    [`(string= "Apple" "APPLE")`], [`NIL`], [Strings keep their case. `string=` checks it],
-    [`(string-equal "Apple" "APPLE")`], [`T`], [`string-equal` ignores case],
-    [`(symbol-name :north)`], [`"NORTH"`], [The colon isn't part of the name],
-  )
+  #[
+    #set par(justify: false)
+    #table(
+      columns: (3.1fr, 0.9fr, 4.0fr),
+      inset: (x: 6pt, y: 4pt),
+      stroke: 0.3pt + luma(200),
+      align: left,
+      table.header([Expression], [Result], [Why]),
+      [`(eq 'Apple 'APPLE)`], [`T`], [Symbol names become upper case when read],
+      [`(string= "Apple" "APPLE")`], [`NIL`], [Strings keep their case. `string=` checks it],
+      [`(string-equal "Apple" "APPLE")`], [`T`], [`string-equal` ignores case],
+      [`(symbol-name :north)`], [`"NORTH"`], [The colon isn't part of the name],
+    )
+  ]
 
 ]
 
@@ -283,18 +298,21 @@ For exercises where the answer is a single expression, the check is simply runni
 #soln("4.2")[
   Expected: `NORMAL`
 
-  #table(
-    columns: (2.9fr, 1.5fr, 3.5fr),
-    inset: (x: 6pt, y: 4pt),
-    stroke: 0.3pt + luma(200),
-    align: left,
-    table.header([Line], [`*mode*` after it], [Why]),
-    [`(defvar *mode* 'easy)`], [`EASY`], [First definition],
-    [`(setf *mode* 'hard)`], [`HARD`], [`setf` changes it],
-    [`(defvar *mode* 'easy)`], [`HARD`], [Already defined, so `defvar` skips it],
-    [`(defparameter *mode* 'normal)`], [`NORMAL`], [`defparameter` always sets it],
-    [`(defvar *mode* 'easy)`], [`NORMAL`], [Already defined again],
-  )
+  #[
+    #set par(justify: false)
+    #table(
+      columns: (2.9fr, 1.9fr, 3.2fr),
+      inset: (x: 6pt, y: 4pt),
+      stroke: 0.3pt + luma(200),
+      align: left,
+      table.header([Line], [`*mode*` after it], [Why]),
+      [`(defvar *mode* 'easy)`], [`EASY`], [First definition],
+      [`(setf *mode* 'hard)`], [`HARD`], [`setf` changes it],
+      [`(defvar *mode* 'easy)`], [`HARD`], [Already defined, so `defvar` skips it],
+      [`(defparameter *mode* 'normal)`], [`NORMAL`], [`defparameter` always sets it],
+      [`(defvar *mode* 'easy)`], [`NORMAL`], [Already defined again],
+    )
+  ]
 
   If you ran these in a session where `*mode*` already existed, the first line also does nothing. Restart Lisp to see the table exactly.
 
@@ -341,16 +359,19 @@ For exercises where the answer is a single expression, the check is simply runni
 ]
 
 #soln("4.6")[
-  #table(
-    columns: (2.3fr, 3.3fr, 2.4fr),
-    inset: (x: 6pt, y: 4pt),
-    stroke: 0.3pt + luma(200),
-    align: left,
-    table.header([Wrong], [Problem], [Fixed]),
-    [`(let (total 10) total)`], [Each binding needs its own parentheses], [`(let ((total 10)) total)`],
-    [`(let ((a 3) (b (* a a))) b)`], [`b` uses `a` from the same `let`], [`(let* ((a 3) (b (* a a))) b)`],
-    [`(* '*apples* 2)`], [The quote gives the name, not the value], [`(* *apples* 2)`],
-  )
+  #[
+    #set par(justify: false)
+    #table(
+      columns: (2.3fr, 3.4fr, 2.3fr),
+      inset: (x: 6pt, y: 4pt),
+      stroke: 0.3pt + luma(200),
+      align: left,
+      table.header([Wrong], [Problem], [Fixed]),
+      [`(let (total 10) total)`], [Each binding needs its own parentheses], [`(let ((total 10)) total)`],
+      [`(let ((a 3) (b (* a a))) b)`], [`b` uses `a` from the same `let`], [`(let* ((a 3) (b (* a a))) b)`],
+      [`(* '*apples* 2)`], [The quote gives the name, not the value], [`(* *apples* 2)`],
+    )
+  ]
 
   Check the fixed versions:
 
@@ -507,16 +528,19 @@ For exercises where the answer is a single expression, the check is simply runni
 ]
 
 #soln("5.7")[
-  #table(
-    columns: (2.0fr, 4.2fr, 1.8fr),
-    inset: (x: 6pt, y: 4pt),
-    stroke: 0.3pt + luma(200),
-    align: left,
-    table.header([Wrong], [Problem], [Fixed]),
-    [`(defun add (a b) (+ a b c))`], [`c` isn't a parameter. SBCL warns "undefined variable: C"], [`(defun add (a b) (+ a b))`],
-    [`(defun (twice n) (* 2 n))`], [The name and the parameter list are separate parts], [`(defun twice (n) (* 2 n))`],
-    [`(add 1)`], [`add` needs two arguments: "invalid number of arguments: 1"], [`(add 1 2)`],
-  )
+  #[
+    #set par(justify: false)
+    #table(
+      columns: (2.0fr, 4.2fr, 1.8fr),
+      inset: (x: 6pt, y: 4pt),
+      stroke: 0.3pt + luma(200),
+      align: left,
+      table.header([Wrong], [Problem], [Fixed]),
+      [`(defun add (a b) (+ a b c))`], [`c` isn't a parameter. SBCL warns "undefined variable: C"], [`(defun add (a b) (+ a b))`],
+      [`(defun (twice n) (* 2 n))`], [The name and the parameter list are separate parts], [`(defun twice (n) (* 2 n))`],
+      [`(add 1)`], [`add` needs two arguments: "invalid number of arguments: 1"], [`(add 1 2)`],
+    )
+  ]
 
   Check the fixed versions:
 
@@ -586,18 +610,21 @@ For exercises where the answer is a single expression, the check is simply runni
 ]
 
 #soln("6.2")[
-  #table(
-    columns: (3.8fr, 0.6fr, 3.7fr),
-    inset: (x: 6pt, y: 4pt),
-    stroke: 0.3pt + luma(200),
-    align: left,
-    table.header([Expression], [Result], [Why]),
-    [`(if nil 1 2)`], [`2`], [`nil` is false],
-    [`(if 0 1 2)`], [`1`], [`0` is not `nil`, so it's true],
-    [`(when (> 1 2) 'yes)`], [`NIL`], [The test fails, so the body doesn't run],
-    [`(unless (> 1 2) 'yes)`], [`YES`], [`unless` runs when the test fails],
-    [`(if (member 3 '(1 2 3)) 'found 'missing)`], [`FOUND`], [`member` returns `(3)`, which is true],
-  )
+  #[
+    #set par(justify: false)
+    #table(
+      columns: (3.8fr, 0.8fr, 3.4fr),
+      inset: (x: 6pt, y: 4pt),
+      stroke: 0.3pt + luma(200),
+      align: left,
+      table.header([Expression], [Result], [Why]),
+      [`(if nil 1 2)`], [`2`], [`nil` is false],
+      [`(if 0 1 2)`], [`1`], [`0` is not `nil`, so it's true],
+      [`(when (> 1 2) 'yes)`], [`NIL`], [The test fails, so the body doesn't run],
+      [`(unless (> 1 2) 'yes)`], [`YES`], [`unless` runs when the test fails],
+      [`(if (member 3 '(1 2 3)) 'found 'missing)`], [`FOUND`], [`member` returns `(3)`, which is true],
+    )
+  ]
 
 ]
 
@@ -713,18 +740,21 @@ For exercises where the answer is a single expression, the check is simply runni
 
   Expected: `("" NIL NONE B NIL)`
 
-  #table(
-    columns: (2.9fr, 0.6fr, 4.5fr),
-    inset: (x: 6pt, y: 4pt),
-    stroke: 0.3pt + luma(200),
-    align: left,
-    table.header([Expression], [Result], [Why]),
-    [`(or nil "" 5)`], [`""`], [`""` is the first true value, so `or` stops there],
-    [`(and 1 0 nil)`], [`NIL`], [One argument is `nil`],
-    [`(or (member 'x '(a b)) 'none)`], [`NONE`], [`member` gives `nil`, so `or` moves on],
-    [`(and 'a 'b)`], [`B`], [All true, so `and` returns the last value],
-    [`(not 0)`], [`NIL`], [`0` is true, so `not` gives `nil`],
-  )
+  #[
+    #set par(justify: false)
+    #table(
+      columns: (2.9fr, 0.8fr, 4.3fr),
+      inset: (x: 6pt, y: 4pt),
+      stroke: 0.3pt + luma(200),
+      align: left,
+      table.header([Expression], [Result], [Why]),
+      [`(or nil "" 5)`], [`""`], [`""` is the first true value, so `or` stops there],
+      [`(and 1 0 nil)`], [`NIL`], [One argument is `nil`],
+      [`(or (member 'x '(a b)) 'none)`], [`NONE`], [`member` gives `nil`, so `or` moves on],
+      [`(and 'a 'b)`], [`B`], [All true, so `and` returns the last value],
+      [`(not 0)`], [`NIL`], [`0` is true, so `not` gives `nil`],
+    )
+  ]
 
 ]
 
@@ -856,18 +886,21 @@ For exercises where the answer is a single expression, the check is simply runni
 
   Expected: `((A . B) ((A) B) (NIL) NIL (X Y))`
 
-  #table(
-    columns: (1.9fr, 0.8fr, 5.2fr),
-    inset: (x: 6pt, y: 4pt),
-    stroke: 0.3pt + luma(200),
-    align: left,
-    table.header([Expression], [Result], [Why]),
-    [`(cons 'a 'b)`], [`(A . B)`], [The cdr isn't a list, so it's a dotted pair],
-    [`(cons '(a) '(b))`], [`((A) B)`], [The element `(A)` goes on the front of `(B)`],
-    [`(cons nil nil)`], [`(NIL)`], [A one-element list whose element is `nil`],
-    [`(cdr '(a))`], [`NIL`], [Only one cons, and its cdr is the end],
-    [`(car '((x y) z))`], [`(X Y)`], [The first element is itself a list],
-  )
+  #[
+    #set par(justify: false)
+    #table(
+      columns: (1.9fr, 0.9fr, 5.1fr),
+      inset: (x: 6pt, y: 4pt),
+      stroke: 0.3pt + luma(200),
+      align: left,
+      table.header([Expression], [Result], [Why]),
+      [`(cons 'a 'b)`], [`(A . B)`], [The cdr isn't a list, so it's a dotted pair],
+      [`(cons '(a) '(b))`], [`((A) B)`], [The element `(A)` goes on the front of `(B)`],
+      [`(cons nil nil)`], [`(NIL)`], [A one-element list whose element is `nil`],
+      [`(cdr '(a))`], [`NIL`], [Only one cons, and its cdr is the end],
+      [`(car '((x y) z))`], [`(X Y)`], [The first element is itself a list],
+    )
+  ]
 
 ]
 
@@ -937,16 +970,19 @@ For exercises where the answer is a single expression, the check is simply runni
 ]
 
 #soln("7.7")[
-  #table(
-    columns: (2.8fr, 2.8fr, 2.4fr),
-    inset: (x: 6pt, y: 4pt),
-    stroke: 0.3pt + luma(200),
-    align: left,
-    table.header([Wrong], [Problem], [Fixed]),
-    [`(cons '(1 2) '(3 4))`], [`cons` adds `(1 2)` as one element], [`(append '(1 2) '(3 4))`],
-    [`(cdr (assoc "b" '(("a" . 1) ("b" . 2))))`], [`assoc` can't compare strings], [`(cdr (assoc 'b '((a . 1) (b . 2))))`],
-    [`(push 'x '(a b))`], [`push` needs a variable to store the result], [`(cons 'x '(a b))`],
-  )
+  #[
+    #set par(justify: false)
+    #table(
+      columns: (2.8fr, 2.8fr, 2.4fr),
+      inset: (x: 6pt, y: 4pt),
+      stroke: 0.3pt + luma(200),
+      align: left,
+      table.header([Wrong], [Problem], [Fixed]),
+      [`(cons '(1 2) '(3 4))`], [`cons` adds `(1 2)` as one element], [`(append '(1 2) '(3 4))`],
+      [`(cdr (assoc "b" '(("a" . 1) ("b" . 2))))`], [`assoc` can't compare strings], [`(cdr (assoc 'b '((a . 1) (b . 2))))`],
+      [`(push 'x '(a b))`], [`push` needs a variable to store the result], [`(cons 'x '(a b))`],
+    )
+  ]
 
   Check the fixed versions:
 
@@ -1077,18 +1113,21 @@ For exercises where the answer is a single expression, the check is simply runni
 
   Expected: `(3 (3 2 1) 24 (KEY) (4 2))`
 
-  #table(
-    columns: (2.5fr, 0.6fr, 4.9fr),
-    inset: (x: 6pt, y: 4pt),
-    stroke: 0.3pt + luma(200),
-    align: left,
-    table.header([Expression], [Result], [Why]),
-    [`(count-atoms '(a (b) c))`], [`3`], [`a`, `b` and `c`: three atoms, at any depth],
-    [`(countdown 3)`], [`(3 2 1)`], [Counts down and stops at zero],
-    [`(factorial 4)`], [`24`], [4 × 3 × 2 × 1],
-    [`(items-in ... 'kitchen)`], [`(KEY)`], [Only the pair whose value is `kitchen`],
-    [`(double-all-into '(1 2) nil)`], [`(4 2)`], [The accumulator is built backwards, so no `reverse` here],
-  )
+  #[
+    #set par(justify: false)
+    #table(
+      columns: (2.5fr, 0.9fr, 4.5fr),
+      inset: (x: 6pt, y: 4pt),
+      stroke: 0.3pt + luma(200),
+      align: left,
+      table.header([Expression], [Result], [Why]),
+      [`(count-atoms '(a (b) c))`], [`3`], [`a`, `b` and `c`: three atoms, at any depth],
+      [`(countdown 3)`], [`(3 2 1)`], [Counts down and stops at zero],
+      [`(factorial 4)`], [`24`], [4 × 3 × 2 × 1],
+      [`(items-in ... 'kitchen)`], [`(KEY)`], [Only the pair whose value is `kitchen`],
+      [`(double-all-into '(1 2) nil)`], [`(4 2)`], [The accumulator is built backwards, so no `reverse` here],
+    )
+  ]
 
   The last one is the accumulator pattern without its `reverse`. Running `double-all` instead gives `(2 4)`, because `double-all` reverses the result of the helper.
 
@@ -1404,18 +1443,21 @@ For exercises where the answer is a single expression, the check is simply runni
 
   Expected: `((1 2) 24 (1 2 0) ((A . A) (B . B)) "hi!!")`
 
-  #table(
-    columns: (3.1fr, 1.8fr, 3.2fr),
-    inset: (x: 6pt, y: 4pt),
-    stroke: 0.3pt + luma(200),
-    align: left,
-    table.header([Expression], [Result], [Why]),
-    [`(funcall #'list 1 2)`], [`(1 2)`], [Same as `(list 1 2)`],
-    [`(apply #'* 2 '(3 4))`], [`24`], [Same as `(* 2 3 4)`],
-    [`(mapcar #'length ...)`], [`(1 2 0)`], [One length per inner list],
-    [`(mapcar (lambda (x) ...) ...)`], [`((A . A) (B . B))`], [Each symbol consed onto itself],
-    [`(apply-twice ...)`], [`"hi!!"`], [One `"!"` per call, two calls],
-  )
+  #[
+    #set par(justify: false)
+    #table(
+      columns: (3.1fr, 1.8fr, 3.2fr),
+      inset: (x: 6pt, y: 4pt),
+      stroke: 0.3pt + luma(200),
+      align: left,
+      table.header([Expression], [Result], [Why]),
+      [`(funcall #'list 1 2)`], [`(1 2)`], [Same as `(list 1 2)`],
+      [`(apply #'* 2 '(3 4))`], [`24`], [Same as `(* 2 3 4)`],
+      [`(mapcar #'length ...)`], [`(1 2 0)`], [One length per inner list],
+      [`(mapcar (lambda (x) ...) ...)`], [`((A . A) (B . B))`], [Each symbol consed onto itself],
+      [`(apply-twice ...)`], [`"hi!!"`], [One `"!"` per call, two calls],
+    )
+  ]
 
 ]
 
@@ -1629,20 +1671,23 @@ For exercises where the answer is a single expression, the check is simply runni
 
   Expected: `((6 8) 3 3 2 24 T (1 3 2))`
 
-  #table(
-    columns: (3.0fr, 0.8fr, 4.2fr),
-    inset: (x: 6pt, y: 4pt),
-    stroke: 0.3pt + luma(200),
-    align: left,
-    table.header([Expression], [Result], [Why]),
-    [`(remove-if-not #'evenp ...)`], [`(6 8)`], [Keeps the even numbers],
-    [`(find-if #'numberp ...)`], [`3`], [The first number, not all of them],
-    [`(count-if #'symbolp ...)`], [`3`], [`a`, `b` and `c`],
-    [`(position #\n "banana")`], [`2`], [Counting from zero: b, a, n],
-    [`(reduce #'* ...)`], [`24`], [1 × 2 × 3 × 4],
-    [`(every #'symbolp '())`], [`T`], [No element says no],
-    [`(remove-duplicates ...)`], [`(1 3 2)`], [Keeps the last copy of each by default],
-  )
+  #[
+    #set par(justify: false)
+    #table(
+      columns: (3.0fr, 0.9fr, 4.1fr),
+      inset: (x: 6pt, y: 4pt),
+      stroke: 0.3pt + luma(200),
+      align: left,
+      table.header([Expression], [Result], [Why]),
+      [`(remove-if-not #'evenp ...)`], [`(6 8)`], [Keeps the even numbers],
+      [`(find-if #'numberp ...)`], [`3`], [The first number, not all of them],
+      [`(count-if #'symbolp ...)`], [`3`], [`a`, `b` and `c`],
+      [`(position #\n "banana")`], [`2`], [Counting from zero: b, a, n],
+      [`(reduce #'* ...)`], [`24`], [1 × 2 × 3 × 4],
+      [`(every #'symbolp '())`], [`T`], [No element says no],
+      [`(remove-duplicates ...)`], [`(1 3 2)`], [Keeps the last copy of each by default],
+    )
+  ]
 
 ]
 
@@ -1897,20 +1942,23 @@ For exercises where the answer is a single expression, the check is simply runni
 
   Expected: `((1 4 9 16) 6 ((0 A) (1 B) (2 C)) (3 2 1) NIL 3 2)`
 
-  #table(
-    columns: (1.6fr, 2.1fr, 4.3fr),
-    inset: (x: 6pt, y: 4pt),
-    stroke: 0.3pt + luma(200),
-    align: left,
-    table.header([Expression], [Result], [Why]),
-    [Squares, 1 to 4], [`(1 4 9 16)`], [`to` includes 4],
-    [`sum` below 4], [`6`], [0 + 1 + 2 + 3],
-    [Two `for` clauses], [`((0 A) (1 B) (2 C))`], [Both step together],
-    [`for tail on`], [`(3 2 1)`], [Tails of lengths 3, 2, 1],
-    [`dolist`], [`NIL`], [`dolist` returns `nil` without a result form],
-    [`count`], [`3`], [`5`, `8` and `9` are above `4`],
-    [`across` + `count`], [`2`], [Two `l` in "hello"],
-  )
+  #[
+    #set par(justify: false)
+    #table(
+      columns: (1.7fr, 2.1fr, 4.2fr),
+      inset: (x: 6pt, y: 4pt),
+      stroke: 0.3pt + luma(200),
+      align: left,
+      table.header([Expression], [Result], [Why]),
+      [Squares, 1 to 4], [`(1 4 9 16)`], [`to` includes 4],
+      [`sum` below 4], [`6`], [0 + 1 + 2 + 3],
+      [Two `for` clauses], [`((0 A) (1 B) (2 C))`], [Both step together],
+      [`for tail on`], [`(3 2 1)`], [Tails of lengths 3, 2, 1],
+      [`dolist`], [`NIL`], [`dolist` returns `nil` without a result form],
+      [`count`], [`3`], [`5`, `8` and `9` are above `4`],
+      [`across` + `count`], [`2`], [Two `l` in "hello"],
+    )
+  ]
 
 ]
 
@@ -2104,17 +2152,20 @@ For exercises where the answer is a single expression, the check is simply runni
 
   Expected: `(T T 3 CHECKED)`
 
-  #table(
-    columns: (1.6fr, 0.9fr, 5.5fr),
-    inset: (x: 6pt, y: 4pt),
-    stroke: 0.3pt + luma(200),
-    align: left,
-    table.header([Expression], [Result], [Why]),
-    [`always`], [`T`], [Every element is even],
-    [`never`], [`T`], [No element is negative],
-    [`thereis`], [`3`], [Returns the value, not just `T`],
-    [The last one], [`CHECKED`], [The list ran out, so `always` never said no],
-  )
+  #[
+    #set par(justify: false)
+    #table(
+      columns: (1.6fr, 0.9fr, 5.5fr),
+      inset: (x: 6pt, y: 4pt),
+      stroke: 0.3pt + luma(200),
+      align: left,
+      table.header([Expression], [Result], [Why]),
+      [`always`], [`T`], [Every element is even],
+      [`never`], [`T`], [No element is negative],
+      [`thereis`], [`3`], [Returns the value, not just `T`],
+      [The last one], [`CHECKED`], [The list ran out, so `always` never said no],
+    )
+  ]
 
   The last one is the subtle case. On `'(2 4)`, `always` never fails, the list ends, and `finally` runs as usual, returning `CHECKED`. On a list containing an odd number, `always` leaves the loop early and returns `nil` without running `finally`. So `finally` after `always` only runs when the loop survived to the end.
 
@@ -2237,19 +2288,22 @@ For exercises where the answer is a single expression, the check is simply runni
 
   b")
 
-  #table(
-    columns: (0.7fr, 1.8fr, 5.6fr),
-    inset: (x: 6pt, y: 4pt),
-    stroke: 0.3pt + luma(200),
-    align: left,
-    table.header([Expression], [Result], [Why]),
-    [`~A!`], [`"DONE!"`], [Symbols print in upper case],
-    [`~S` on "hi"], [`"\"hi\""`], [The string with its quotes; the backslashes are how the quotes show inside another string],
-    [`~3D` on 7], [`"  7"`], [Width 3, padded on the left],
-    [`~,1F` on 2.25], [`"2.2"`], [One digit after the point, rounded],
-    [`~A~A`], [`"AB"`], [Two arguments, no space unless you type it],
-    [`a~2%b`], [Two newlines between a and b], [],
-  )
+  #[
+    #set par(justify: false)
+    #table(
+      columns: (1.3fr, 1.8fr, 4.9fr),
+      inset: (x: 6pt, y: 4pt),
+      stroke: 0.3pt + luma(200),
+      align: left,
+      table.header([Expression], [Result], [Why]),
+      [`~A!`], [`"DONE!"`], [Symbols print in upper case],
+      [`~S` on "hi"], [`"\"hi\""`], [The string with its quotes; the backslashes are how the quotes show inside another string],
+      [`~3D` on 7], [`"  7"`], [Width 3, padded on the left],
+      [`~,1F` on 2.25], [`"2.2"`], [One digit after the point, rounded],
+      [`~A~A`], [`"AB"`], [Two arguments, no space unless you type it],
+      [`a~2%b`], [Two newlines between a and b], [],
+    )
+  ]
 
   The second result printed as `"\"hi\""` is worth a second look: the string `format` built contains a quote character, and when the REPL shows that string, it shows its own quotes and escapes.
 
@@ -2483,18 +2537,21 @@ For exercises where the answer is a single expression, the check is simply runni
 
   Expected: `(30 2 #\l (3 2) (NIL NIL))`
 
-  #table(
-    columns: (2.1fr, 1.2fr, 4.8fr),
-    inset: (x: 6pt, y: 4pt),
-    stroke: 0.3pt + luma(200),
-    align: left,
-    table.header([Expression], [Result], [Why]),
-    [`aref` on 2], [`30`], [Indexes count from zero],
-    [`length` of vector], [`2`], [`length` works on any sequence],
-    [`aref` on "lisp"], [`#\l`], [Strings are vectors of characters],
-    [`floor`], [`(3 2)`], [Two values: 17 = 5×3 + 2],
-    [`gethash` on empty], [`(NIL NIL)`], [No value, and the key was never there],
-  )
+  #[
+    #set par(justify: false)
+    #table(
+      columns: (2.1fr, 1.2fr, 4.8fr),
+      inset: (x: 6pt, y: 4pt),
+      stroke: 0.3pt + luma(200),
+      align: left,
+      table.header([Expression], [Result], [Why]),
+      [`aref` on 2], [`30`], [Indexes count from zero],
+      [`length` of vector], [`2`], [`length` works on any sequence],
+      [`aref` on "lisp"], [`#\l`], [Strings are vectors of characters],
+      [`floor`], [`(3 2)`], [Two values: 17 = 5×3 + 2],
+      [`gethash` on empty], [`(NIL NIL)`], [No value, and the key was never there],
+    )
+  ]
 
 ]
 

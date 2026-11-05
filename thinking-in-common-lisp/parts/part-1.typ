@@ -7,7 +7,7 @@
   
 ]
 
-== A note on reading results
+#heading(level: 2, numbering: none)[A note on reading results]
 
 Most listings in this guide show their expected result as a comment:
 

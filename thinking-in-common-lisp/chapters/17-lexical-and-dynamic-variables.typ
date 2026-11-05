@@ -147,23 +147,26 @@ You'll meet it in code that interprets other Lisp code. Note what it can do that
 
 A short list, since you've used half of these already and knowing them as a family helps:
 
-#table(
-  columns: (1.9fr, 5.3fr, 0.9fr),
-  inset: (x: 6pt, y: 4pt),
-  stroke: 0.3pt + luma(200),
-  align: left,
-  table.header([Variable], [Meaning], [Used in]),
-  [`*package*`], [the current package — affects how names are read], [16],
-  [`*standard-output*`], [where `format t`, `princ` and friends write], [12],
-  [`*error-output*`], [where `warn` writes], [18],
-  [`*print-readably*`], [print output that `read` can rebuild], [18],
-  [`*print-length*`], [cap on list length printed (nil = unlimited)], [this ch.],
-  [`*print-level*`], [cap on nesting depth printed], [this ch.],
-  [`*read-base*`], [what number base `read` assumes], [this ch.],
-  [`*features*`], [the list of implementation feature symbols], [App. A],
-  [`*load-pathname*`], [the file being `load`ed, if any], [this ch.],
-  [`*debugger-hook*`], [a function to call instead of the debugger], [this ch.],
-)
+#[
+  #set par(justify: false)
+  #table(
+    columns: (1.7fr, 5.2fr, 1.0fr),
+    inset: (x: 6pt, y: 4pt),
+    stroke: 0.3pt + luma(200),
+    align: left,
+    table.header([Variable], [Meaning], [Used in]),
+    [`*package*`], [the current package — affects how names are read], [16],
+    [`*standard-output*`], [where `format t`, `princ` and friends write], [12],
+    [`*error-output*`], [where `warn` writes], [18],
+    [`*print-readably*`], [print output that `read` can rebuild], [18],
+    [`*print-length*`], [cap on list length printed (nil = unlimited)], [this ch.],
+    [`*print-level*`], [cap on nesting depth printed], [this ch.],
+    [`*read-base*`], [what number base `read` assumes], [this ch.],
+    [`*features*`], [the list of implementation feature symbols], [App. A],
+    [`*load-pathname*`], [the file being `load`ed, if any], [this ch.],
+    [`*debugger-hook*`], [a function to call instead of the debugger], [this ch.],
+  )
+]
 
 Two examples of the `let` pattern in daily use. Printing large data without flooding the screen:
 

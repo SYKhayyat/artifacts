@@ -410,8 +410,8 @@ Write this one: =100 / (2 * 5) - 3=.
 
 **** Exercise 1.4
 
-Print the line =Welcome, traveller.= without quotes. How do you make
-the printed line — rather than the value — the thing you see?
+Print the line =Welcome, traveller.= without quotes. Which printing
+function earns that, and what does the REPL show you in return?
 
 **** Exercise 1.5
 
@@ -940,8 +940,8 @@ A string is text inside double quotes:
 (length "Hello")     ; => 5
 #+end_src
 
-To put a double quote inside a string, write =\"=. To put in a
-backslash, write =\\=:
+To put a double quote inside a string, write =\"=. To put a
+backslash in one, write =\\=:
 
 #+begin_src lisp :results output
 (princ "She said \"hi\" and left.")
@@ -1260,6 +1260,7 @@ Starting from the strings ="hello"= and ="world"=, build
 **** Exercise 3.5
 
 Write two expressions:
+
 1. One that gives the numeric value of the character =#\7=.
 2. One that turns =#\b= into upper case and then gives its character
    code.
@@ -1377,9 +1378,10 @@ operators:
 variable and return its new value. They're like Java's =score++= and
 =score += 10=.
 
-Run that twice in a fresh session and the result is different: the =defparameter=
-resets =*score*= to =0=, then the rest counts up again to =7=. Keep
-this in mind for the next section.
+Run the =incf= lines a second time, without the =defparameter=, and
+you get different numbers: =*score*= keeps the value it had. The
+=defparameter= is what resets it to =0=. Keep this in mind for the next
+section.
 
 *** =defvar=: define once, keep the value
 

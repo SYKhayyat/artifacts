@@ -59,27 +59,30 @@ The second argument to `float` is an example of the precision you want. The `d0`
 
 == Arithmetic you'll use
 
-#table(
-  columns: (2.0fr, 1.1fr, 4.9fr),
-  inset: (x: 6pt, y: 4pt),
-  stroke: 0.3pt + luma(200),
-  align: left,
-  table.header([Expression], [Result], [Meaning]),
-  [`(+ 1 2 3)`], [`6`], [add],
-  [`(- 10 3)`], [`7`], [subtract],
-  [`(- 5)`], [`-5`], [negate],
-  [`(* 2 3 4)`], [`24`], [multiply],
-  [`(/ 12 4)`], [`3`], [divide],
-  [`(1+ 5)`], [`6`], [add one],
-  [`(1- 5)`], [`4`], [subtract one],
-  [`(mod 17 5)`], [`2`], [remainder (like Java's `%`)],
-  [`(expt 2 8)`], [`256`], [power],
-  [`(sqrt 16)`], [`4.0`], [square root (gives a float)],
-  [`(isqrt 17)`], [`4`], [whole-number square root],
-  [`(abs -7)`], [`7`], [absolute value],
-  [`(max 3 9 2)`], [`9`], [largest],
-  [`(min 3 9 2)`], [`2`], [smallest],
-)
+#[
+  #set par(justify: false)
+  #table(
+    columns: (2.0fr, 1.1fr, 4.9fr),
+    inset: (x: 6pt, y: 4pt),
+    stroke: 0.3pt + luma(200),
+    align: left,
+    table.header([Expression], [Result], [Meaning]),
+    [`(+ 1 2 3)`], [`6`], [add],
+    [`(- 10 3)`], [`7`], [subtract],
+    [`(- 5)`], [`-5`], [negate],
+    [`(* 2 3 4)`], [`24`], [multiply],
+    [`(/ 12 4)`], [`3`], [divide],
+    [`(1+ 5)`], [`6`], [add one],
+    [`(1- 5)`], [`4`], [subtract one],
+    [`(mod 17 5)`], [`2`], [remainder (like Java's `%`)],
+    [`(expt 2 8)`], [`256`], [power],
+    [`(sqrt 16)`], [`4.0`], [square root (gives a float)],
+    [`(isqrt 17)`], [`4`], [whole-number square root],
+    [`(abs -7)`], [`7`], [absolute value],
+    [`(max 3 9 2)`], [`9`], [largest],
+    [`(min 3 9 2)`], [`2`], [smallest],
+  )
+]
 
 `1+` is a single name, not "one plus". It's a function called `1+`. Lisp names can contain characters like `+`, `-` and `*`.
 
@@ -165,7 +168,7 @@ A string is text inside double quotes:
 (length "Hello")     ; => 5
 ```
 
-To put a double quote inside a string, write `\"`. To put in a backslash, write `\\`:
+To put a double quote inside a string, write `\"`. To put a backslash in one, write `\\`:
 
 ```lisp
 (princ "She said \"hi\" and left.")
@@ -306,17 +309,20 @@ Strings keep their case. `"Kitchen"` stays `"Kitchen"`. Use strings for text a h
 
 For symbols, `eq` is the right test. For the other atoms you know:
 
-#table(
-  columns: (5.0fr, 3.0fr),
-  inset: (x: 6pt, y: 4pt),
-  stroke: 0.3pt + luma(200),
-  align: left,
-  table.header([To compare], [Use]),
-  [numbers], [`=`],
-  [characters], [`char=`],
-  [strings], [`string=`],
-  [symbols], [`eq`],
-)
+#[
+  #set par(justify: false)
+  #table(
+    columns: (5.0fr, 3.0fr),
+    inset: (x: 6pt, y: 4pt),
+    stroke: 0.3pt + luma(200),
+    align: left,
+    table.header([To compare], [Use]),
+    [numbers], [`=`],
+    [characters], [`char=`],
+    [strings], [`string=`],
+    [symbols], [`eq`],
+  )
+]
 
 Part IV covers equality fully, including how to compare lists.
 
@@ -433,7 +439,10 @@ You are in the Kitchen. A warm kitchen that smells of bread.
 ]
 
 #exercise("3.5")[
-  Write two expressions: 1. One that gives the numeric value of the character `#\7`. 2. One that turns `#\b` into upper case and then gives its character code.
+  Write two expressions:
+
+  + One that gives the numeric value of the character `#\7`.
+  + One that turns `#\b` into upper case and then gives its character code.
 
 ]
 

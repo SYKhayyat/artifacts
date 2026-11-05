@@ -101,24 +101,27 @@ It's useful when you know exactly which value you want and the others would just
 
 The vocabulary for the vanishing rule: a #emph[single-value context] keeps the primary value; a #emph[multiple-value context] keeps all. The full table, which is the reference to come back to:
 
-#table(
-  columns: (6.2fr, 1.8fr),
-  inset: (x: 6pt, y: 4pt),
-  stroke: 0.3pt + luma(200),
-  align: left,
-  table.header([Context], [Values kept]),
-  [Argument of a function call], [1 (primary)],
-  [`let`\/`let*` binding value form], [1 (primary)],
-  [`if`\/`when`\/`cond` test form], [1 (primary)],
-  [`progn` non-final form (value discarded)], [1 (primary)],
-  [Inner `(values ...)` in `values`' args], [1 (primary)],
-  [Body's last form of `defun`\/`let`\/`progn`], [all],
-  [`multiple-value-bind`'s form], [all],
-  [`multiple-value-list`'s form], [all],
-  [`multiple-value-call`'s argument forms], [all (each)],
-  [`multiple-value-prog1`'s first form], [all],
-  [`return`\/`return-from` value form], [all],
-)
+#[
+  #set par(justify: false)
+  #table(
+    columns: (6.2fr, 1.8fr),
+    inset: (x: 6pt, y: 4pt),
+    stroke: 0.3pt + luma(200),
+    align: left,
+    table.header([Context], [Values kept]),
+    [Argument of a function call], [1 (primary)],
+    [`let`\/`let*` binding value form], [1 (primary)],
+    [`if`\/`when`\/`cond` test form], [1 (primary)],
+    [`progn` non-final form (value discarded)], [1 (primary)],
+    [Inner `(values ...)` in `values`' args], [1 (primary)],
+    [Body's last form of `defun`\/`let`\/`progn`], [all],
+    [`multiple-value-bind`'s form], [all],
+    [`multiple-value-list`'s form], [all],
+    [`multiple-value-call`'s argument forms], [all (each)],
+    [`multiple-value-prog1`'s first form], [all],
+    [`return`\/`return-from` value form], [all],
+  )
+]
 
 The table's shape is the lesson: #emph[default behavior is truncation]. Any form that uses its argument's values all does so by explicit design, and the design is visible in the name (`multiple-value-...`) or the position (a body's last form, an exit form).
 

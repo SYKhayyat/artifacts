@@ -123,17 +123,20 @@ A #emph[stream] is a source or sink of characters (or bytes). You've used stream
   (write-line "Line two." out))
 ```
 
-#table(
-  columns: (2.4fr, 5.6fr),
-  inset: (x: 6pt, y: 4pt),
-  stroke: 0.3pt + luma(200),
-  align: left,
-  table.header([Argument], [Meaning]),
-  [`:direction :output`], [Writing instead of the default `:input`],
-  [`:if-exists :supersede`], [Replace an existing file],
-  [`:if-exists :append`], [Add to the end of an existing file],
-  [`:if-exists :error`], [The default: signal an error rather than clobber],
-)
+#[
+  #set par(justify: false)
+  #table(
+    columns: (2.4fr, 5.6fr),
+    inset: (x: 6pt, y: 4pt),
+    stroke: 0.3pt + luma(200),
+    align: left,
+    table.header([Argument], [Meaning]),
+    [`:direction :output`], [Writing instead of the default `:input`],
+    [`:if-exists :supersede`], [Replace an existing file],
+    [`:if-exists :append`], [Add to the end of an existing file],
+    [`:if-exists :error`], [The default: signal an error rather than clobber],
+  )
+]
 
 Without `:if-exists`, writing over an existing file is an error — Lisp refuses to destroy your data by accident.
 

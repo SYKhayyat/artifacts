@@ -67,16 +67,19 @@ A conflict happens when a name becomes findable two ways in one package: `use-pa
 ;; bring MYLIB:HELPER in; error if the name is taken
 ```
 
-#table(
-  columns: (1.4fr, 6.6fr),
-  inset: (x: 6pt, y: 4pt),
-  stroke: 0.3pt + luma(200),
-  align: left,
-  table.header([Option], [Effect on the conflicting name]),
-  [`:shadow`], [my package gets its own fresh symbol],
-  [`:shadowing-import-from`], [the named package's symbol wins, and is #emph[shadowing] — later `use-package` conflicts with it resolve silently],
-  [`:import-from`], [bring the named package's symbol in (error if the table already has the name)],
-)
+#[
+  #set par(justify: false)
+  #table(
+    columns: (2.4fr, 5.6fr),
+    inset: (x: 6pt, y: 4pt),
+    stroke: 0.3pt + luma(200),
+    align: left,
+    table.header([Option], [Effect on the conflicting name]),
+    [`:shadow`], [my package gets its own fresh symbol],
+    [`:shadowing-import-from`], [the named package's symbol wins, and is #emph[shadowing] — later `use-package` conflicts with it resolve silently],
+    [`:import-from`], [bring the named package's symbol in (error if the table already has the name)],
+  )
+]
 
 The shadowing concept: a package can hold a symbol that shadows an inherited one — `find-symbol` returns it, and future `use-package`'s that would conflict with it are legal, the shadowing symbol winning. That's what makes `:shadowing-import-from` the tool for deliberately overriding part of a used package.
 

@@ -100,16 +100,19 @@ You can give some arguments directly before the list. The last argument must alw
 
 How to choose:
 
-#table(
-  columns: (1.5fr, 6.5fr),
-  inset: (x: 6pt, y: 4pt),
-  stroke: 0.3pt + luma(200),
-  align: left,
-  table.header([Use], [When]),
-  [A normal call], [You know the function when you write the code],
-  [`funcall`], [The function is in a variable, the arguments are separate],
-  [`apply`], [The function is in a variable, the arguments are in a list],
-)
+#[
+  #set par(justify: false)
+  #table(
+    columns: (1.5fr, 6.5fr),
+    inset: (x: 6pt, y: 4pt),
+    stroke: 0.3pt + luma(200),
+    align: left,
+    table.header([Use], [When]),
+    [A normal call], [You know the function when you write the code],
+    [`funcall`], [The function is in a variable, the arguments are separate],
+    [`apply`], [The function is in a variable, the arguments are in a list],
+  )
+]
 
 == Writing functions that take functions
 

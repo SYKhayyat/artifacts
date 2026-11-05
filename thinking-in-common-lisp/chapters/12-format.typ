@@ -18,16 +18,19 @@ Hello, world.
 
 `format` takes a #emph[destination], a control string, and any number of arguments. The destination decides where the text goes:
 
-#table(
-  columns: (1.9fr, 6.1fr),
-  inset: (x: 6pt, y: 4pt),
-  stroke: 0.3pt + luma(200),
-  align: left,
-  table.header([Destination], [Meaning]),
-  [`t`], [Print to standard output, return `nil`],
-  [`nil`], [Build a string and return it],
-  [A stream], [Write to that stream (Chapter 16)],
-)
+#[
+  #set par(justify: false)
+  #table(
+    columns: (1.9fr, 6.1fr),
+    inset: (x: 6pt, y: 4pt),
+    stroke: 0.3pt + luma(200),
+    align: left,
+    table.header([Destination], [Meaning]),
+    [`t`], [Print to standard output, return `nil`],
+    [`nil`], [Build a string and return it],
+    [A stream], [Write to that stream (Chapter 16)],
+  )
+]
 
 So `t` is for printing and `nil` is for building. The game's message functions build strings, so they use `nil`:
 
@@ -286,18 +289,21 @@ The same message with `format`:
 
 The examples above are fragments; the full message is in the project step. The important part is the pair of directive modifiers:
 
-#table(
-  columns: (1.6fr, 6.4fr),
-  inset: (x: 6pt, y: 4pt),
-  stroke: 0.3pt + luma(200),
-  align: left,
-  table.header([Directive], [Effect]),
-  [`~A`], [As is],
-  [`~(~A~)`], [Lower-case],
-  [`~:(~A~)`], [First letter of each word upper-case],
-  [`~@(~A~)`], [First letter upper-case, rest lower],
-  [`~:@(~A~)`], [All upper-case],
-)
+#[
+  #set par(justify: false)
+  #table(
+    columns: (1.6fr, 6.4fr),
+    inset: (x: 6pt, y: 4pt),
+    stroke: 0.3pt + luma(200),
+    align: left,
+    table.header([Directive], [Effect]),
+    [`~A`], [As is],
+    [`~(~A~)`], [Lower-case],
+    [`~:(~A~)`], [First letter of each word upper-case],
+    [`~@(~A~)`], [First letter upper-case, rest lower],
+    [`~:@(~A~)`], [All upper-case],
+  )
+]
 
 `~@(~A~)` is the one for starting a sentence: it gives `"Key"` from `KEY`, with any capitals inside tamed to lower case.
 

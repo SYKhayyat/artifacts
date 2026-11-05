@@ -129,18 +129,21 @@ Each variable is written `(name start step)`. Before each pass, `do` checks the 
 (loop for i from 0 to 10 by 5 collect i)  ; => (0 5 10)
 ```
 
-#table(
-  columns: (1.8fr, 6.2fr),
-  inset: (x: 6pt, y: 4pt),
-  stroke: 0.3pt + luma(200),
-  align: left,
-  table.header([Words], [Meaning]),
-  [`from n`], [Start at `n` (`0` if left out)],
-  [`to n`], [Stop after `n`: `n` is included],
-  [`below n`], [Stop before `n`: `n` is left out],
-  [`downto n`], [Count down, `n` included],
-  [`by n`], [Step by `n` instead of `1`],
-)
+#[
+  #set par(justify: false)
+  #table(
+    columns: (1.8fr, 6.2fr),
+    inset: (x: 6pt, y: 4pt),
+    stroke: 0.3pt + luma(200),
+    align: left,
+    table.header([Words], [Meaning]),
+    [`from n`], [Start at `n` (`0` if left out)],
+    [`to n`], [Stop after `n`: `n` is included],
+    [`below n`], [Stop before `n`: `n` is left out],
+    [`downto n`], [Count down, `n` included],
+    [`by n`], [Step by `n` instead of `1`],
+  )
+]
 
 === Walking lists and strings
 
@@ -209,19 +212,22 @@ With two `for` clauses, both step together, and the loop stops when either one r
 
 === Collecting results
 
-#table(
-  columns: (1.9fr, 6.1fr),
-  inset: (x: 6pt, y: 4pt),
-  stroke: 0.3pt + luma(200),
-  align: left,
-  table.header([Clause], [Result]),
-  [`collect x`], [A list of every `x`, in order],
-  [`append x`], [The lists `x` joined into one list],
-  [`sum x`], [The total],
-  [`count x`], [How many times `x` was true],
-  [`maximize x`], [The largest `x`],
-  [`minimize x`], [The smallest `x`],
-)
+#[
+  #set par(justify: false)
+  #table(
+    columns: (1.9fr, 6.1fr),
+    inset: (x: 6pt, y: 4pt),
+    stroke: 0.3pt + luma(200),
+    align: left,
+    table.header([Clause], [Result]),
+    [`collect x`], [A list of every `x`, in order],
+    [`append x`], [The lists `x` joined into one list],
+    [`sum x`], [The total],
+    [`count x`], [How many times `x` was true],
+    [`maximize x`], [The largest `x`],
+    [`minimize x`], [The smallest `x`],
+  )
+]
 
 ```lisp
 (loop for x in '(1 2 3) sum x)                ; => 6
@@ -328,19 +334,22 @@ Put `with` and `for` clauses first, then everything else: `repeat`, `while`, `wh
 
 == Which one to use
 
-#table(
-  columns: (6.5fr, 1.5fr),
-  inset: (x: 6pt, y: 4pt),
-  stroke: 0.3pt + luma(200),
-  align: left,
-  table.header([Job], [Use]),
-  [A result for every element], [`mapcar`],
-  [Keep, find, count with one predicate], [Chapter 10's functions],
-  [Effects for each element, such as printing], [`dolist`],
-  [Something `n` times], [`dotimes`],
-  [Counting ranges, several lists at once, filtering and collecting together, early exit with a result], [`loop`],
-  [Trees, nested structure], [Recursion (Chapter 8)],
-)
+#[
+  #set par(justify: false)
+  #table(
+    columns: (6.5fr, 1.5fr),
+    inset: (x: 6pt, y: 4pt),
+    stroke: 0.3pt + luma(200),
+    align: left,
+    table.header([Job], [Use]),
+    [A result for every element], [`mapcar`],
+    [Keep, find, count with one predicate], [Chapter 10's functions],
+    [Effects for each element, such as printing], [`dolist`],
+    [Something `n` times], [`dotimes`],
+    [Counting ranges, several lists at once, filtering and collecting together, early exit with a result], [`loop`],
+    [Trees, nested structure], [Recursion (Chapter 8)],
+  )
+]
 
 These overlap. `(mapcar #'twice lst)` and `(loop for x in lst collect (twice x))` do the same job. Pick the one that reads most clearly.
 

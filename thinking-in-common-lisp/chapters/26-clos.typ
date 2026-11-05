@@ -214,18 +214,21 @@ This runs whenever any `container` is made, whether or not the caller remembered
 
 Both give named slots. The honest comparison:
 
-#table(
-  columns: (1.9fr, 2.7fr, 3.4fr),
-  inset: (x: 6pt, y: 4pt),
-  stroke: 0.3pt + luma(200),
-  align: left,
-  table.header([], [`defstruct`], [`defclass`]),
-  [Accessors], [automatic], [only what you declare],
-  [Inheritance], [single superclass], [multiple, with precedence list],
-  [Methods that vary], [by `typecase` or `etypecase`], [by `defmethod`],
-  [Speed], [usually faster, simpler], [more machinery underneath],
-  [Intended for], [internal records], [types with a public interface],
-)
+#[
+  #set par(justify: false)
+  #table(
+    columns: (1.9fr, 2.7fr, 3.4fr),
+    inset: (x: 6pt, y: 4pt),
+    stroke: 0.3pt + luma(200),
+    align: left,
+    table.header([], [`defstruct`], [`defclass`]),
+    [Accessors], [automatic], [only what you declare],
+    [Inheritance], [single superclass], [multiple, with precedence list],
+    [Methods that vary], [by `typecase` or `etypecase`], [by `defmethod`],
+    [Speed], [usually faster, simpler], [more machinery underneath],
+    [Intended for], [internal records], [types with a public interface],
+  )
+]
 
 The game has used `defstruct` rooms so far, and that's fine — rooms are internal. The `thing` hierarchy above is the kind of thing that benefits from CLOS, because `describe-thing` wants to vary by type.
 
@@ -233,20 +236,23 @@ The game has used `defstruct` rooms so far, and that's fine — rooms are intern
 
 Chapter 25 built account and registry objects out of closures. CLOS gives the same patterns a different shape, and choosing between them is a real design question:
 
-#table(
-  columns: (2.1fr, 2.6fr, 3.4fr),
-  inset: (x: 6pt, y: 4pt),
-  stroke: 0.3pt + luma(200),
-  align: left,
-  table.header([], [Closures], [CLOS]),
-  [State lives in], [`let` bindings], [slots],
-  [Behaviour is], [one function, message-dispatched], [one method per generic function],
-  [Adding behaviour], [edit the `ecase`], [define a new `defmethod`],
-  [Multiple objects], [return more closures], [`make-instance`, many instances],
-  [Redefinition while running], [re-define the closure], [re-define the class; instances auto-update],
-  [Printing], [wrap the closure], [`print-object`],
-  [Inheritance], [compose by hand], [`defclass` superclasses],
-)
+#[
+  #set par(justify: false)
+  #table(
+    columns: (2.1fr, 2.6fr, 3.4fr),
+    inset: (x: 6pt, y: 4pt),
+    stroke: 0.3pt + luma(200),
+    align: left,
+    table.header([], [Closures], [CLOS]),
+    [State lives in], [`let` bindings], [slots],
+    [Behaviour is], [one function, message-dispatched], [one method per generic function],
+    [Adding behaviour], [edit the `ecase`], [define a new `defmethod`],
+    [Multiple objects], [return more closures], [`make-instance`, many instances],
+    [Redefinition while running], [re-define the closure], [re-define the class; instances auto-update],
+    [Printing], [wrap the closure], [`print-object`],
+    [Inheritance], [compose by hand], [`defclass` superclasses],
+  )
+]
 
 For a small stateful object with three or four messages, closures are lighter — no class to define, no dispatch overhead. For a type hierarchy, multiple implementations of the same interface, or behaviour that varies by more than one argument, CLOS is the right tool.
 

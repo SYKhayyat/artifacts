@@ -23,6 +23,12 @@ def esc(text):
     return "".join("\\" + c if c in SPECIAL else c for c in text)
 
 
+# A key sequence -- C-c C-c, M-x, SPC f e d -- is set as one unbreakable
+# unit: a line ending between "C-" and "c" reads as a typo.
+KEY_TOKEN = r"(?:[CMS]-[A-Za-z0-9<>/',.\-]+|SPC|TAB|RET|ESC|DEL)"
+KEY_RE = re.compile(r"^" + KEY_TOKEN + r"(?: " + KEY_TOKEN + r")*$")
+
+
 def raw_inline(code):
     code = code.strip()
     n = 1
@@ -124,6 +130,13 @@ def inner_marker_ok(body, marker):
     return True
 
 
+# Typst swallows a semicolon written directly after a content block --
+# #strong[habit]; loses the punctuation -- so the span is followed by a
+# semicolon of its own and the real one is consumed. This flag says a
+# semicolon is owed.
+EAT_SEMI = [False]
+
+
 def scan_markup(text, keep):
     """Replace Org emphasis spans with placeholders, following Org's rules.
 
@@ -168,10 +181,12 @@ def scan_markup(text, keep):
                           kind_is_code(MARKERS[ch]):
                         close += 1
                     body = text[i + 1:close]
-                    frag = keep(MARKERS[ch], body, ch)
+                    frag = keep(MARKERS[ch], body, ch,
+                                text[close + 1] if close + 1 < n else "")
                     if frag is not None:
                         out.append(frag)
-                        i = close + 1
+                        i = close + 1 + (1 if EAT_SEMI[0] else 0)
+                        EAT_SEMI[0] = False
                         continue
         out.append(ch)
         i += 1
@@ -269,9 +284,12 @@ def inline(text, store=None):
         return "\x00%d\x00" % (len(store) - 1)
 
     def code_keep(content):
-        return keep(raw_inline(content), content)
+        frag = raw_inline(content)
+        if KEY_RE.match(content.strip()):
+            frag = "#box[%s]" % frag
+        return keep(frag, content)
 
-    def markup_keep(kind, body, marker):
+    def markup_keep(kind, body, marker, after=""):
         if not plausible_code(body) or len(body) > 120:
             return None
         if kind == "code":
@@ -283,7 +301,11 @@ def inline(text, store=None):
             return code_keep(body)
         # Emphasis can hold code spans of its own, so convert the inside too.
         tag = "#strong" if kind == "strong" else "#emph"
-        return keep("%s[%s]" % (tag, inline(body, store)))
+        frag = "%s[%s]" % (tag, inline(body, store))
+        if after == ";":
+            frag += '#";"'
+            EAT_SEMI[0] = True
+        return keep(frag)
 
     text = BARE_EQ_RE.sub(lambda m: code_keep("="), text)
     text = sub_plausible(GLUED_CODE_RE, text, lambda m: code_keep(m.group(1)))
@@ -495,26 +517,61 @@ def emit_table(rows, out):
         if re.fullmatch(r"\|[\-+|: ]+\|?", r.strip()):
             continue
         body.append(cells(r))
+    def    plain(cell):
+        """The cell's text with the emphasis and code markers taken out."""
+        return re.sub(r"[=~*/`]", "", cell).strip()
+
     ncols = len(header)
     widths = []
     for c in range(ncols):
         best = 6
-        for r in [header] + body:
-            if c < len(r):
-                best = max(best, len(re.sub(r"[=~]", "", r[c])))
+        for cell in [r[c] for r in [header] + body if c < len(r)]:
+            best = max(best, len(plain(cell)))
         widths.append(best)
+    # A column must be at least as wide as its longest unbreakable word, or
+    # the word hyphenates -- a header reading "Re-sult" is the visible case.
+    # Widths are handed out in proportion to content, then a column that
+    # comes out too narrow is topped up from the widest one.
+    CHAR_PT, PAD_PT, FR_PT = 5.6, 13.0, 55.8
+    floors = []
+    for c in range(ncols):
+        cells = [plain(r[c]) for r in [header] + body if c < len(r)]
+        word = max(len(header[c]) if c < len(header) else 0,
+                   max([len(w) for w in cells if " " not in w] + [0]))
+        # A short cell -- (3 2 1) in a Result column -- should not be broken
+        # across lines either: ask for the width of the widest one.
+        if widths[c] <= 16:
+            word = max(word, widths[c])
+        floors.append((word * CHAR_PT + PAD_PT) / FR_PT)
     total = sum(widths)
-    cols = ", ".join("%.1ffr" % max(0.6, 8.0 * w / total) for w in widths)
-    out.append("#table(")
-    out.append("  columns: (%s)," % cols)
-    out.append("  inset: (x: 6pt, y: 4pt),")
-    out.append("  stroke: 0.3pt + luma(200),")
-    out.append("  align: left,")
-    out.append("  table.header(%s)," % ", ".join("[%s]" % inline(c) for c in header))
+    shares = [8.0 * w / total for w in widths]
+    for _ in range(ncols):
+        poor = [c for c in range(ncols) if shares[c] < floors[c]]
+        if not poor:
+            break
+        rich = max(range(ncols), key=lambda c: shares[c] - floors[c])
+        c = poor[0]
+        if rich == c or shares[rich] - floors[rich] <= 0:
+            break
+        take = min(floors[c] - shares[c], shares[rich] - floors[rich])
+        shares[c] += take
+        shares[rich] -= take
+    cols = ", ".join("%.1ffr" % max(0.55, s) for s in shares)
+    # Justified text in a narrow column puts rivers of space between the
+    # words of a short cell; tables read better ragged right.
+    out.append("#[")
+    out.append("  #set par(justify: false)")
+    out.append("  #table(")
+    out.append("    columns: (%s)," % cols)
+    out.append("    inset: (x: 6pt, y: 4pt),")
+    out.append("    stroke: 0.3pt + luma(200),")
+    out.append("    align: left,")
+    out.append("    table.header(%s)," % ", ".join("[%s]" % inline(c) for c in header))
     for r in body:
         cellsr = [inline(c) for c in r] + [""] * (ncols - len(r))
-        out.append("  " + ", ".join("[%s]" % c for c in cellsr[:ncols]) + ",")
-    out.append(")")
+        out.append("    " + ", ".join("[%s]" % c for c in cellsr[:ncols]) + ",")
+    out.append("  )")
+    out.append("]")
     out.append("")
 
 
@@ -530,7 +587,18 @@ def emit_items(items, out):
         elif kind == "ex":
             out.extend(fence(it[1]))
         elif kind == "list":
-            for indent, mark, txt in it[1]:
+            rows = it[1]
+            # A numbered list interrupted by a code block resumes at the number
+            # it left off, so keep its own counter instead of restarting at 1.
+            first = rows[0][1]
+            flat = all(r[0] == rows[0][0] for r in rows)
+            if first[0].isdigit() and int(first.rstrip(".")) > 1 and flat:
+                start = int(first.rstrip("."))
+                body = ", ".join("[%s]" % inline(r[2]) for r in rows)
+                out.append("#enum(start: %d, %s)" % (start, body))
+                out.append("")
+                continue
+            for indent, mark, txt in rows:
                 pad = "  " * (indent // 2)
                 marker = "+" if mark[0].isdigit() else "-"
                 out.append("%s%s %s" % (pad, marker, inline(txt)))
@@ -790,9 +858,11 @@ def main():
                 includes.append(name)
                 continue
             if not t.startswith("Chapter "):
-                # A section that belongs to the part itself, before its
-                # first chapter.
-                part_file_out.append("== %s" % inline(t))
+                # A section that belongs to the part itself, before its first
+                # chapter. It is not a chapter, so it carries no chapter
+                # number: numbered, it would read "0.1".
+                part_file_out.append(
+                    '#heading(level: 2, numbering: none)[%s]' % inline(t))
                 part_file_out.append("")
                 emit_chapter_body(ch.items, part_file_out, 3)
                 continue

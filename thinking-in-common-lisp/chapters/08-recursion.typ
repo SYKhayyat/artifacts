@@ -143,15 +143,18 @@ Because the `cons` happens on the way in, nothing is left waiting on the way out
 
 Which pattern to use:
 
-#table(
-  columns: (2.4fr, 5.6fr),
-  inset: (x: 6pt, y: 4pt),
-  stroke: 0.3pt + luma(200),
-  align: left,
-  table.header([Pattern], [Use when]),
-  [Build with `cons` on the way out], [The result has the same order as the input, or the order doesn't matter],
-  [Accumulator, then `reverse`], [You are walking a long list, or the result is naturally built backwards],
-)
+#[
+  #set par(justify: false)
+  #table(
+    columns: (2.4fr, 5.6fr),
+    inset: (x: 6pt, y: 4pt),
+    stroke: 0.3pt + luma(200),
+    align: left,
+    table.header([Pattern], [Use when]),
+    [Build with `cons` on the way out], [The result has the same order as the input, or the order doesn't matter],
+    [Accumulator, then `reverse`], [You are walking a long list, or the result is naturally built backwards],
+  )
+]
 
 When in doubt, use the first. Reach for the accumulator when a list is long or when the recursion would otherwise go deep.
 
