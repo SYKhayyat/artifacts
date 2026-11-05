@@ -162,7 +162,7 @@ Most blocks in this guide show their expected result as a comment:
 #+end_src
 
 A semicolon starts a comment. Lisp ignores everything from =;= to the
-end of the line. The =; =>= comment means "this evaluates to". When
+end of the line. The ~; =>~ comment means "this evaluates to". When
 you run the block with ~C-c C-c~, the =#+RESULTS:= line should match.
 
 ** Chapter 1: The REPL and the Edit-Evaluate Loop
@@ -6200,7 +6200,7 @@ gets the first, anything else the second:
 (format nil "The door is ~:[closed~;open~]." t)   ; => "The door is open."
 #+end_src
 
-=~:[= can also compare against nothing at all: ~:[~A~;nothing~] takes
+=~:[= can also compare against nothing at all: =~:[~A~;nothing~]= takes
 no integer. When the argument is =nil=, the second clause prints:
 
 #+begin_src lisp
@@ -11509,7 +11509,7 @@ what =setf= has been doing all along:
 #+end_src
 
 The last line's oddity: =symbol-function= takes a /symbol/, so
-~(symbol-function 'car)=, not~(symbol-function #'car)=.
+=(symbol-function 'car)=, not =(symbol-function #'car)=.
 Writing =#'car= there would evaluate the function object first,
 and =symbol-function= wants the name, not the value. The five
 parts make concrete what Chapter 9 said abstractly: one name,
@@ -11992,11 +11992,11 @@ about multiple values or not. That's why =(defun g () (f))=
 passes both values through — =(f)= is the body's last form,
 hence multiple-value.
 
-*return-from=.* (return-from block (values 1 2)) exits
-the block with /both/ values, and (multiple-value-bind
-(a b) (block ...) ...)=catches them.=return= uses the
-same mechanism (it's =return-from nil=), and =dolist=/
-==dotimes=/=loop= all establish =nil= blocks, so a
+=return-from=. =(return-from block (values 1 2))= exits
+the block with /both/ values, and =(multiple-value-bind
+(a b) (block ...) ...)= catches them. =return= uses the
+same mechanism (it's =return-from nil=), and =dolist=,
+=dotimes= and =loop= all establish =nil= blocks, so a
 =return= with a values form delivers them all:
 
 #+begin_src lisp
@@ -12197,7 +12197,7 @@ count of a bind, and so on.
 **** Expecting a toplevel to catch two values
 
 =(defun f () (floor 7 2))=. At the REPL, =(f)= shows 3, 1.
-But ~(mapcar #'f ...)= sees only~3==per call.=mapcar='
+But =(mapcar #'f ...)= sees only =3= per call. =mapcar='s
 function-call arguments (and results) are single-valued. If
 you want a mapcar-shaped operation that preserves values, you
 have to write it (=multiple-value-call= with careful argument
@@ -13382,8 +13382,8 @@ Chapter 26 exercises 26.1-26.8:
 ** Chapter 27: CLOS Deep Dive
 
 Chapter 26 gave you working CLOS: =defclass=, slots with
-:initarg=/:reader=/:accessor=/:initform=, defmethod=,
-=call-next-method=, ~:before=/:after=/:around~, and
+=:initarg=, =:reader=, =:accessor=, =:initform=, =defmethod=,
+=call-next-method=, =:before=/=:after=/=:around=, and
 =initialize-instance :after= as the constructor hook. This
 chapter goes the rest of the way — the parts of CLOS that
 distinguish reading other people's code from writing serious
@@ -13503,7 +13503,7 @@ print, save and query.
 
 *** Method combination
 
-Chapter 26's ~:before=/:after=/:around~ is /standard method
+Chapter 26's =:before=/=:after=/=:around= is /standard method
 combination/. The primary-method-plus-auxiliaries shape
 generalises: other combination types run /all/ applicable
 primary methods in most-specific-first order and combine the
@@ -13995,7 +13995,7 @@ ASDF's =:package-inferred-system= (Chapter 20) takes the
 per-file-package style to its conclusion: one package per
 file, named after the file, used by explicit =:use= or
 =:import-from= lines at the top. You'll meet it reading
-modern libraries; the skill of /reading==:import-from=
+modern libraries; the skill of /reading/ =:import-from=
 lists as a dependency declaration is what this chapter buys.
 
 *** Common mistakes
@@ -14401,7 +14401,7 @@ suffice:
            "/tmp/visits.csv")
 #+end_src
 
-~~{~A~^,~}= is Chapter 12's iteration with~~^= cutting the
+=~{~A~^,~}= is Chapter 12's iteration with =~^= cutting the
 final comma. Reading well-behaved CSV back:
 
 #+begin_src lisp
@@ -14414,7 +14414,7 @@ final comma. Reading well-behaved CSV back:
 #+end_src
 
 For CSV from the outside world, use the library:
-~(ql:quickload :cl-csv)=, whose~(cl-csv:read-csv file)=
+=(ql:quickload :cl-csv)=, whose =(cl-csv:read-csv file)=
 handles quoting, embedded newlines, and the rest. The lesson
 generalises: /parse formats you produce; library-parse
 formats you consume./
@@ -14422,7 +14422,7 @@ formats you consume./
 The one shared concern worth noting: both naive CSV and cl-csv
 write strings, not Lisp objects. If a field can be a number
 or a symbol or a list, the writer must decide how to render it
-(==princ-to-string=? =write-to-string=? something schema-
+(=princ-to-string=? =write-to-string=? something schema-
 specific?) and the reader must decide how to parse it back.
 That's the schema problem, and CSV doesn't solve it for you.
 
@@ -15984,9 +15984,11 @@ that the shell runs. A file build.sh= next to the =.asd=:
 
 #+begin_example
 #!/bin/sh
-sbcl --noinform --non-interactive
---eval "(asdf:load-system "cave-of-noise")"
---eval "(sb-ext:save-lisp-and-die "game" :executable t :compression t :toplevel #'cave-of-noise:main)"
+sbcl --noinform --non-interactive \
+  --eval '(asdf:load-system "cave-of-noise")' \
+  --eval '(sb-ext:save-lisp-and-die "game"
+           :executable t :compression t
+           :toplevel (function cave-of-noise:main))'
 #+end_example
 
 Reading the flags:
@@ -23144,7 +23146,7 @@ slots: =datum=, holding =5=, and =expected-type=, holding
 
 Handlers read slots, never the printed message — Chapter 15's
 rule, now with the inspector as the way to /discover/ what slots
-exist. The ~~S~ on =datum= is what keeps =5= (a number) distinct
+exist. The =~S= on =datum= is what keeps =5= (a number) distinct
 from ="5"= (a string) in the output; that's exactly the case
 where ~~A~ would lie.
 
@@ -23801,24 +23803,24 @@ Check:
   (first-or-default (lambda () nil) :none))
 #+end_src
 
-Expected: (:NONE 1 NIL)=.
+Expected: =(:NONE 1 NIL)=.
 
 The three cases:
 
-    (values)= — zero values — vals=isnil=, so default=
+    =(values)= — zero values — =vals= is =nil=, so =default=
     is returned.
 
-    (values 1 2)= — two values — vals=is(1 2)=, so (first
-    vals)=gives1=.
+    =(values 1 2)= — two values — =vals= is =(1 2)=, so =(first
+    vals)= gives 1=.
 
-    nil= — /one/ value, which happens to be nil — vals= is
-    (nil)=, so (first vals)= gives nil= (the value, not the
+    =nil= — /one/ value, which happens to be nil — =vals= is
+    =(nil)=, so =(first vals)= gives =nil= (the value, not the
     default).
 
-The default='s value is :none= (a keyword) rather than
-nil= because nil= is itself a legitimate /value/, and using
-nil= as the default would conflate it with "the thunk
-returned nil". :none= is unambiguous.
+The =default='s value is =:none= (a keyword) rather than
+=nil=, because =nil= is itself a legitimate /value/, and using
+=nil= as the default would conflate it with "the thunk
+returned nil". =:none= is unambiguous.
 
 *** Exercise 24.6
 
@@ -24898,10 +24900,10 @@ weight, =foyer= at -1.
 
 The comment the exercise asks for:
 
-+= is right because room difficulty /adds up/ — base cost from
+=+= is right because room difficulty /adds up/ — base cost from
 exit count, plus darkness penalty, minus visit discount is an
 arithmetic sum of independent contributions, and each class
-owns exactly its contribution. max= would be wrong because it
+owns exactly its contribution. =max= would be wrong because it
 picks /one/ contribution and discards the others: a dark,
 visited room would weigh 5 (the darkness penalty) instead of
 1+5-2=4, and the whole point of the visit discount would be
@@ -25311,12 +25313,12 @@ Expected: =((1 2 (3)) ((:A) (:B . 0)))=.
 The first result is straightforward — a JSON array decodes to
 a Lisp list, nested arrays to nested lists.
 
-The second is the one to look at. (:B . 0)= is a cons whose
+The second is the one to look at. =(:B . 0)= is a cons whose
 car is the keyword =:B= and whose cdr is the integer =0= —
-the normal alist pair. (:A)= is a cons whose car is :A= and
-whose cdr is nil= — a JSON null= decoded as a pair with nil
-value. It prints as (:A)= (no dot) because nil is the empty
-list, but it's still a cons: (consp (first result))= is t=.
+the normal alist pair. =(:A)= is a cons whose car is =:A= and
+whose cdr is =nil= — a JSON =null= decoded as a pair with nil
+value. It prints as =(:A)= (no dot) because nil is the empty
+list, but it's still a cons: =(consp (first result))= is =t=.
 
 The ambiguity is already here, in the output shape: (cdr
 (assoc :a result))= is nil= — indistinguishable from a
@@ -25416,7 +25418,7 @@ the headers, numeric fields as numbers.
 
 The comment the exercise asks for:
 
-The naive number test is `ignore-errors parse-integer=` — it
+The naive number test is ~ignore-errors parse-integer~ — it
 accepts "42", "-7", and "+3" (parse-integer handles the sign);
 it rejects "3.5" (which JSON would call a number, so this
 version keeps it a string — a deliberate under-parsing).
@@ -25427,21 +25429,21 @@ Three things it misses that a real schema would care about:
    23's warning). Production code should validate against
    a known header set, not trust the file.
 
-2. `parse-integer=` on " 3 " returns 3 (it skips leading
+2. ~parse-integer=~ on " 3 " returns 3 (it skips leading
    whitespace), but on "3.0" returns 3 with a second value
-   of 2 (where it stopped). The naive `or=` keeps only the
+   of 2 (where it stopped). The naive ~or=~ keeps only the
    integer, silently dropping the ".0" — a value mismatch
    an upstream consumer might not notice.
 
 3. Empty fields parse as nil from parse-integer's error, so
-   `maybe-number ""=` returns "", not nil — inconsistent
+   =maybe-number ""= returns "", not nil — inconsistent
    with how JSON treats missing fields. The seam's schema
    should decide: is "" the empty string, a null, or
    absent?
 
 When cl-csv becomes necessary: as soon as any field contains
 a quoted comma, an embedded newline, or a double-quote.
-`uiop:split-string= on commas silently breaks those cases
+=uiop:split-string= on commas silently breaks those cases
 (producing extra fields), and the breakage is invisible
 until downstream arithmetic fails. For data you produce, the
 naive reader is fine. For data you consume, always cl-csv.
@@ -26667,7 +26669,7 @@ which definitions to keep.
 | =play=                |  9 → 24    | Ch 9: =mapcar= over commands. Ch 24: two-value return (=replies=, =unknowns=). /Current:/ Ch 24's. |
 | =transcript=          | 11 → 32    | Ch 11: prints with header/footer. Ch 32: =play-streamed= and =replay-streamed= add streaming variants. /Current:/ Ch 11's for eager, Ch 30's for streaming. |
 | =count-unknown=       | 11 → 24    | Ch 11: string-matching against unknown message. Ch 24: uses the two-valued =run-command=. /Current:/ Ch 24's. |
-| =item-report=         |  8 → 11 → 12 | Ch 8: recursive. Ch 11: =loop= with destructuring. Ch 12: =format= with ~~@(~A~)~. /Current:/ Ch 12's. |
+| =item-report=         |  8 → 11 → 12 | Ch 8: recursive. Ch 11: =loop= with destructuring. Ch 12: =format= with =~@(~A~)=. /Current:/ Ch 12's. |
 | =*item-locations*=    |  7 → 33    | Ch 7: initial state. Ch 33: reset in tests. The variable itself is the same; only its tests change. |
 | =*save-file*=         | 16 → 18    | Ch 16: default ="/tmp/game-save.lisp"=. Ch 18: same. Bound via =let= in tests. |
 | =price= generic       | 27 → 33    | Ch 27: =+= combination with methods on =thing=, =container=, =treasure=. Ch 33's test notes the =thing= method contributes 1 to every price. /Current:/ Ch 27's, with that note. |
