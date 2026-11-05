@@ -40,7 +40,7 @@ The stars around `*price*` are part of the name. They're called #emph[earmuffs].
 
 === Variables live in the running Lisp
 
-The variable now exists in your Lisp session. Every later block can use it. If you restart Lisp (or Emacs), it's gone. Run the `defparameter` block again to bring it back.
+The variable now exists in your Lisp session. Every later expression can use it. If you restart Lisp (or Emacs), it's gone. Run the `defparameter` again to bring it back.
 
 == Changing a variable with `setf`
 
@@ -75,13 +75,13 @@ Changing a number by a little is common enough to have its own operators:
 
 `incf` adds (1 by default), `decf` subtracts. Both change the variable and return its new value. They're like Java's `score++` and `score +` `10`.
 
-Run that block twice and the result is different: the `defparameter` resets `*score*` to `0`, then the rest counts up again to `7`. Keep this in mind for the next section.
+Run that twice in a fresh session and the result is different: the `defparameter` resets `*score*` to `0`, then the rest counts up again to `7`. Keep this in mind for the next section.
 
 == `defvar`: define once, keep the value
 
 `defvar` also makes a global variable, with one difference. If the variable already exists, `defvar` leaves it alone.
 
-Run each block once, in order:
+Run each of these once, in order:
 
 ```lisp
 (defvar *lives* 3)
@@ -164,7 +164,7 @@ Local variables don't get earmuffs. The stars are only for globals.
   (print age))
 ```
 
-The body runs top to bottom. Without `:results output`, the block would show only `36`, the value of the last expression.
+The body runs top to bottom. The two `print` calls write their lines, and the form's value is `36` — the value of the last expression.
 
 === Values can be computed
 
@@ -247,7 +247,7 @@ Read it slowly. The first `x` is `1`. Inside the inner `let`, `x` is `100`. Afte
 == How to choose
 
 - Need a value in one calculation? Use `let`.
-- Need it to stay around between blocks, or for the whole program? Use `defparameter` or `defvar`.
+- Need it to stay around between expressions, or for the whole program? Use `defparameter` or `defvar`.
 - Never changes? Use `defconstant`.
 
 Most Lisp code uses many local variables and only a few globals.
@@ -260,7 +260,7 @@ Most Lisp code uses many local variables and only a few globals.
 - #strong[Using a local name outside its `let`:] the name is unbound there. Move the code inside the body.
 - #strong[Expecting `defvar` to reset a value:] re-running `(defvar *x* 0)` keeps the old value. Use `setf` to change it, or use `defparameter`.
 - #strong[Quoting a variable:] `(* '*price* 2)` gives "#strong[PRICE] is not a NUMBER". The quote gives you the name, not the value. Leave the quote off.
-- #strong[Running blocks out of order:] after restarting Lisp, a block that uses `*price*` fails with "unbound". Run the `defparameter` block first.
+- #strong[Running code out of order:] after restarting Lisp, an expression that uses `*price*` fails with "unbound". Run the `defparameter` first.
 - #strong[Forgetting the earmuffs when using a global:] if you defined `*price*`, then `price` is a different name and is unbound.
 
 == Project step: naming the rooms
@@ -304,7 +304,7 @@ Build the description with `let`, so each part has a clear name:
 
 Compare this with the Chapter 3 version. The room list appears nowhere in the code. The `let` names its parts, and the last expression puts them together.
 
-Move the player to the hallway, then run the description block again:
+Move the player to the hallway, then run the description again:
 
 ```lisp
 (setf *current-room* *hallway*)
@@ -312,7 +312,7 @@ Move the player to the hallway, then run the description block again:
 
 The same description code now says "You are in the Hallway." The code didn't change. Only the data did.
 
-You still have to copy the description block each time you want to use it. Chapter 5 turns it into a function you can call by name.
+You still have to copy the description each time you want to use it. Chapter 5 turns it into a function you can call by name.
 
 == Exercises
 
@@ -345,7 +345,7 @@ You still have to copy the description block each time you want to use it. Chapt
 ]
 
 #exercise("4.5")[
-  Make a global `*steps*` starting at 0. Write one block that adds 1 three times and then adds 10, and shows the final value.
+  Make a global `*steps*` starting at 0. Write one form that adds 1 three times and then adds 10, and shows the final value.
 
 ]
 

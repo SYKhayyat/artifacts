@@ -16,8 +16,9 @@ Two promises:
 
 1. *No forward references.* You will never see "don't worry about this
    yet". Every piece of code uses only what has already been explained.
-2. *You run everything.* Every example is a live code block. You run
-   it inside this file and see the result right below it.
+2. *You run everything.* Every example is code you type and run
+   yourself, with its result printed underneath so you can check
+   yourself as you go.
 
 You know Python and Java. Now and then a short note will say "this is
 roughly like X in Java". Treat those as landmarks, not translations.
@@ -28,103 +29,112 @@ Lisp works best when you meet it on its own terms.
 Before anything else, do these in order:
 
 1. Appendix A: install SBCL (the Lisp itself).
-2. Appendix B: make Emacs talk to SBCL and run code blocks.
+2. Appendix B: make Emacs talk to SBCL and run your first expression.
 3. Skim Appendix C: the Emacs keys you need.
 
-Come back here when the test block in Appendix B prints =3=.
+Come back here when the test expression in Appendix B prints =3=.
 
 ** How each chapter is built
 
 Every chapter has the same parts:
 
-- *Explanation* with code blocks you run as you read.
+- *Explanation*, with code you run as you read.
 - *Common mistakes:* the errors beginners actually make, what the error
   message looks like, and how to fix it.
 - *Project step:* one new piece of the running project (see below).
 - *Exercises:* answers are in Appendix D.
 
-** Running code blocks (Org Babel)
+** Running the code
 
-A code block looks like this:
+A listing looks like this:
 
 #+begin_src lisp
 (+ 1 2)
 #+end_src
 
-To run it:
-
-1. Make sure Lisp is running. Type ~M-x slime~ and press Enter once per
-   Emacs session. A REPL window opens. You can leave it alone.
-2. Put the cursor anywhere inside the block.
-3. Press ~C-c C-c~.
-
-The result appears right under the block:
+You run it by typing it at the REPL and pressing ~RET~:
 
 #+begin_example
-,#+RESULTS:
-: 3
+CL-USER> (+ 1 2)
+3
 #+end_example
 
-Run the block again and the result is replaced, not duplicated.
+Most listings in this guide carry that answer as a comment, so you can
+check yourself without waiting for us:
+
+#+begin_src lisp
+(+ 1 2)   ; => 3
+#+end_src
+
+There are two ways to run a listing, and the book works with either:
+
+- *At the REPL.* Type it, press ~RET~, read the answer. Best for
+  experiments and one-liners.
+- *In a =.lisp= buffer.* Type it in a file, put the cursor after the
+  closing parenthesis, and press ~C-c C-c~. Emacs sends the expression
+  to Lisp and shows the value in the echo area at the bottom of the
+  frame. Best for code you want to keep. Chapter 1 calls this the
+  edit-evaluate loop, and Appendix B sets it up.
 
 *** Two kinds of results
 
-By default you get the *value* of the last expression in the block,
-which is the thing the code "returns".
+A listing either *returns* a value or *prints* text, and the two are
+shown differently.
 
-If the code *prints* text, add =:results output= to the first line to
-capture what was printed:
+The value is what Lisp hands back — what the REPL shows after you
+press ~RET~. Listings that return a value show it as a =; =>= comment:
+
+#+begin_src lisp
+(* 6 7)   ; => 42
+#+end_src
+
+Printed text is output written along the way, by =print=, =princ=,
+=format= or the debugger. It comes out above the value:
 
 #+begin_src lisp :results output
 (print "hello")
 (print "world")
 #+end_src
 
-Without =:results output=, the printed text goes to the REPL window and
-the block shows only the final value. When a block's result looks
-"wrong", this is usually why.
+The two printed lines appear first, then the value of the last
+=print= — the string ="world"= — comes back on its own line.
 
-*** Blocks share one Lisp
+When a listing's result looks "wrong", it is usually this: you expected
+the printed text, and what you are looking at is the value that came
+back at the end.
 
-Every block runs in the same Lisp session. If you define something in
-one block, later blocks can use it. This means:
+*** One Lisp, running
 
-- Run blocks in order, from top to bottom.
-- If you restart Emacs or Lisp, re-run the earlier blocks that define
-  things before running later ones.
+Everything you run goes into the same Lisp process. If you define
+something once, later listings can use it. This means:
 
-*** Editing a block comfortably
+- Run the code in order, from top to bottom.
+- If you restart Emacs or Lisp, re-run the definitions the later
+  examples depend on.
 
-Press ~C-c '~ (Control-c, then apostrophe) inside a block. It opens in
-its own window with full Lisp editing support. Press ~C-c '~ again to
-go back.
+*** Editing comfortably
+
+Emacs indents Lisp for you: select a region and press ~TAB~, or put the
+cursor inside a definition and press ~C-M-q~ to re-indent it. Indented
+code is how Lispers read structure, so let Emacs do it.
 
 ** Writing and checking your exercise answers
 
-Under each exercise, make your own block and type your answer:
+Write your answer where you can run it — a scratch =.lisp= buffer, or
+straight at the REPL. Exercise 1.1 asks for a function =twice=, so the
+answer is:
 
-#+begin_example
-,*** Exercise 1.1
-Write a function =twice= that returns twice its argument.
-
-,#+begin_src lisp
-;; my answer
+#+begin_src lisp
 (defun twice (n)
   (* n 2))
-,#+end_src
-#+end_example
+#+end_src
 
-Then check it. Each answer in Appendix D comes with *test lines*.
-Paste them into a second block under yours and run both:
+Then check it. Each answer in Appendix D comes with *test lines*. Run
+them after your definition:
 
-#+begin_example
-,#+begin_src lisp
-(list (twice 4) (twice 0) (twice -3))
-,#+end_src
-
-,#+RESULTS:
-: (8 0 -6)
-#+end_example
+#+begin_src lisp
+(list (twice 4) (twice 0) (twice -3))   ; => (8 0 -6)
+#+end_src
 
 If your result matches the one in Appendix D, you're done. Your
 version doesn't need to look like the answer. There are many correct
@@ -155,15 +165,15 @@ code without trouble.
 
 ** A note on reading results
 
-Most blocks in this guide show their expected result as a comment:
+Most listings in this guide show their expected result as a comment:
 
 #+begin_src lisp
 (+ 1 2)   ; => 3
 #+end_src
 
 A semicolon starts a comment. Lisp ignores everything from =;= to the
-end of the line. The ~; =>~ comment means "this evaluates to". When
-you run the block with ~C-c C-c~, the =#+RESULTS:= line should match.
+end of the line. The ~; =>~ comment means "this evaluates to": run the
+expression, and the REPL should answer with the value shown.
 
 ** Chapter 1: The REPL and the Edit-Evaluate Loop
 
@@ -176,8 +186,9 @@ Lisp works in a loop of four steps:
 3. *Print* the value.
 4. *Loop* back and wait for more.
 
-That is the REPL. Every time you press ~C-c C-c~ on a block, the same
-thing happens: the block is read, evaluated, and the value is shown.
+That is the REPL. Every time you press ~RET~ on an expression — or
+~C-c C-c~ on one in a file — the same thing happens: it is read,
+evaluated, and the value is shown.
 
 In Java you write a whole program, compile it, and run =main=. In
 Lisp you talk to a running program, one expression at a time, and it
@@ -186,7 +197,7 @@ change in how you will work.
 
 *** Your first expressions
 
-Run each block.
+Run each of these at the REPL.
 
 #+begin_src lisp
 42
@@ -224,9 +235,9 @@ write exactly what you mean:
 (* (+ 2 3) 4)   ; => 20
 #+end_src
 
-When a block contains several expressions, they all run, top to
-bottom, and the block shows the value of the *last* one. The block
-above shows =20=.
+When a listing contains several expressions, they all run, top to
+bottom, and you see the value of the *last* one. The listing above
+shows =20=.
 
 *** Using the REPL directly
 
@@ -243,7 +254,7 @@ the parentheses are balanced, the REPL waits for the rest. That isn't
 an error. Finish typing and press ~RET~ again.
 
 Use ~M-p~ to bring back what you typed before. Use the REPL for quick
-experiments. Use code blocks for anything you want to keep.
+experiments. Put anything you want to keep in a file.
 
 *** Printing
 
@@ -276,11 +287,12 @@ back.
 REPL you see the value twice: once printed, once as the result.
 That's normal.
 
-Remember the difference between the two kinds of block results:
+Remember the difference between the two kinds of result:
 
-- Without =:results output=: you see the *value* of the last
-  expression.
-- With =:results output=: you see what was *printed*.
+- The *value* of the last expression is what the REPL prints at the
+  prompt, and what a =; =>= comment records.
+- *Printed* output comes out above it — whatever =print= and =princ=
+  wrote on the way.
 
 *** Comments
 
@@ -332,8 +344,7 @@ New Lispers worry about parentheses. Two facts make them easy:
    parenthesis and Emacs highlights the opening one.
 2. *Experienced Lispers read indentation, not parentheses.* The shape
    of the code on the page shows its structure. Emacs indents it for
-   you: select a region and press ~TAB~, or inside a code block press
-   ~C-c '~ and then ~TAB~ on each line.
+   you: select a region and press ~TAB~.
 
 Closing parentheses go together at the end of the last line:
 
@@ -364,11 +375,11 @@ Both work. Only the first looks like Lisp. Use it.
 - *Using commas between arguments:* =(+ 1, 2)=. Lisp separates
   arguments with spaces only. A comma here gives "comma not inside a
   backquote", which is a feature you will meet in Part IV.
-- *Expecting printed text in the block result:* you used =print= but
-  the block shows only the final value. Add =:results output=.
-- *Unbalanced parentheses in a block:* the block gives an "end of
-  file" error. One closing parenthesis is missing. Put the cursor
-  after each closing parenthesis to find the one that has no partner.
+- *Expecting printed text in the result:* you used =print= but what
+  you see is the value that came back. The text was printed above it.
+- *Unbalanced parentheses:* you get an "end of file" error. One
+  closing parenthesis is missing. Put the cursor after each closing
+  parenthesis to find the one that has no partner.
 
 *** Project step: the adventure begins
 
@@ -399,8 +410,8 @@ Write this one: =100 / (2 * 5) - 3=.
 
 **** Exercise 1.4
 
-Print the line =Welcome, traveller.= without quotes. Which block
-header do you need to see it in the result?
+Print the line =Welcome, traveller.= without quotes. How do you make
+the printed line — rather than the value — the thing you see?
 
 **** Exercise 1.5
 
@@ -561,16 +572,16 @@ You'll also see =car= and =cdr= in older code. They mean the same as
 Read nested calls from the inside out: "the rest of =(a b c)= is
 =(b c)=, and the first of that is =b=".
 
-*** How Org shows results
+*** How results are printed
 
-The line =#+PROPERTY: header-args:lisp :results verbatim= at the top
-of this file tells Org to show every result exactly as the REPL would
-print it. Without it, Org tries to be helpful. A list like =(1 2 3)=
-turns into a table =| 1 | 2 | 3 |=, and a string loses its quotes.
+Results are shown the way the REPL prints them, not the way a
+typesetter would. A list stays a list — =(1 2 3)=, not a table — and a
+string keeps its quotes, because that is the form Lisp would read
+back.
 
-If you ever see a table where you expected a list, check that the
-=#+PROPERTY= line is there. Then press ~C-c C-c~ on it to make Org
-notice it.
+So when you compare your answer with ours, expect the readable form.
+The human form — no quotes, no escaping — is what =princ= and
+=format= are for.
 
 *** Counting and indexing
 
@@ -699,7 +710,8 @@ Now take it apart:
 (second '(kitchen (hallway garden)))   ; => (HALLWAY GARDEN)
 #+end_src
 
-The first block shows =KITCHEN=. The second shows the list of exits.
+The first expression returns =KITCHEN=. The second returns the list of
+exits.
 You've just designed a data format with nothing but lists. In Java
 you'd write a =Room= class first. In Lisp you often start with plain
 lists and add structure later, when you know what you need.
@@ -750,7 +762,7 @@ the kitchen and the shed. Write an expression that returns =SHED=.
 ** Chapter 3: Numbers, Characters, Strings and Symbols
 
 This chapter covers the atoms you'll use every day. Each section is a
-small tour. Run every block, and come back to this chapter as a
+small tour. Run everything, and come back to this chapter as a
 reference.
 
 *** Integers
@@ -1202,8 +1214,7 @@ You had to type the room list twice. That's clumsy, and it's exactly
 the problem Chapter 4 solves: you'll give the list a name and use the
 name instead.
 
-To show the line to the player, wrap the same expression in =princ=
-and add =:results output=:
+To show the line to the player, wrap the same expression in =princ=:
 
 #+begin_src lisp :results output
 (princ (concatenate 'string
@@ -1325,9 +1336,9 @@ reason behind the habit, and you'll already have it.
 
 **** Variables live in the running Lisp
 
-The variable now exists in your Lisp session. Every later block can
-use it. If you restart Lisp (or Emacs), it's gone. Run the
-=defparameter= block again to bring it back.
+The variable now exists in your Lisp session. Every later expression
+can use it. If you restart Lisp (or Emacs), it's gone. Run the
+=defparameter= again to bring it back.
 
 *** Changing a variable with =setf=
 
@@ -1366,7 +1377,7 @@ operators:
 variable and return its new value. They're like Java's =score++= and
 =score += 10=.
 
-Run that block twice and the result is different: the =defparameter=
+Run that twice in a fresh session and the result is different: the =defparameter=
 resets =*score*= to =0=, then the rest counts up again to =7=. Keep
 this in mind for the next section.
 
@@ -1375,7 +1386,7 @@ this in mind for the next section.
 =defvar= also makes a global variable, with one difference. If the
 variable already exists, =defvar= leaves it alone.
 
-Run each block once, in order:
+Run each of these once, in order:
 
 #+begin_src lisp
 (defvar *lives* 3)
@@ -1464,8 +1475,8 @@ Local variables don't get earmuffs. The stars are only for globals.
   (print age))
 #+end_src
 
-The body runs top to bottom. Without =:results output=, the block
-would show only =36=, the value of the last expression.
+The body runs top to bottom. The two =print= calls write their lines,
+and the form's value is =36= — the value of the last expression.
 
 **** Values can be computed
 
@@ -1556,7 +1567,7 @@ binding never changed the outer one. It only hid it for a while.
 *** How to choose
 
 - Need a value in one calculation? Use =let=.
-- Need it to stay around between blocks, or for the whole program?
+- Need it to stay around between expressions, or for the whole program?
   Use =defparameter= or =defvar=.
 - Never changes? Use =defconstant=.
 
@@ -1580,8 +1591,8 @@ Most Lisp code uses many local variables and only a few globals.
 - *Quoting a variable:* =(* '*price* 2)= gives "*PRICE* is not a
   NUMBER". The quote gives you the name, not the value. Leave the
   quote off.
-- *Running blocks out of order:* after restarting Lisp, a block that
-  uses =*price*= fails with "unbound". Run the =defparameter= block
+- *Running code out of order:* after restarting Lisp, an expression
+  that uses =*price*= fails with "unbound". Run the =defparameter=
   first.
 - *Forgetting the earmuffs when using a global:* if you defined
   =*price*=, then =price= is a different name and is unbound.
@@ -1630,7 +1641,7 @@ Compare this with the Chapter 3 version. The room list appears
 nowhere in the code. The =let= names its parts, and the last
 expression puts them together.
 
-Move the player to the hallway, then run the description block again:
+Move the player to the hallway, then run the description again:
 
 #+begin_src lisp
 (setf *current-room* *hallway*)
@@ -1639,7 +1650,7 @@ Move the player to the hallway, then run the description block again:
 The same description code now says "You are in the Hallway." The
 code didn't change. Only the data did.
 
-You still have to copy the description block each time you want to
+You still have to copy the description each time you want to
 use it. Chapter 5 turns it into a function you can call by name.
 
 *** Exercises
@@ -1676,7 +1687,7 @@ it with the formula F = C × 9/5 + 32. Return a list of both values.
 
 **** Exercise 4.5
 
-Make a global =*steps*= starting at 0. Write one block that adds 1
+Make a global =*steps*= starting at 0. Write one form that adds 1
 three times and then adds 10, and shows the final value.
 
 **** Exercise 4.6
@@ -1805,17 +1816,16 @@ called =dice-faces=, which doesn't exist.
 
 The body runs top to bottom. The value of the last expression is
 returned. Here that's the value of the second =princ=, which is
-="!"=. With =:results output= you see only what was printed:
-=HELLO!=.
+="!"=; the printed text =HELLO!= comes out first, on its own line.
 
-Run the same call without =:results output=:
+Ask for the value alone and you see just that:
 
 #+begin_src lisp
 (shout "hello")        ; => "!"
 #+end_src
 
-The text was still printed, but it went to the REPL window. The
-block shows only the return value.
+The text is still printed — that is what the output is for — and the
+value is what comes back at the end.
 
 Keep two ideas apart:
 
@@ -2017,7 +2027,7 @@ at a time. The required parameters always come first.
 
 *** Project step: room functions
 
-Run the Chapter 4 project blocks first, so the room variables exist.
+Run the Chapter 4 project code first, so the room variables exist.
 
 Each room is a list of name, description and exits. Instead of
 remembering which position holds what, give each part a function:
@@ -2577,8 +2587,8 @@ anything else.
 
 **** Exercise 6.6
 
-Each block has a mistake. Run it, read the error or the wrong result,
-and fix it.
+Each listing has a mistake. Run it, read the error or the wrong
+result, and fix it.
 
 #+begin_example
 (let ((x 5))
@@ -2595,10 +2605,10 @@ and fix it.
     (otherwise 0)))
 #+end_example
 
-In the first block, the intent is: when =x= is positive, print both
+In the first listing, the intent is: when =x= is positive, print both
 ="positive"= and ="big"=. Otherwise print ="negative"=.
 
-In the third block, the intent is to return =1= when =answer= is
+In the third listing, the intent is to return =1= when =answer= is
 ="yes"=.
 
 **** Exercise 6.7
@@ -3175,7 +3185,7 @@ Try it in the kitchen:
 The lamp is in the cellar, so the first =take= fails. The key is in
 the kitchen, so the second works. After that, the key is carried.
 
-Run the block a second time and the first =take 'key= says "You
+Run it a second time and the first =take 'key= says "You
 already have that.", because the key is still marked as carried. To
 start over, re-run the =defparameter= for =*item-locations*=.
 
@@ -3373,9 +3383,9 @@ When recursion is hard to follow, ask Lisp to show you every call:
 (untrace double-all)
 #+end_src
 
-The block shows only the final value. The trace lines appear in the
-*REPL window*, so switch to it (~C-x o~) to read them. They look like
-this:
+Only the final value comes back; the trace lines are printed as they
+happen, in the *REPL window*, so switch to it (~C-x o~) to read them.
+They look like this:
 
 #+begin_example
 0: (DOUBLE-ALL (1 2 3))
@@ -6411,7 +6421,7 @@ Now the messages, rebuilt around =format nil=:
 in the code.
 
 Run the whole thing. This resets the items and the current room, so
-run it as one block:
+run it as one piece:
 
 #+begin_src lisp
 (defparameter *item-locations*
@@ -6955,7 +6965,7 @@ First the structure, with a print function so rooms read well:
 #+end_src
 
 If you defined =room= in an earlier experiment, redefine it now with
-this block, so the accessors match. SBCL warns "undefined function
+this definition, so the accessors match. SBCL warns "undefined function
 ROOM-NAME" while compiling =print-room=, because the accessor doesn't
 exist yet. The warning is harmless: =print-room= is only *called*
 when a room is printed, which is after =defstruct= has run.
@@ -7635,7 +7645,7 @@ Now the command table. Add undo to it (if Exercise 14.7 has you add
 (push '(undo . undo) commands)
 #+end_src
 
-Check the undo. This block resets everything, so run it whole:
+Check the undo. This resets everything, so run it whole:
 
 #+begin_src lisp
 (defparameter item-locations
@@ -7712,7 +7722,7 @@ Then run each form on suitable variables and say what happens and why.
 Write =my-or2=, a two-argument =or=: evaluate the first; if it is
 true, return it without evaluating the second; otherwise evaluate and
 return the second. No function can do this — say why in one comment
-line inside your test block.
+line in your test code.
 
 **** Exercise 14.3
 
@@ -8239,7 +8249,7 @@ second through the restart path.
 
 **** Exercise 15.1
 
-Predict what each block returns or prints, then check:
+Predict what each listing returns or prints, then check:
 
 #+begin_example
 (ignore-errors (+ 1 2))
@@ -8425,14 +8435,14 @@ keywords =:name= and =:key= belong to =keyword=, evaluate to
 themselves, and are the standard choice for names that are only
 names.
 
-**** Packages and Org Babel
+**** Packages and one session
 
-One practical note. Your Org Babel blocks share one Lisp session, so
-an =in-package= in one block affects all the others. When a chapter
+One practical note. Everything you run shares one Lisp session, so an
+=in-package= in one listing affects all the others. When a chapter
 experiment switches packages, switch back with =(in-package
-:cl-user)= in the same block, or your next game function will be
-defined in the wrong place. The blocks below each switch back at the
-end.
+:cl-user)= in the same listing, or your next game function will be
+defined in the wrong place. The listings below each switch back at
+the end.
 
 *** Files and streams
 
@@ -8612,8 +8622,8 @@ not.
 **** Switching packages and forgetting to switch back
 
 An =in-package= at the REPL is sticky. When =(in-package :game)= is
-run and the next block defines =take=, the game's =take= is
-silently replaced. The rule above: switch back inside the same block.
+run and the next thing you define is =take=, the game's =take= is
+silently replaced. The rule above: switch back before you move on.
 
 **** The wrong path separators
 
@@ -17625,7 +17635,7 @@ SLY is installed. Press ~C-g~ to cancel.
 ** Step 3: Add the settings
 
 Open your config file (~C-x C-f~, then type the path from step 1). Go
-to the very end (~M->~) and paste *one* of these blocks.
+to the very end (~M->~) and paste *one* of these settings blocks.
 
 *** SLIME version (default)
 
@@ -17647,22 +17657,11 @@ to the very end (~M->~) and paste *one* of these blocks.
   (setq inferior-lisp-program "sbcl")
   :config
   (slime-setup '(slime-fancy)))
-
-(with-eval-after-load 'org
-  (org-babel-do-load-languages
-   'org-babel-load-languages
-   '((emacs-lisp . t)
-     (lisp . t)))
-  (setq org-babel-lisp-eval-fn #'slime-eval)
-  ;; Don't ask "Evaluate this block?" for Lisp blocks
-  (setq org-confirm-babel-evaluate
-        (lambda (lang _body) (not (string= lang "lisp")))))
 #+end_src
 
 *** SLY version (only if step 2 found SLY)
 
-Same as above, but replace the =use-package slime= part with this, and
-use =#'sly-eval= instead of =#'slime-eval=:
+Same as above, but replace the =use-package slime= part with this:
 
 #+begin_src emacs-lisp
 (use-package sly
@@ -17691,21 +17690,22 @@ Replace ="sbcl"= with the full path, using forward slashes:
 3. Type ~M-x slime~ (or ~M-x sly~) and press Enter. A window titled
    =*slime-repl sbcl*= (or =*sly-mrepl*=) opens with a prompt like
    =CL-USER>=. Lisp is now running.
-4. Open this file (~C-x C-f~ then =thinking-in-lisp.org=).
-5. Put the cursor in the block below and press ~C-c C-c~.
+4. At the =CL-USER>= prompt, type =(+ 1 2)= and press ~RET~. Lisp
+   answers =3=.
 
-#+begin_src lisp
-(+ 1 2)
-#+end_src
+** Step 5: Run code from a buffer
 
-You should see:
+Typing at the prompt is one half of the loop. The other half is
+sending an expression from a file to Lisp.
 
-#+begin_example
-,#+RESULTS:
-: 3
-#+end_example
+1. Open a new file ending in =.lisp= (~C-x C-f~, then =hello.lisp=).
+   Type =(+ 1 2)= and save (~C-x C-s~).
+2. Put the cursor after the closing parenthesis and press ~C-c C-c~.
+   The first time, Emacs starts Lisp for that buffer. You should see
+   the value =3= in the echo area at the bottom of the frame — not in
+   the buffer itself.
 
-If you see =3=, you're set. Go back to "How to Use This Guide" and
+If both work, you're set. Go back to "How to Use This Guide" and
 start Part I. If not, read "Common mistakes" at the end of this
 appendix.
 
@@ -17737,7 +17737,7 @@ later chapter builds the *habit*; this is the *keypress*.
 
 Doom keeps your settings in =~/.config/doom/= (or =~/.doom.d/=). If
 either folder exists, you use Doom, even if step 1 showed a different
-path. Don't add the block from step 3. Do this instead:
+path. Don't add the settings from step 3. Do this instead:
 
 1. Open =~/.config/doom/init.el=. Find the =:lang= section and remove
    the =;;= in front of =common-lisp=, so the line reads:
@@ -17746,21 +17746,7 @@ path. Don't add the block from step 3. Do this instead:
        common-lisp       ; if you've seen one lisp, you've seen them all
 #+end_src
 
-   Make sure =org= in the same section has no =;;= in front of it.
-2. Open =~/.config/doom/config.el= and add at the end:
-
-#+begin_src emacs-lisp
-(after! org
-  (org-babel-do-load-languages
-   'org-babel-load-languages
-   '((emacs-lisp . t)
-     (lisp . t)))
-  (setq org-babel-lisp-eval-fn #'sly-eval)
-  (setq org-confirm-babel-evaluate
-        (lambda (lang _body) (not (string= lang "lisp")))))
-#+end_src
-
-3. In a terminal, run =doom sync= (on Windows it may be
+2. In a terminal, run =doom sync= (on Windows it may be
    =~/.config/emacs/bin/doom sync=), then restart Emacs.
 
 Doom uses *SLY*, so use ~M-x sly~ wherever this guide says
@@ -17771,32 +17757,17 @@ keys behave like Vim" in Appendix C.
 
 1. Open =~/.spacemacs= (press ~SPC f e d~ as a shortcut).
 2. Find the list called =dotspacemacs-configuration-layers= and add
-   =common-lisp= and =org= to it if they're missing:
+   =common-lisp= to it if it's missing:
 
 #+begin_src emacs-lisp
    dotspacemacs-configuration-layers
    '(
      common-lisp
-     org
      ;; ... whatever is already here ...
      )
 #+end_src
 
-3. In the same file, find the function =dotspacemacs/user-config= and
-   add this inside it, before its final closing parenthesis:
-
-#+begin_src emacs-lisp
-  (with-eval-after-load 'org
-    (org-babel-do-load-languages
-     'org-babel-load-languages
-     '((emacs-lisp . t)
-       (lisp . t)))
-    (setq org-babel-lisp-eval-fn #'slime-eval)
-    (setq org-confirm-babel-evaluate
-          (lambda (lang _body) (not (string= lang "lisp")))))
-#+end_src
-
-4. Restart Emacs (~SPC q R~). Spacemacs uses SLIME, so ~M-x slime~
+3. Restart Emacs (~SPC q R~). Spacemacs uses SLIME, so ~M-x slime~
    works as written.
 
 ** Common mistakes
@@ -17804,22 +17775,14 @@ keys behave like Vim" in Appendix C.
 - *"No SLIME connection" or "Not connected" when pressing ~C-c C-c~:*
   Lisp isn't running yet. Type ~M-x slime~ (or ~M-x sly~) and try
   again. You need this once per Emacs session.
-- *"No org-babel-execute function for lisp":* Org doesn't know about
-  Lisp blocks yet. The settings didn't load. Check that you saved the
-  config file, then restart Emacs.
 - *"Searching for program: No such file or directory, sbcl":* Emacs
   can't find SBCL. On Windows, use the full-path setting from step 3.
   On Linux, check that =sbcl --version= works in a terminal.
-- *The block says =common-lisp= or =cl= instead of =lisp=:* Org only
-  recognises =lisp=. Write =#+begin_src lisp=.
-- *Emacs asks "Evaluate this lisp code block?" every time:* the
-  =org-confirm-babel-evaluate= line didn't load. Type =yes= for now
-  and check the config.
 - *SLY says SLIME is also loaded and asks to disable it:* your config
   has both. Answer yes, and keep only one of them in the config.
-- *The result is =nil= but you expected printed text:* add
-  =:results output= to the block's first line (see "How to Use This
-  Guide").
+- *The result is =nil= but you expected printed text:* the printing
+  went to the output; the value at the end is what came back. See "Two
+  kinds of results" in "How to Use This Guide".
 
 * Appendix C: Emacs Survival Guide
 
@@ -17866,8 +17829,8 @@ page. A *window* is a section of the screen that shows a buffer.
 | ~C-x 3~   | Split the screen left and right               |
 | ~C-x k~   | Close a buffer                                |
 
-A good layout for this guide: ~C-x 3~, the guide on the left, the REPL
-on the right.
+A good layout for this guide: ~C-x 3~, your =.lisp= file on the left,
+the REPL on the right.
 
 ** Moving around
 
@@ -17899,26 +17862,9 @@ Selecting with the mouse also works, followed by ~M-w~ or ~C-w~.
 If you'd rather use =C-c=, =C-x= and =C-v= like other programs, type
 ~M-x cua-mode~. It stays on until you restart Emacs.
 
-** Org mode keys
-
-| Key          | What it does                                      |
-|--------------+---------------------------------------------------|
-| ~TAB~        | On a heading: fold or unfold it                   |
-| ~S-TAB~      | Fold or unfold the whole file (Shift-Tab)         |
-| ~C-c C-n~    | Jump to the next heading                          |
-| ~C-c C-p~    | Jump to the previous heading                      |
-| ~C-c C-c~    | Inside a code block: run it                       |
-| ~C-c '~      | Inside a code block: edit it in its own window    |
-| ~C-c C-,~    | Insert a new block (press =s= for a source block) |
-| ~C-c C-v k~  | Delete a block's result                           |
-
-To make a new Lisp block for an exercise answer: press ~C-c C-,~, then
-=s=, then type =lisp= after =#+begin_src=.
-
 ** Lisp keys
 
-These work in the REPL, in =.lisp= files, and in the window that
-~C-c '~ opens for a code block.
+These work in the REPL and in =.lisp= files.
 
 | Key         | What it does                                        |
 |-------------+-----------------------------------------------------|
@@ -17983,7 +17929,7 @@ The basics:
 - Press ~Esc~ to stop typing and go back to moving around (normal mode).
 - Press =:w= then ~RET~ to save.
 - The ~C-~ and ~M-~ keys in this guide mostly still work, including
-  ~C-c C-c~ and ~C-c '~.
+  ~C-c C-c~.
 - Doom and Spacemacs also use ~SPC~ in normal mode as a menu key.
   Press it and wait: a menu of choices appears.
 
@@ -17992,7 +17938,7 @@ off until the next restart.
 
 ** If Lisp gets stuck
 
-If running a block never finishes (for example, a loop that never
+If an expression never finishes (for example, a loop that never
 ends):
 
 1. Switch to the REPL buffer (~C-x b~, then type =repl=).
@@ -18001,7 +17947,7 @@ ends):
 
 If that doesn't help, run ~M-x slime-restart-inferior-lisp~ (SLY:
 ~M-x sly-restart-inferior-lisp~). This starts a fresh Lisp. Everything
-you defined is gone, so re-run the earlier blocks.
+you defined is gone, so re-run the earlier definitions.
 
 ** Common mistakes
 
@@ -18010,17 +17956,15 @@ you defined is gone, so re-run the earlier blocks.
   keys suddenly feel different, press ~C-z~ again.
 - *Pressing ~C-x~ and then waiting:* Emacs is waiting for the second
   key. Finish the combination or press ~C-g~.
-- *Typing into the =#+RESULTS:= area by accident:* don't bother fixing
-  it. Run the block again and the result is rewritten.
 - *Closing the REPL buffer with ~C-x k~:* Lisp may still be running in
   the background. Run ~M-x slime~ again; if it asks whether to create
   an additional connection, answer no.
-- *Losing your place in a large file:* press ~S-TAB~ until you see only
-  the top-level headings, move to the one you want, then press ~TAB~.
+- *Losing your place in a large file:* ~M-<~ and ~M->~ jump to the ends,
+  ~C-s~ searches forward, and ~C-M-f~ moves over whole expressions.
 
 * Appendix D: Answers to Exercises
 
-Each answer has a solution, test lines to paste under your own answer,
+Each answer has a solution, test lines to run after your own answer,
 and the result you should see.
 
 ** How to use these answers
@@ -18028,8 +17972,8 @@ and the result you should see.
 Each answer gives a solution, a *check* to run, and the *expected*
 result. To check your own answer:
 
-1. Run your answer block.
-2. Make a new block under it, paste the check lines, and run it.
+1. Run your definition.
+2. Run the check lines after it.
 3. Compare with the expected result.
 
 For exercises where the answer is a single expression, the check is
@@ -18076,8 +18020,8 @@ and =(- 10 3)= is =7=.
 
 Expected: =Welcome, traveller.=
 
-You need =:results output=. Without it, the block shows the value
-that =princ= returns, which is the string with quotes.
+The line is what =princ= writes. Its value is the string itself, and
+Lisp shows a string with quotes around it.
 
 *** Exercise 1.5
 
@@ -18322,7 +18266,7 @@ is 86. A plain =let= fails here, because =fahrenheit= uses =celsius=.
 
 Expected: =13=
 
-The last =incf= returns the new value, so the block shows it. Adding
+The last =incf= returns the new value, so that is what you see. Adding
 =*steps*= as a final line gives the same result.
 
 *** Exercise 4.6
@@ -18510,7 +18454,7 @@ Expected: =(3 42)=
   (string-capitalize (symbol-name (room-name place))))
 #+end_src
 
-Check (run the project blocks from Chapter 5 first):
+Check (run the Chapter 5 project code first):
 
 #+begin_src lisp
 (list (exit-count *hallway*)
@@ -18625,7 +18569,7 @@ Expected: =(WEEKEND WEEKDAY UNKNOWN)=
 
 *** Exercise 6.6
 
-First block. =if= got four arguments after the test, so SBCL
+First listing. =if= got four arguments after the test, so SBCL
 complains that there are too many. Group the two prints with =progn=:
 
 #+begin_src lisp :results output
@@ -18644,7 +18588,7 @@ Expected output:
 "big" 
 #+end_example
 
-Second block. Without the extra parentheses, =cond= takes =>= as the
+Second listing. Without the extra parentheses, =cond= takes =>= as the
 test and tries to look up a variable called =>=: "The variable > is
 unbound". Each clause needs its own pair:
 
@@ -18654,7 +18598,7 @@ unbound". Each clause needs its own pair:
 
 Expected: =YES=
 
-Third block. It returns =0=, not an error. =case= can't match
+Third listing. It returns =0=, not an error. =case= can't match
 strings, so the ="yes"= clause never matches. Use =cond= with
 =string==:
 
@@ -18724,7 +18668,7 @@ works as the first test.
       nil))
 #+end_src
 
-Check (run the Chapter 4 to 6 project blocks first):
+Check (run the Chapter 4 to 6 project code first):
 
 #+begin_src lisp
 (setf *current-room* *hallway*)
@@ -18928,7 +18872,7 @@ If you really want =push=, put the list in a variable first:
       "You don't have that."))
 #+end_src
 
-Check. This resets the items, so run it as one block:
+Check. This resets the items, so run it in one go:
 
 #+begin_src lisp
 (defparameter *item-locations*
@@ -18980,7 +18924,7 @@ to the garden earlier, it still holds the old garden list, whose
 exits don't include the shed, and =go-to= answers "You can't go there
 from here."
 
-Each push adds to =*rooms*= again, so running this block twice puts
+Each push adds to =*rooms*= again, so running this twice puts
 two copies at the front. That's harmless, because only the first one
 is ever found. Re-run the =defparameter= for =*rooms*= from the
 project step to start clean.
@@ -19251,8 +19195,8 @@ chain =(b)=: three. An atom has none, and =nil= isn't a cons either.
                (item-report (cdr pairs))))))
 #+end_src
 
-Check. This resets the items and marks one as carried, so run it as
-one block:
+Check. This resets the items and marks one as carried, so run it in
+one go:
 
 #+begin_src lisp
 (defparameter *item-locations*
@@ -20875,10 +20819,10 @@ XX
 A
 #+end_example
 
-The first line is the two =princ= calls from the expansion; the
-second is the value =my-when= returned, which the REPL did not print
-because =:results output= shows only what was printed. If you want the
-return values, drop =:results output= and wrap each form in =list=.
+The =XX= is the print made by the expansion; the =A= on the next line
+is the value =my-when= returned. The expansion's own return value is
+not shown here — wrap the form in =list= if you want to see it
+alongside the printing.
 
 *** Exercise 14.2
 
@@ -21010,9 +20954,9 @@ Check:
 (benchmark (+ 1 2))
 #+end_src
 
-Expected: =3=, with ="start end "= printed to the REPL window (add
-=:results output= and call =princ= on the result to see both together,
-since the block otherwise shows only the value =3=).
+Expected: =3=, with ="start end "= printed first (wrap the call in
+=princ= if you want to see both together, since the listing shows only
+the value =3=).
 
 The comment the exercise asks for:
 
@@ -21433,7 +21377,7 @@ Expected: the =COMMON-LISP= package, the =GAME= package, =T=, and
 =COMMON-LISP-USER=.
 
 =(first '(a b))= is =a=, read in whichever package was current when
-you ran the block — =cl-user= here. Symbols land in the package that
+you ran it — =cl-user= here. Symbols land in the package that
 was current /when they were read/, which is why the same name can
 exist in two packages as two different symbols.
 
@@ -22493,7 +22437,7 @@ Check:
 Expected: =("There is no lamp here." ... KITCHEN)= on a fresh
 save — wait, precisely: the first =take 'lamp= signals =cerror=
 because the lamp is in the cellar, and no handler is bound, so
-the debugger opens. Running the whole list in one block therefore
+the debugger opens. Running the whole list at once therefore
 stops at the first element. Two separate checks are the honest
 way:
 
@@ -27280,7 +27224,7 @@ It is not a name index: it is for looking up /ideas/.
 
 ** Part I: First Steps
 
-- Ch 1: REPL loop; prefix notation; =C-c C-c= workflow
+- Ch 1: REPL loop; prefix notation; the edit-evaluate loop
 - Ch 2: evaluation rule; =quote=; atoms vs lists; =nil= truth
 - Ch 3: exact numbers (ratios); characters vs strings vs symbols; upper-casing
 - Ch 4: =defparameter= vs =defvar=; =let= vs =let*=; earmuffs
@@ -27347,6 +27291,6 @@ reflexes. The two together were the promise: not a reference
 that tells, but a guide that holds your hand until the hand
 lets go.
 
-The tools that made it: Emacs, Org mode, SBCL. The tools you
+The tools that made it: Emacs, SBCL, Typst. The tools you
 now know better than the person who configured your init
 file did.

@@ -147,13 +147,13 @@ The best thing the book can do now is suggest what to practice on.
 
 + #strong[Extend the game past the book.] The game you've built is small — five rooms, four item types, one player. It's also #emph[`yours`] in a way a book's exercise never is: you chose the room descriptions, you chose which items go where, you chose how `describe-thing` reads. Add a shop where buying and selling happen; add a monster that moves between rooms; add a save format that survives a schema change; add a room that only opens when the player carries the key. Every addition is a chapter's tools re-applied. And every one teaches something the chapters couldn't, because they had to be ordered.
 
-+ #strong[Write something small and new.] A backup tool, a log analyser, a text adventure generator, a budget calculator. Start with `ql:quickproject` (which scaffolds an `.asd`, a `package.lisp`, a `tests/` directory, and a README), one package, one `.asd`, one file — the Chapter 28 shape, fresh. Do the whole discipline: docstrings, tests, a build script, a README. The game taught you how; a new project teaches you why — because the shapes feel natural this time, and the code reads like Lisp instead of like Lisp-looking Java.
+#enum(start: 2, [#strong[Write something small and new.] A backup tool, a log analyser, a text adventure generator, a budget calculator. Start with `ql:quickproject` (which scaffolds an `.asd`, a `package.lisp`, a `tests/` directory, and a README), one package, one `.asd`, one file — the Chapter 28 shape, fresh. Do the whole discipline: docstrings, tests, a build script, a README. The game taught you how; a new project teaches you why — because the shapes feel natural this time, and the code reads like Lisp instead of like Lisp-looking Java.])
 
-+ #strong[Read one good codebase.] Pick a small Quicklisp library you use — `split-sequence`, `iterate`, `cl-ppcre` if you have patience — and read it end to end. Keep the Hyperspec open beside it. Notice how the author solves the problems you've solved, and where the solutions differ. Notice the docstrings, the comment conventions, the test suite. Reading with the standard at hand is how the remaining rough edges — yours and the language's — get polished off. Chapter 31 was a tour; this is the practice.
+#enum(start: 3, [#strong[Read one good codebase.] Pick a small Quicklisp library you use — `split-sequence`, `iterate`, `cl-ppcre` if you have patience — and read it end to end. Keep the Hyperspec open beside it. Notice how the author solves the problems you've solved, and where the solutions differ. Notice the docstrings, the comment conventions, the test suite. Reading with the standard at hand is how the remaining rough edges — yours and the language's — get polished off. Chapter 31 was a tour; this is the practice.])
 
 The three suggestions have a shape: #emph[more game], #emph[new game], #emph[someone else's game]. That's deliberate. The first teaches extension, the second teaches inception, the third teaches continuation. Together they're the full life of a programmer in any language, and they're what the book's whole structure was pointing at.
 
-The running image, the file, and the REPL: they were the whole method. Every chapter ended in one of them — a `C-c C-c` into a live game, a `with-open-file` to a disk, a REPL experiment that answered a question no amount of reading could. That method is Lisp's method, and it is what the book was teaching all along. Enjoy the language — it rewards exactly the curiosity that got you this far.
+The running image, the file, and the REPL: they were the whole method. Every chapter ended in one of them — a #box[`C-c C-c`] into a live game, a `with-open-file` to a disk, a REPL experiment that answered a question no amount of reading could. That method is Lisp's method, and it is what the book was teaching all along. Enjoy the language — it rewards exactly the curiosity that got you this far.
 
 == Exercises
 
@@ -178,7 +178,7 @@ The running image, the file, and the REPL: they were the whole method. Every cha
 ]
 
 #exercise("34.5")[
-  Add a `--version` flag to the game's `main` (Chapter 32) that reports both the game's version and the Quicklisp distro version, so `./game --version` tells a user both. The distro version comes from `ql-dist:`; `M-.` on i`(asdf:system-version= (asdf:find-system :quicklisp))` — find the right accessor and use it.
+  Add a `--version` flag to the game's `main` (Chapter 32) that reports both the game's version and the Quicklisp distro version, so `./game --version` tells a user both. The distro version comes from `ql-dist:`; #box[`M-.`] on i`(asdf:system-version= (asdf:find-system :quicklisp))` — find the right accessor and use it.
 
 ]
 

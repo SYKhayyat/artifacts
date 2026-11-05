@@ -6,5 +6,5 @@ This book was written as one continuous conversation, part by part, against a ru
 
 The running game — the Cave of Noise — carried every idea in turn: alists for rooms, closures for history, conditions for failsafes, CLOS for items, packages for the split, generators for the streamed replay, and finally `save-lisp-and-die` for the shipped executable. If you worked the project steps, you built a program; if you worked the exercises, you built the reflexes. The two together were the promise: not a reference that tells, but a guide that holds your hand until the hand lets go.
 
-The tools that made it: Emacs, Org mode, SBCL. The tools you now know better than the person who configured your init file did.
+The tools that made it: Emacs, SBCL, Typst. The tools you now know better than the person who configured your init file did.
 

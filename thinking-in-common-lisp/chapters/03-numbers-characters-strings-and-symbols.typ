@@ -2,7 +2,7 @@
 
 = Numbers, Characters, Strings and Symbols
 
-This chapter covers the atoms you'll use every day. Each section is a small tour. Run every block, and come back to this chapter as a reference.
+This chapter covers the atoms you'll use every day. Each section is a small tour. Run everything, and come back to this chapter as a reference.
 
 == Integers
 
@@ -387,7 +387,7 @@ Read it from the inside out:
 
 You had to type the room list twice. That's clumsy, and it's exactly the problem Chapter 4 solves: you'll give the list a name and use the name instead.
 
-To show the line to the player, wrap the same expression in `princ` and add `:results output`:
+To show the line to the player, wrap the same expression in `princ`:
 
 ```lisp
 (princ (concatenate 'string

@@ -422,7 +422,7 @@ Try it in the kitchen:
 
 The lamp is in the cellar, so the first `take` fails. The key is in the kitchen, so the second works. After that, the key is carried.
 
-Run the block a second time and the first `take 'key` says "You already have that.", because the key is still marked as carried. To start over, re-run the `defparameter` for `*item-locations*`.
+Run it a second time and the first `take 'key` says "You already have that.", because the key is still marked as carried. To start over, re-run the `defparameter` for `*item-locations*`.
 
 The game can't yet list the items in a room, because that means looking at every pair in the alist. Chapter 8 teaches you how to walk through a whole list.
 

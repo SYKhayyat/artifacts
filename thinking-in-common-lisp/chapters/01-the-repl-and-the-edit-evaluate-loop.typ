@@ -11,13 +11,13 @@ Lisp works in a loop of four steps:
 + #strong[Print] the value.
 + #strong[Loop] back and wait for more.
 
-That is the REPL. Every time you press `C-c C-c` on a block, the same thing happens: the block is read, evaluated, and the value is shown.
+That is the REPL. Every time you press #box[`RET`] on an expression — or #box[`C-c C-c`] on one in a file — the same thing happens: it is read, evaluated, and the value is shown.
 
 In Java you write a whole program, compile it, and run `main`. In Lisp you talk to a running program, one expression at a time, and it answers. The program grows while it runs. This is the single biggest change in how you will work.
 
 == Your first expressions
 
-Run each block.
+Run each of these at the REPL.
 
 ```lisp
 42
@@ -50,7 +50,7 @@ There is no operator precedence to remember. In Python, `2 + 3 * 4` depends on r
 (* (+ 2 3) 4)   ; => 20
 ```
 
-When a block contains several expressions, they all run, top to bottom, and the block shows the value of the #strong[last] one. The block above shows `20`.
+When a listing contains several expressions, they all run, top to bottom, and you see the value of the #strong[last] one. The listing above shows `20`.
 
 == Using the REPL directly
 
@@ -61,9 +61,9 @@ CL-USER> (* 6 7)
 42
 ```
 
-Press `RET` after the closing parenthesis. If you press `RET` before the parentheses are balanced, the REPL waits for the rest. That isn't an error. Finish typing and press `RET` again.
+Press #box[`RET`] after the closing parenthesis. If you press #box[`RET`] before the parentheses are balanced, the REPL waits for the rest. That isn't an error. Finish typing and press #box[`RET`] again.
 
-Use `M-p` to bring back what you typed before. Use the REPL for quick experiments. Use code blocks for anything you want to keep.
+Use #box[`M-p`] to bring back what you typed before. Use the REPL for quick experiments. Put anything you want to keep in a file.
 
 == Printing
 
@@ -91,10 +91,10 @@ Text in double quotes is a #emph[string]. Chapter 3 covers strings fully. For no
 
 `print` and `princ` also #emph[return] the value they printed. So in a REPL you see the value twice: once printed, once as the result. That's normal.
 
-Remember the difference between the two kinds of block results:
+Remember the difference between the two kinds of result:
 
-- Without `:results output`: you see the #strong[value] of the last expression.
-- With `:results output`: you see what was #strong[printed].
+- The #strong[value] of the last expression is what the REPL prints at the prompt, and what a `; =>` comment records.
+- #strong[Printed] output comes out above it — whatever `print` and `princ` wrote on the way.
 
 == Comments
 
@@ -137,7 +137,7 @@ Errors in Lisp don't crash your program. The program pauses and asks you what to
 New Lispers worry about parentheses. Two facts make them easy:
 
 + #strong[Emacs counts them for you.] Put the cursor right after a closing parenthesis and Emacs highlights the opening one.
-+ #strong[Experienced Lispers read indentation, not parentheses.] The shape of the code on the page shows its structure. Emacs indents it for you: select a region and press `TAB`, or inside a code block press `C-c '` and then `TAB` on each line.
++ #strong[Experienced Lispers read indentation, not parentheses.] The shape of the code on the page shows its structure. Emacs indents it for you: select a region and press #box[`TAB`].
 
 Closing parentheses go together at the end of the last line:
 
@@ -162,8 +162,8 @@ Both work. Only the first looks like Lisp. Use it.
 - #strong[Putting the operator in the middle:] `(1 + 2)`. The error is "Illegal function call" or "1 is not a function name". The operator always comes first: `(+ 1 2)`.
 - #strong[Leaving out spaces:] `(+1 2)` is not "plus, one, two". Lisp reads `+1` as the number positive one, then complains that `+1` is not a function. Always put a space after the operator.
 - #strong[Using commas between arguments:] `(+ 1, 2)`. Lisp separates arguments with spaces only. A comma here gives "comma not inside a backquote", which is a feature you will meet in Part IV.
-- #strong[Expecting printed text in the block result:] you used `print` but the block shows only the final value. Add `:results output`.
-- #strong[Unbalanced parentheses in a block:] the block gives an "end of file" error. One closing parenthesis is missing. Put the cursor after each closing parenthesis to find the one that has no partner.
+- #strong[Expecting printed text in the result:] you used `print` but what you see is the value that came back. The text was printed above it.
+- #strong[Unbalanced parentheses:] you get an "end of file" error. One closing parenthesis is missing. Put the cursor after each closing parenthesis to find the one that has no partner.
 
 == Project step: the adventure begins
 
@@ -193,7 +193,7 @@ That's the whole step. In the next chapter, the rooms become data.
 ]
 
 #exercise("1.4")[
-  Print the line `Welcome, traveller.` without quotes. Which block header do you need to see it in the result?
+  Print the line `Welcome, traveller.` without quotes. How do you make the printed line — rather than the value — the thing you see?
 
 ]
 

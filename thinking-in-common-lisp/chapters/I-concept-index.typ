@@ -6,7 +6,7 @@ A guided index of the concepts each chapter covered, in chapter order, so it dou
 
 == Part I: First Steps
 
-- Ch 1: REPL loop; prefix notation; `C-c C-c` workflow
+- Ch 1: REPL loop; prefix notation; the edit-evaluate loop
 - Ch 2: evaluation rule; `quote`; atoms vs lists; `nil` truth
 - Ch 3: exact numbers (ratios); characters vs strings vs symbols; upper-casing
 - Ch 4: `defparameter` vs `defvar`; `let` vs `let*`; earmuffs

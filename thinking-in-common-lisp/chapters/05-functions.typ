@@ -83,15 +83,15 @@ To call it, put the name in parentheses with nothing after it. Writing just `dic
 (shout "hello")
 ```
 
-The body runs top to bottom. The value of the last expression is returned. Here that's the value of the second `princ`, which is `"!"`. With `:results output` you see only what was printed: `HELLO!`.
+The body runs top to bottom. The value of the last expression is returned. Here that's the value of the second `princ`, which is `"!"`; the printed text `HELLO!` comes out first, on its own line.
 
-Run the same call without `:results output`:
+Ask for the value alone and you see just that:
 
 ```lisp
 (shout "hello")        ; => "!"
 ```
 
-The text was still printed, but it went to the REPL window. The block shows only the return value.
+The text is still printed — that is what the output is for — and the value is what comes back at the end.
 
 Keep two ideas apart:
 
@@ -130,7 +130,7 @@ WARNING: redefining COMMON-LISP-USER::TWICE in DEFUN
 
 That's harmless. It's telling you what you already know.
 
-This is how you work in Lisp. You don't restart the program to fix a function. You change the `defun`, run it again with `C-c C-c`, and the running program uses the new version immediately.
+This is how you work in Lisp. You don't restart the program to fix a function. You change the `defun`, run it again with #box[`C-c C-c`], and the running program uses the new version immediately.
 
 == Functions calling functions
 
@@ -247,7 +247,7 @@ You will rarely need more than one of `&optional`, `&rest` and `&key` at a time.
 
 == Project step: room functions
 
-Run the Chapter 4 project blocks first, so the room variables exist.
+Run the Chapter 4 project code first, so the room variables exist.
 
 Each room is a list of name, description and exits. Instead of remembering which position holds what, give each part a function:
 

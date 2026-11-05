@@ -340,7 +340,7 @@ First the structure, with a print function so rooms read well:
   exits)
 ```
 
-If you defined `room` in an earlier experiment, redefine it now with this block, so the accessors match. SBCL warns "undefined function ROOM-NAME" while compiling `print-room`, because the accessor doesn't exist yet. The warning is harmless: `print-room` is only #strong[called] when a room is printed, which is after `defstruct` has run.
+If you defined `room` in an earlier experiment, redefine it now with this definition, so the accessors match. SBCL warns "undefined function ROOM-NAME" while compiling `print-room`, because the accessor doesn't exist yet. The warning is harmless: `print-room` is only #strong[called] when a room is printed, which is after `defstruct` has run.
 
 Now the five rooms, with the same topology as before, built with `make-room`:
 

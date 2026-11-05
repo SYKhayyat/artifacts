@@ -418,7 +418,7 @@ Now the messages, rebuilt around `format nil`:
 
 `take`, `drop` and `item-report` now pass symbols straight to `format`, and the case directives do the lowering. Compare `item-report` with the version from Chapter 11: no `symbol-name`, no `string-downcase`, no `concatenate`. The message reads as a sentence in the code.
 
-Run the whole thing. This resets the items and the current room, so run it as one block:
+Run the whole thing. This resets the items and the current room, so run it as one piece:
 
 ```lisp
 (defparameter *item-locations*

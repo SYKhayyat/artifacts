@@ -353,7 +353,7 @@ Expected: `"key has 3 letters."` and `"sword has 0 letters."` — the second thr
 == Exercises
 
 #exercise("15.1")[
-  Predict what each block returns or prints, then check:
+  Predict what each listing returns or prints, then check:
 
   ```text
   (ignore-errors (+ 1 2))

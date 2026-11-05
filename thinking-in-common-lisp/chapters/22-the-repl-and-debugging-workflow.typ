@@ -39,7 +39,7 @@ Useful in the moment, dangerous as a habit: the next expression you evaluate sil
 
 You see the structure, each slot with its name and value, and for the game's `room` structures that's exactly the view you want: name, description, exits, locked, items. From there you can descend: follow a slot into another object, evaluate expressions #emph[in the context of the object], and walk back out. The inspector is how you answer "what does this room actually contain right now?" without writing printing code — Chapter 13's `:print-function` makes the top-level view readable, and the inspector makes it navigable.
 
-Use it on: an alist whose shape looks wrong, a condition object caught in a handler, a structure whose slots hold surprises. In SLIME\/SLY, `C-c C-v C-o` (or `M-x slime-inspect`) inspects the expression at point.
+Use it on: an alist whose shape looks wrong, a condition object caught in a handler, a structure whose slots hold surprises. In SLIME\/SLY, #box[`C-c C-v C-o`] (or `M-x slime-inspect`) inspects the expression at point.
 
 == `break`, `error`, and deliberate stops
 
@@ -82,7 +82,7 @@ Read from the top: `length` was given `5`. Frame 1 shows your function passed a 
 Chapter 16 showed the file-to-session loop; here's its debugging form. When the game misbehaves:
 
 + Try the failing command at the REPL with the same arguments the game gave it. The debugger you get is #emph[your] debugger, with the arguments in front of you.
-+ Find and fix the definition. `C-c C-c` it — the running game now calls the new version; nothing restarts.
++ Find and fix the definition. #box[`C-c C-c`] it — the running game now calls the new version; nothing restarts.
 + Try the command again. If it works, done — and the fix is already in the file.
 
 This loop is seconds long, and its speed changes how you debug: instead of reasoning your way to the answer before touching anything, you can test hypotheses directly — change one thing, push it live, try again. Keep the loop honest by changing #emph[one thing] at a time; a session where five definitions were redefined since the last success is a session you can't reason about.
@@ -117,7 +117,7 @@ Reading code and reasoning is slow and often wrong. The session is right there: 
 
 === Fixing five things between tests
 
-The redefinition loop's power comes from its granularity. One change, one try. If you must change several, write them all in the file first, then `C-c C-c` them one at a time in dependency order — classes, then methods, then callers.
+The redefinition loop's power comes from its granularity. One change, one try. If you must change several, write them all in the file first, then #box[`C-c C-c`] them one at a time in dependency order — classes, then methods, then callers.
 
 === Leaving `break` and `trace` in finished code
 

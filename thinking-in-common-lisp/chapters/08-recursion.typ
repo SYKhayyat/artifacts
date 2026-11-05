@@ -89,7 +89,7 @@ When recursion is hard to follow, ask Lisp to show you every call:
 (untrace double-all)
 ```
 
-The block shows only the final value. The trace lines appear in the #strong[REPL window], so switch to it (`C-x o`) to read them. They look like this:
+Only the final value comes back; the trace lines are printed as they happen, in the #strong[REPL window], so switch to it (`C-x o`) to read them. They look like this:
 
 ```text
 0: (DOUBLE-ALL (1 2 3))

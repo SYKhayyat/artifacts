@@ -81,9 +81,9 @@ Two packages may both export a symbol named `look`. A package that uses both mus
 
 Two more bits of syntax you'll meet. `#:foo` is a symbol belonging to no package at all, made by `gensym` in Chapter 14 and used there for exactly this reason: it cannot collide with anything. And the keywords `:name` and `:key` belong to `keyword`, evaluate to themselves, and are the standard choice for names that are only names.
 
-=== Packages and Org Babel
+=== Packages and one session
 
-One practical note. Your Org Babel blocks share one Lisp session, so an `in-package` in one block affects all the others. When a chapter experiment switches packages, switch back with `(in-package :cl-user)` in the same block, or your next game function will be defined in the wrong place. The blocks below each switch back at the end.
+One practical note. Everything you run shares one Lisp session, so an `in-package` in one listing affects all the others. When a chapter experiment switches packages, switch back with `(in-package :cl-user)` in the same listing, or your next game function will be defined in the wrong place. The listings below each switch back at the end.
 
 == Files and streams
 
@@ -222,7 +222,7 @@ Without `:use :cl`, bare names resolve only inside the package, and the whole la
 
 === Switching packages and forgetting to switch back
 
-An `in-package` at the REPL is sticky. When `(in-package :game)` is run and the next block defines `take`, the game's `take` is silently replaced. The rule above: switch back inside the same block.
+An `in-package` at the REPL is sticky. When `(in-package :game)` is run and the next thing you define is `take`, the game's `take` is silently replaced. The rule above: switch back before you move on.
 
 === The wrong path separators
 

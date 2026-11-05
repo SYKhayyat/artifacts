@@ -9,7 +9,7 @@ This guide takes you from zero to reading, writing and thinking in Common Lisp. 
 Two promises:
 
 + #strong[No forward references.] You will never see "don't worry about this yet". Every piece of code uses only what has already been explained.
-+ #strong[You run everything.] Every example is a live code block. You run it inside this file and see the result right below it.
++ #strong[You run everything.] Every example is code you type and run yourself, with its result printed underneath so you can check yourself as you go.
 
 You know Python and Java. Now and then a short note will say "this is roughly like X in Java". Treat those as landmarks, not translations. Lisp works best when you meet it on its own terms.
 
@@ -18,91 +18,91 @@ You know Python and Java. Now and then a short note will say "this is roughly li
 Before anything else, do these in order:
 
 + Appendix A: install SBCL (the Lisp itself).
-+ Appendix B: make Emacs talk to SBCL and run code blocks.
++ Appendix B: make Emacs talk to SBCL and run your first expression.
 + Skim Appendix C: the Emacs keys you need.
 
-Come back here when the test block in Appendix B prints `3`.
+Come back here when the test expression in Appendix B prints `3`.
 
 == How each chapter is built
 
 Every chapter has the same parts:
 
-- #strong[Explanation] with code blocks you run as you read.
+- #strong[Explanation], with code you run as you read.
 - #strong[Common mistakes:] the errors beginners actually make, what the error message looks like, and how to fix it.
 - #strong[Project step:] one new piece of the running project (see below).
 - #strong[Exercises:] answers are in Appendix D.
 
-== Running code blocks (Org Babel)
+== Running the code
 
-A code block looks like this:
+A listing looks like this:
 
 ```lisp
 (+ 1 2)
 ```
 
-To run it:
-
-+ Make sure Lisp is running. Type `M-x slime` and press Enter once per Emacs session. A REPL window opens. You can leave it alone.
-+ Put the cursor anywhere inside the block.
-+ Press `C-c C-c`.
-
-The result appears right under the block:
+You run it by typing it at the REPL and pressing #box[`RET`]:
 
 ```text
-#+RESULTS:
-: 3
+CL-USER> (+ 1 2)
+3
 ```
 
-Run the block again and the result is replaced, not duplicated.
+Most listings in this guide carry that answer as a comment, so you can check yourself without waiting for us:
+
+```lisp
+(+ 1 2)   ; => 3
+```
+
+There are two ways to run a listing, and the book works with either:
+
+- #strong[At the REPL.] Type it, press #box[`RET`], read the answer. Best for experiments and one-liners.
+- #strong[In a `.lisp` buffer.] Type it in a file, put the cursor after the closing parenthesis, and press #box[`C-c C-c`]. Emacs sends the expression to Lisp and shows the value in the echo area at the bottom of the frame. Best for code you want to keep. Chapter 1 calls this the edit-evaluate loop, and Appendix B sets it up.
 
 === Two kinds of results
 
-By default you get the #strong[value] of the last expression in the block, which is the thing the code "returns".
+A listing either #strong[returns] a value or #strong[prints] text, and the two are shown differently.
 
-If the code #strong[prints] text, add `:results output` to the first line to capture what was printed:
+The value is what Lisp hands back — what the REPL shows after you press #box[`RET`]. Listings that return a value show it as a `; =>` comment:
+
+```lisp
+(* 6 7)   ; => 42
+```
+
+Printed text is output written along the way, by `print`, `princ`, `format` or the debugger. It comes out above the value:
 
 ```lisp
 (print "hello")
 (print "world")
 ```
 
-Without `:results output`, the printed text goes to the REPL window and the block shows only the final value. When a block's result looks "wrong", this is usually why.
+The two printed lines appear first, then the value of the last `print` — the string `"world"` — comes back on its own line.
 
-=== Blocks share one Lisp
+When a listing's result looks "wrong", it is usually this: you expected the printed text, and what you are looking at is the value that came back at the end.
 
-Every block runs in the same Lisp session. If you define something in one block, later blocks can use it. This means:
+=== One Lisp, running
 
-- Run blocks in order, from top to bottom.
-- If you restart Emacs or Lisp, re-run the earlier blocks that define things before running later ones.
+Everything you run goes into the same Lisp process. If you define something once, later listings can use it. This means:
 
-=== Editing a block comfortably
+- Run the code in order, from top to bottom.
+- If you restart Emacs or Lisp, re-run the definitions the later examples depend on.
 
-Press `C-c '` (Control-c, then apostrophe) inside a block. It opens in its own window with full Lisp editing support. Press `C-c '` again to go back.
+=== Editing comfortably
+
+Emacs indents Lisp for you: select a region and press #box[`TAB`], or put the cursor inside a definition and press #box[`C-M-q`] to re-indent it. Indented code is how Lispers read structure, so let Emacs do it.
 
 == Writing and checking your exercise answers
 
-Under each exercise, make your own block and type your answer:
+Write your answer where you can run it — a scratch `.lisp` buffer, or straight at the REPL. Exercise 1.1 asks for a function `twice`, so the answer is:
 
-```text
-*** Exercise 1.1
-Write a function =twice= that returns twice its argument.
-
-#+begin_src lisp
-;; my answer
+```lisp
 (defun twice (n)
   (* n 2))
-#+end_src
 ```
 
-Then check it. Each answer in Appendix D comes with #strong[test lines]. Paste them into a second block under yours and run both:
+Then check it. Each answer in Appendix D comes with #strong[test lines]. Run them after your definition:
 
-```text
-#+begin_src lisp
-(list (twice 4) (twice 0) (twice -3))
-#+end_src
-
-#+RESULTS:
-: (8 0 -6)
+```lisp
+(list (twice 4) (twice 0) (twice -3))   ; => (8 0 -6)
 ```
 
 If your result matches the one in Appendix D, you're done. Your version doesn't need to look like the answer. There are many correct ways to write most things.

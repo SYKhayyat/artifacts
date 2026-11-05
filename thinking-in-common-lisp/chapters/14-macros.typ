@@ -429,7 +429,7 @@ Now the command table. Add undo to it (if Exercise 14.7 has you add `drop` too, 
 (push '(undo . undo) commands)
 ```
 
-Check the undo. This block resets everything, so run it whole:
+Check the undo. This resets everything, so run it whole:
 
 ```lisp
 (defparameter item-locations
@@ -493,7 +493,7 @@ Both macros expand into code you could have written by hand; check with `macroex
 ]
 
 #exercise("14.2")[
-  Write `my-or2`, a two-argument `or`: evaluate the first; if it is true, return it without evaluating the second; otherwise evaluate and return the second. No function can do this — say why in one comment line inside your test block.
+  Write `my-or2`, a two-argument `or`: evaluate the first; if it is true, return it without evaluating the second; otherwise evaluate and return the second. No function can do this — say why in one comment line in your test code.
 
 ]
 

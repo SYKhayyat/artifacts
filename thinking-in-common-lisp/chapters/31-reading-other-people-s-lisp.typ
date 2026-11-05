@@ -13,9 +13,9 @@ The tour needs a specimen. Pick a small, well-regarded one:
 (asdf:system-source-directory :split-sequence)
 ```
 
-That last call returns the directory where Quicklisp unpacked the library. Open it in Emacs (`C-x C-f` then the path, or `C-x d` for dired — Appendix C covers both). Reading source in Emacs, `M-.` on any symbol jumps to its definition (with `slime` or `sly` running, and it works across the whole image — library code included); `M-,` jumps back. This one key is most of "reading Lisp in Emacs".
+That last call returns the directory where Quicklisp unpacked the library. Open it in Emacs (#box[`C-x C-f`] then the path, or `C-x d` for dired — Appendix C covers both). Reading source in Emacs, #box[`M-.`] on any symbol jumps to its definition (with `slime` or `sly` running, and it works across the whole image — library code included); #box[`M-,`] jumps back. This one key is most of "reading Lisp in Emacs".
 
-The reason this works: the Lisp image holds the #emph[definitions] of every function, not just the text. `M-.` asks the running Lisp where `split-sequence` was defined, and the answer points at the file and line. That's a completely different lookup from Emacs's tag-based systems in other languages — the image is the authority.
+The reason this works: the Lisp image holds the #emph[definitions] of every function, not just the text. #box[`M-.`] asks the running Lisp where `split-sequence` was defined, and the answer points at the file and line. That's a completely different lookup from Emacs's tag-based systems in other languages — the image is the authority.
 
 == The shape of a system
 
@@ -147,9 +147,9 @@ A checklist, in order of cheapness:
 
 #emph[Maintenance] — the dists directory's dates, or the repo: stale is not dead in Lisp (stable standard, stable code), but a decade of silent issues is a signal.
 
-#emph[Read the source] — the final and most Lisp-native step. 150 lines, the whole story, and `M-.` makes it walkable.
+#emph[Read the source] — the final and most Lisp-native step. 150 lines, the whole story, and #box[`M-.`] makes it walkable.
 
-The cultural note to carry: in Lisp, #emph[the source is the documentation of last resort, and reading it is normal]. Hyperspec lookup (Appendix B) for the standard, `M-.` for the library — the reading loop is the same skill at both layers.
+The cultural note to carry: in Lisp, #emph[the source is the documentation of last resort, and reading it is normal]. Hyperspec lookup (Appendix B) for the standard, #box[`M-.`] for the library — the reading loop is the same skill at both layers.
 
 == Common mistakes
 

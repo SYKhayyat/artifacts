@@ -126,11 +126,11 @@ You'll also see `car` and `cdr` in older code. They mean the same as `first` and
 
 Read nested calls from the inside out: "the rest of `(a b c)` is `(b c)`, and the first of that is `b`".
 
-== How Org shows results
+== How results are printed
 
-The line `#+PROPERTY: header-args:lisp :results verbatim` at the top of this file tells Org to show every result exactly as the REPL would print it. Without it, Org tries to be helpful. A list like `(1 2 3)` turns into a table `| 1 | 2 | 3 |`, and a string loses its quotes.
+Results are shown the way the REPL prints them, not the way a typesetter would. A list stays a list — `(1 2 3)`, not a table — and a string keeps its quotes, because that is the form Lisp would read back.
 
-If you ever see a table where you expected a list, check that the `#+PROPERTY` line is there. Then press `C-c C-c` on it to make Org notice it.
+So when you compare your answer with ours, expect the readable form. The human form — no quotes, no escaping — is what `princ` and `format` are for.
 
 == Counting and indexing
 
@@ -241,7 +241,7 @@ Now take it apart:
 (second '(kitchen (hallway garden)))   ; => (HALLWAY GARDEN)
 ```
 
-The first block shows `KITCHEN`. The second shows the list of exits. You've just designed a data format with nothing but lists. In Java you'd write a `Room` class first. In Lisp you often start with plain lists and add structure later, when you know what you need.
+The first expression returns `KITCHEN`. The second returns the list of exits. You've just designed a data format with nothing but lists. In Java you'd write a `Room` class first. In Lisp you often start with plain lists and add structure later, when you know what you need.
 
 == Exercises
 

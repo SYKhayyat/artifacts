@@ -384,7 +384,7 @@ The game now has rules. In Part II you'll learn how lists are really built, and 
 ]
 
 #exercise("6.6")[
-  Each block has a mistake. Run it, read the error or the wrong result, and fix it.
+  Each listing has a mistake. Run it, read the error or the wrong result, and fix it.
 
   ```text
   (let ((x 5))
@@ -401,9 +401,9 @@ The game now has rules. In Part II you'll learn how lists are really built, and 
       (otherwise 0)))
   ```
 
-  In the first block, the intent is: when `x` is positive, print both `"positive"` and `"big"`. Otherwise print `"negative"`.
+  In the first listing, the intent is: when `x` is positive, print both `"positive"` and `"big"`. Otherwise print `"negative"`.
 
-  In the third block, the intent is to return `1` when `answer` is `"yes"`.
+  In the third listing, the intent is to return `1` when `answer` is `"yes"`.
 
 ]
 

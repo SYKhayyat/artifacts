@@ -9,10 +9,10 @@
 
 == A note on reading results
 
-Most blocks in this guide show their expected result as a comment:
+Most listings in this guide show their expected result as a comment:
 
 ```lisp
 (+ 1 2)   ; => 3
 ```
 
-A semicolon starts a comment. Lisp ignores everything from `;` to the end of the line. The `; =>` comment means "this evaluates to". When you run the block with `C-c C-c`, the `#+RESULTS:` line should match.
+A semicolon starts a comment. Lisp ignores everything from `;` to the end of the line. The `; =>` comment means "this evaluates to": run the expression, and the REPL should answer with the value shown.

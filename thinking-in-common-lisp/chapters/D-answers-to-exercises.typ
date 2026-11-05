@@ -2,14 +2,14 @@
 
 = Answers to Exercises
 
-Each answer has a solution, test lines to paste under your own answer, and the result you should see.
+Each answer has a solution, test lines to run after your own answer, and the result you should see.
 
 == How to use these answers
 
 Each answer gives a solution, a #strong[check] to run, and the #strong[expected] result. To check your own answer:
 
-+ Run your answer block.
-+ Make a new block under it, paste the check lines, and run it.
++ Run your definition.
++ Run the check lines after it.
 + Compare with the expected result.
 
 For exercises where the answer is a single expression, the check is simply running your expression. Your code may look different from the solution and still be right. Only the result has to match.
@@ -54,7 +54,7 @@ For exercises where the answer is a single expression, the check is simply runni
 
   Expected: `Welcome, traveller.`
 
-  You need `:results output`. Without it, the block shows the value that `princ` returns, which is the string with quotes.
+  The line is what `princ` writes. Its value is the string itself, and Lisp shows a string with quotes around it.
 
 ]
 
@@ -336,7 +336,7 @@ For exercises where the answer is a single expression, the check is simply runni
 
   Expected: `13`
 
-  The last `incf` returns the new value, so the block shows it. Adding `*steps*` as a final line gives the same result.
+  The last `incf` returns the new value, so that is what you see. Adding `*steps*` as a final line gives the same result.
 
 ]
 
@@ -539,7 +539,7 @@ For exercises where the answer is a single expression, the check is simply runni
     (string-capitalize (symbol-name (room-name place))))
   ```
 
-  Check (run the project blocks from Chapter 5 first):
+  Check (run the Chapter 5 project code first):
 
   ```lisp
   (list (exit-count *hallway*)
@@ -662,7 +662,7 @@ For exercises where the answer is a single expression, the check is simply runni
 ]
 
 #soln("6.6")[
-  First block. `if` got four arguments after the test, so SBCL complains that there are too many. Group the two prints with `progn`:
+  First listing. `if` got four arguments after the test, so SBCL complains that there are too many. Group the two prints with `progn`:
 
   ```lisp
   (let ((x 5))
@@ -680,7 +680,7 @@ For exercises where the answer is a single expression, the check is simply runni
   "big" 
   ```
 
-  Second block. Without the extra parentheses, `cond` takes `>` as the test and tries to look up a variable called `>`: "The variable \> is unbound". Each clause needs its own pair:
+  Second listing. Without the extra parentheses, `cond` takes `>` as the test and tries to look up a variable called `>`: "The variable \> is unbound". Each clause needs its own pair:
 
   ```lisp
   (cond ((> 5 0) 'yes))
@@ -688,7 +688,7 @@ For exercises where the answer is a single expression, the check is simply runni
 
   Expected: `YES`
 
-  Third block. It returns `0`, not an error. `case` can't match strings, so the `"yes"` clause never matches. Use `cond` with `string=`:
+  Third listing. It returns `0`, not an error. `case` can't match strings, so the `"yes"` clause never matches. Use `cond` with `string=`:
 
   ```lisp
   (let ((answer "yes"))
@@ -762,7 +762,7 @@ For exercises where the answer is a single expression, the check is simply runni
         nil))
   ```
 
-  Check (run the Chapter 4 to 6 project blocks first):
+  Check (run the Chapter 4 to 6 project code first):
 
   ```lisp
   (setf *current-room* *hallway*)
@@ -973,7 +973,7 @@ For exercises where the answer is a single expression, the check is simply runni
         "You don't have that."))
   ```
 
-  Check. This resets the items, so run it as one block:
+  Check. This resets the items, so run it in one go:
 
   ```lisp
   (defparameter *item-locations*
@@ -1018,7 +1018,7 @@ For exercises where the answer is a single expression, the check is simply runni
 
   The `setf` must come #emph[after] the pushes. If `*current-room*` was set to the garden earlier, it still holds the old garden list, whose exits don't include the shed, and `go-to` answers "You can't go there from here."
 
-  Each push adds to `*rooms*` again, so running this block twice puts two copies at the front. That's harmless, because only the first one is ever found. Re-run the `defparameter` for `*rooms*` from the project step to start clean.
+  Each push adds to `*rooms*` again, so running this twice puts two copies at the front. That's harmless, because only the first one is ever found. Re-run the `defparameter` for `*rooms*` from the project step to start clean.
 
 ]
 
@@ -1280,7 +1280,7 @@ For exercises where the answer is a single expression, the check is simply runni
                  (item-report (cdr pairs))))))
   ```
 
-  Check. This resets the items and marks one as carried, so run it as one block:
+  Check. This resets the items and marks one as carried, so run it in one go:
 
   ```lisp
   (defparameter *item-locations*
@@ -2801,7 +2801,7 @@ For exercises where the answer is a single expression, the check is simply runni
   A
   ```
 
-  The first line is the two `princ` calls from the expansion; the second is the value `my-when` returned, which the REPL did not print because `:results output` shows only what was printed. If you want the return values, drop `:results output` and wrap each form in `list`.
+  The `XX` is the print made by the expansion; the `A` on the next line is the value `my-when` returned. The expansion's own return value is not shown here — wrap the form in `list` if you want to see it alongside the printing.
 
 ]
 
@@ -2908,7 +2908,7 @@ For exercises where the answer is a single expression, the check is simply runni
   (benchmark (+ 1 2))
   ```
 
-  Expected: `3`, with `"start end "` printed to the REPL window (add `:results output` and call `princ` on the result to see both together, since the block otherwise shows only the value `3`).
+  Expected: `3`, with `"start end "` printed first (wrap the call in `princ` if you want to see both together, since the listing shows only the value `3`).
 
   The comment the exercise asks for:
 
@@ -3266,7 +3266,7 @@ For exercises where the answer is a single expression, the check is simply runni
 
   Expected: the `COMMON-LISP` package, the `GAME` package, `T`, and `COMMON-LISP-USER`.
 
-  `(first '(a b))` is `a`, read in whichever package was current when you ran the block — `cl-user` here. Symbols land in the package that was current #emph[when they were read], which is why the same name can exist in two packages as two different symbols.
+  `(first '(a b))` is `a`, read in whichever package was current when you ran it — `cl-user` here. Symbols land in the package that was current #emph[when they were read], which is why the same name can exist in two packages as two different symbols.
 
 ]
 
@@ -4079,7 +4079,7 @@ For exercises where the answer is a single expression, the check is simply runni
         (item-location 'lamp))
   ```
 
-  Expected: `("There is no lamp here." ... KITCHEN)` on a fresh save — wait, precisely: the first `take 'lamp` signals `cerror` because the lamp is in the cellar, and no handler is bound, so the debugger opens. Running the whole list in one block therefore stops at the first element. Two separate checks are the honest way:
+  Expected: `("There is no lamp here." ... KITCHEN)` on a fresh save — wait, precisely: the first `take 'lamp` signals `cerror` because the lamp is in the cellar, and no handler is bound, so the debugger opens. Running the whole list at once therefore stops at the first element. Two separate checks are the honest way:
 
   ```lisp
   (defparameter *item-locations*
@@ -4606,7 +4606,7 @@ For exercises where the answer is a single expression, the check is simply runni
 
   Symptom: `go-to 'kitchen` from the hallway says "You can't go there from here" — the hallway's exit list still names kitchen, but `find-room` returns nil. And `items-here` on kitchen errors; `doctor` reports `"key is in unknown room KITCHEN"` (and any item that was in the kitchen), because the `find-room` check catches it.
 
-  The catalogue's pattern: data drift is loud (conditions, `doctor` catches it), function damage is silent (wrong values, no signal). `doctor` is how you give the silent kind a voice — and the redefinition loop is how you fix it, one `C-c C-c` per definition, no restart.
+  The catalogue's pattern: data drift is loud (conditions, `doctor` catches it), function damage is silent (wrong values, no signal). `doctor` is how you give the silent kind a voice — and the redefinition loop is how you fix it, one #box[`C-c C-c`] per definition, no restart.
 
 ]
 
@@ -5508,9 +5508,9 @@ For exercises where the answer is a single expression, the check is simply runni
 
   + Structured data. A thing can have several slots — name, description, weight, value, contents — that belong together as one thing, distinguishable by which instance carries which. A plist on a symbol mixes the description, the weight, and everything else into one flat list; keeping the fields associated per-instance is a discipline the plist doesn't enforce.
 
-  + Behaviour that varies by kind. describe-thing dispatches on class; there is no way to make (get 'key 'description) vary by kind without writing if-typecase logic. Adding a new kind (fragile, say) means one new class and one new method; adding it to the plist world means editing every function that reads the plist.
+  #enum(start: 2, [Behaviour that varies by kind. describe-thing dispatches on class; there is no way to make (get 'key 'description) vary by kind without writing if-typecase logic. Adding a new kind (fragile, say) means one new class and one new method; adding it to the plist world means editing every function that reads the plist.])
 
-  + State safety. A plist is global mutable state attached to a symbol — remprop, setf get, any code anywhere can corrupt it (Chapter 23's warnings). An instance's slot is protected by the class's accessor contract, and two instances of the same class never share state accidentally.
+  #enum(start: 3, [State safety. A plist is global mutable state attached to a symbol — remprop, setf get, any code anywhere can corrupt it (Chapter 23's warnings). An instance's slot is protected by the class's accessor contract, and two instances of the same class never share state accidentally.])
 
   The plist's one advantage: symbolic stability. A symbol's plist is the same wherever the symbol appears; a class instance must be passed. For constants attached to a name, plists are fine. For a #emph[thing], with several slots and behaviour, classes are the right shape.
 
@@ -6103,9 +6103,9 @@ For exercises where the answer is a single expression, the check is simply runni
 
   + It interns a keyword from header text. A hostile or mistaken header row floods the keyword table (Chapter 23's warning). Production code should validate against a known header set, not trust the file.
 
-  + `parse-integer=` on " 3 " returns 3 (it skips leading whitespace), but on "3.0" returns 3 with a second value of 2 (where it stopped). The naive `or=` keeps only the integer, silently dropping the ".0" — a value mismatch an upstream consumer might not notice.
+  #enum(start: 2, [`parse-integer=` on " 3 " returns 3 (it skips leading whitespace), but on "3.0" returns 3 with a second value of 2 (where it stopped). The naive `or=` keeps only the integer, silently dropping the ".0" — a value mismatch an upstream consumer might not notice.])
 
-  + Empty fields parse as nil from parse-integer's error, so `maybe-number ""` returns "", not nil — inconsistent with how JSON treats missing fields. The seam's schema should decide: is "" the empty string, a null, or absent?
+  #enum(start: 3, [Empty fields parse as nil from parse-integer's error, so `maybe-number ""` returns "", not nil — inconsistent with how JSON treats missing fields. The seam's schema should decide: is "" the empty string, a null, or absent?])
 
   When cl-csv becomes necessary: as soon as any field contains a quoted comma, an embedded newline, or a double-quote. `uiop:split-string` on commas silently breaks those cases (producing extra fields), and the breakage is invisible until downstream arithmetic fails. For data you produce, the naive reader is fine. For data you consume, always cl-csv.
 

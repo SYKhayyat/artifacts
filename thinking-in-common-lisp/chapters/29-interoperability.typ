@@ -39,7 +39,7 @@ Without :ignore-error-status `t`, a non-zero exit signals an error — Chapter 1
 ;; just the last 100 lines, collected
 ```
 
-The exact keyword for line-by-line processing has drifted across `uiop` versions — `M-.` on `uiop:run-program` and read its docstring; this is the reading skill of Chapter 31 applied within the hour. For input, :input "string" pipes it to the process's stdin.
+The exact keyword for line-by-line processing has drifted across `uiop` versions — #box[`M-.`] on `uiop:run-program` and read its docstring; this is the reading skill of Chapter 31 applied within the hour. For input, :input "string" pipes it to the process's stdin.
 
 == Reading and writing CSV
 
