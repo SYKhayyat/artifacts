@@ -2,13 +2,13 @@
 
 = Packages and Symbols Internals
 
-Chapter 16 taught the working day: `defpackage`, `in-package`, `export`, and why the game's symbols live behind `:cave-of-noise:` prefixes. This chapter goes under the hood — the package system as data structures you can query and manipulate. You need this not to write exotic code but to `/read` it: every `shadow`, `unintern` and double-colon in someone's source is a sentence about these structures, and the name-conflict errors that interrupt your loading are questions these tools answer.
+Chapter 16 taught the working day: `defpackage`, `in-package`, `export`, and why the game's symbols live behind `:cave-of-noise:` prefixes. This chapter goes under the hood — the package system as data structures you can query and manipulate. You need this not to write exotic code but to read it: every `shadow`, `unintern` and double-colon in someone's source is a sentence about these structures, and the name-conflict errors that interrupt your loading are questions these tools answer.
 
 == The symbol table, by hand
 
 A package is, at bottom, a table from strings to symbols, with a list of exported names and a list of use-lists. Three functions are the whole API surface for one symbol:
 
-- `find-symbol` — look up a string; two values: the symbol and its `/status` (`:internal`, `:external`, `:inherited`, or `nil`).
+- `find-symbol` — look up a string; two values: the symbol and its status (`:internal`, `:external`, `:inherited`, or `nil`).
 - `intern` — look up or create; the reader's own operation.
 - `unintern` — remove a symbol from the package (the symbol object itself survives wherever it's referenced; it's just no longer #emph[findable by name `here`]).
 
@@ -36,7 +36,7 @@ A package is, at bottom, a table from strings to symbols, with a list of exporte
 
 == export, import, and the two-way door
 
-`export` puts a symbol's name in the package's external list. What's less obvious: `export` on a symbol the package doesn't `/home` first `/imports` it — the machinery is about tables, not about "publishing". The round trip:
+`export` puts a symbol's name in the package's external list. What's less obvious: `export` on a symbol the package doesn't home first imports it — the machinery is about tables, not about "publishing". The round trip:
 
 ```lisp
 (defpackage :demo (:use :cl))
@@ -78,14 +78,14 @@ A conflict happens when a name becomes findable two ways in one package: `use-pa
   [`:import-from`], [bring the named package's symbol in (error if the table already has the name)],
 )
 
-The `/shadowing` concept: a package can hold a symbol that `/shadows` an inherited one — `find-symbol` returns it, and future `use-package`'s that would conflict with it are legal, the shadowing symbol winning. That's what makes `:shadowing-import-from` the tool for deliberately overriding part of a used package.
+The shadowing concept: a package can hold a symbol that shadows an inherited one — `find-symbol` returns it, and future `use-package`'s that would conflict with it are legal, the shadowing symbol winning. That's what makes `:shadowing-import-from` the tool for deliberately overriding part of a used package.
 
 The four `defpackage` options for bringing names in, summarised:
 
-- `(:use pkg)` — import all of `pkg`'s `/exports`, so they can be found by name, and any name conflict is an error at `use-package` time.
+- `(:use pkg)` — import all of `pkg`'s exports, so they can be found by name, and any name conflict is an error at `use-package` time.
 - `(:import-from pkg name...)` — import the specific `symbols` `name...`; error if the name is taken.
-- `(:shadowing-import-from pkg name...)` — same, but the imported symbols `/override` the current table's names; no error if the name is taken.
-- `(:shadow name...)` — the package gets its `/own` symbol for each name, deliberately unrelated to whatever that name meant elsewhere.
+- `(:shadowing-import-from pkg name...)` — same, but the imported symbols override the current table's names; no error if the name is taken.
+- `(:shadow name...)` — the package gets its own symbol for each name, deliberately unrelated to whatever that name meant elsewhere.
 
 == Nicknames, renaming, deleting
 
@@ -109,7 +109,7 @@ And the inverse notations, rarely needed but met in macros and printouts: `#:sym
 
 Chapter 16 split the game into files; the deeper design question is #emph[packages per file vs one package]. The practical wisdom:
 
-- One package per `/interface`, not per file. `packages.lisp` defining one `:cave-of-noise` package is right for an application; a library exposing `:mylib` and `:mylib.driver` splits when the parts serve different readers.
+- One package per interface, not per file. `packages.lisp` defining one `:cave-of-noise` package is right for an application; a library exposing `:mylib` and `:mylib.driver` splits when the parts serve different readers.
 - `(:use :cl)` always; `use` of your own other packages only where the dependency is real — every used package's exports become part of your package's unqualified namespace, which is coupling.
 - Export deliberately: the export list is your API contract, and `find-symbol` can test it. A symbol exported by accident is a commitment to support it.
 
@@ -127,7 +127,7 @@ Long `:use` lists invite conflicts and hide provenance: when you read `merge` in
 
 === unintern in live code
 
-`unintern` of a symbol that functions still reference leaves those references holding a symbol findable nowhere by name — redefinitions then create a `/different` symbol with the same name, and the old code silently diverges from the new. Unintern only in package-fiddling sessions, never in program logic.
+`unintern` of a symbol that functions still reference leaves those references holding a symbol findable nowhere by name — redefinitions then create a different symbol with the same name, and the old code silently diverges from the new. Unintern only in package-fiddling sessions, never in program logic.
 
 === Treating keywords as "just strings"
 
@@ -182,7 +182,7 @@ Check:
 (member '*rooms* (unexported-api))       ; => (*ROOMS*) — internal
 ```
 
-Running `unexported-api` after a long development session routinely surfaces three or four symbols you meant to keep private but accidentally exported, or symbols you've been referring to by `::` that should be part of the API. That's the audit: names that `/should` be public are in `:export`; names that shouldn't be are internal and reachable only by `::`.
+Running `unexported-api` after a long development session routinely surfaces three or four symbols you meant to keep private but accidentally exported, or symbols you've been referring to by `::` that should be part of the API. That's the audit: names that should be public are in `:export`; names that shouldn't be are internal and reachable only by `::`.
 
 Two more tests worth adding to the audit habit:
 

@@ -151,7 +151,7 @@ Structs and pointers, one step deeper:
 
 `with-foreign-object` is `with-open-file`'s shape for raw memory: allocate on the stack for the body's duration, free automatically. Memory you allocate yourself with `cffi:foreign-alloc` you must `foreign-free` — the resource discipline of every `with-` form, minus the automation.
 
-An honest boundary note: CFFI is `/readable` after this chapter but `/serious` C interop (callbacks, memory management across the boundary, threads) is its own book chapter in other books. The realistic division of labour: call a C library for something Lisp lacks (a hardware binding, a fast codec), keep your logic in Lisp, and treat the FFI layer as a thin, tested seam — a dozen `defcfun` lines in one `ffi.lisp` file, never scattered.
+An honest boundary note: CFFI is readable after this chapter but serious C interop (callbacks, memory management across the boundary, threads) is its own book chapter in other books. The realistic division of labour: call a C library for something Lisp lacks (a hardware binding, a fast codec), keep your logic in Lisp, and treat the FFI layer as a thin, tested seam — a dozen `defcfun` lines in one `ffi.lisp` file, never scattered.
 
 == When to leave the image, and when not to
 
@@ -166,7 +166,7 @@ The game's needs so far have been satisfied in-image, and most programs' are. Th
 
 If you take one mental model from this chapter, take this one: interop fails in three distinct ways, and each wants a different defensive shape.
 
-#emph[Format mismatch.] The outside world produces data in a shape your Lisp didn't expect — a CSV row with the wrong number of fields, a JSON object missing a required key, a shell command returning empty stdout. These are `/expected` failures in the sense of Chapter 24: the caller usually knows what to do (fill defaults, skip the record, try the next file). Defend them with validate-then-use — the shape `game-state-json` uses in the project step below.
+#emph[Format mismatch.] The outside world produces data in a shape your Lisp didn't expect — a CSV row with the wrong number of fields, a JSON object missing a required key, a shell command returning empty stdout. These are expected failures in the sense of Chapter 24: the caller usually knows what to do (fill defaults, skip the record, try the next file). Defend them with validate-then-use — the shape `game-state-json` uses in the project step below.
 
 #emph[Environment failure.] The file doesn't exist, the command isn't installed, the library isn't on the PATH. These are Chapter 15 conditions: catchable, and the right answer is almost always to surface them with a specific condition type so the caller can distinguish "missing save file" from "corrupt save file".
 
@@ -221,7 +221,7 @@ The CSV export: `visit-report` returns a list of (count room-symbol) lists. That
    path))
 ```
 
-Note the conversions: the room's `/symbol` is downcased to a string for readability; the count is `write-to-string`'d so the CSV writer receives strings as it expects. CSV is a string-in, string-out format; the conversion lives here, at the seam.
+Note the conversions: the room's symbol is downcased to a string for readability; the count is `write-to-string`'d so the CSV writer receives strings as it expects. CSV is a string-in, string-out format; the conversion lives here, at the seam.
 
 The JSON export — and its first draft that the chapter warns against:
 

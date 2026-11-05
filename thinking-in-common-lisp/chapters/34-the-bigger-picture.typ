@@ -137,7 +137,7 @@ The chapters in this book taught these questions by demonstrating them: when Cha
 
 You won't know whether it "took" immediately. The test comes in the next program you start, or the next non-Lisp program you read — do you reach for a class when a closure would do? Do you write a for-loop when a `mapcar` reads more clearly? Do you let a bug hide behind a comment when a condition would surface it? If yes, the shapes are becoming yours. If not, the shapes are still Java-shaped, and the language is a dialect of Java that happens to look different.
 
-The book's whole structure was in service of this: Part I gave you the atoms (numbers, symbols, lists); Part II gave you the shapes those atoms build (conses, recursion, functions-as-values); Part III gave you the tools (loops, `format`, structures, macros, conditions, packages); Part IV gave you the `/why` of those tools (binding, reading, compiling, types, symbols-as-data, closures, classes, packages-as-data); Part V gave you the discipline of shipping (interoperability, streaming, reading strangers' code, executables, tests).
+The book's whole structure was in service of this: Part I gave you the atoms (numbers, symbols, lists); Part II gave you the shapes those atoms build (conses, recursion, functions-as-values); Part III gave you the tools (loops, `format`, structures, macros, conditions, packages); Part IV gave you the why of those tools (binding, reading, compiling, types, symbols-as-data, closures, classes, packages-as-data); Part V gave you the discipline of shipping (interoperability, streaming, reading strangers' code, executables, tests).
 
 You can now read, understand, write, and extend Common Lisp. The "grok" the guide promised in its introduction is the shapes part — the vocabulary that comes to mind when a new problem arrives. That comes with practice, not with the book.
 
@@ -147,7 +147,7 @@ The best thing the book can do now is suggest what to practice on.
 
 + #strong[Extend the game past the book.] The game you've built is small — five rooms, four item types, one player. It's also #emph[`yours`] in a way a book's exercise never is: you chose the room descriptions, you chose which items go where, you chose how `describe-thing` reads. Add a shop where buying and selling happen; add a monster that moves between rooms; add a save format that survives a schema change; add a room that only opens when the player carries the key. Every addition is a chapter's tools re-applied. And every one teaches something the chapters couldn't, because they had to be ordered.
 
-+ #strong[Write something small and new.] A backup tool, a log analyser, a text adventure generator, a budget calculator. Start with `ql:quickproject` (which scaffolds an `.asd`, a `package.lisp`, a `tests/` directory, and a README), one package, one `.asd`, one file — the Chapter 28 shape, fresh. Do the whole discipline: docstrings, tests, a build script, a README. The game taught you how; a new project teaches you `/why` — because the shapes feel natural this time, and the code reads like Lisp instead of like Lisp-looking Java.
++ #strong[Write something small and new.] A backup tool, a log analyser, a text adventure generator, a budget calculator. Start with `ql:quickproject` (which scaffolds an `.asd`, a `package.lisp`, a `tests/` directory, and a README), one package, one `.asd`, one file — the Chapter 28 shape, fresh. Do the whole discipline: docstrings, tests, a build script, a README. The game taught you how; a new project teaches you why — because the shapes feel natural this time, and the code reads like Lisp instead of like Lisp-looking Java.
 
 + #strong[Read one good codebase.] Pick a small Quicklisp library you use — `split-sequence`, `iterate`, `cl-ppcre` if you have patience — and read it end to end. Keep the Hyperspec open beside it. Notice how the author solves the problems you've solved, and where the solutions differ. Notice the docstrings, the comment conventions, the test suite. Reading with the standard at hand is how the remaining rough edges — yours and the language's — get polished off. Chapter 31 was a tour; this is the practice.
 
@@ -168,17 +168,17 @@ The running image, the file, and the REPL: they were the whole method. Every cha
 ]
 
 #exercise("34.3")[
-  Pick a library from the ecosystem table by category, load it with `ql:quickload`, and write three sentences on what it does and whether you'd reach for it in a real project. Then answer: what does the library's README `/lack` that a project's README should have? (The answer is usually the same thing Chapter 31's audit checklist calls out.)
+  Pick a library from the ecosystem table by category, load it with `ql:quickload`, and write three sentences on what it does and whether you'd reach for it in a real project. Then answer: what does the library's README lack that a project's README should have? (The answer is usually the same thing Chapter 31's audit checklist calls out.)
 
 ]
 
 #exercise("34.4")[
-  Convert `item-names` from Chapter 8 to a generator that yields one name at a time. Compare with the eager version: when would you prefer each? Then convert the generator `/back` to eager processing — what did the conversion cost in code complexity, and what did it buy?
+  Convert `item-names` from Chapter 8 to a generator that yields one name at a time. Compare with the eager version: when would you prefer each? Then convert the generator back to eager processing — what did the conversion cost in code complexity, and what did it buy?
 
 ]
 
 #exercise("34.5")[
-  Add a `--version` flag to the game's `main` (Chapter 32) that reports `/both` the game's version and the Quicklisp distro version, so `./game --version` tells a user both. The distro version comes from `ql-dist:`; `M-.` on i`(asdf:system-version= (asdf:find-system :quicklisp))` — find the right accessor and use it.
+  Add a `--version` flag to the game's `main` (Chapter 32) that reports both the game's version and the Quicklisp distro version, so `./game --version` tells a user both. The distro version comes from `ql-dist:`; `M-.` on i`(asdf:system-version= (asdf:find-system :quicklisp))` — find the right accessor and use it.
 
 ]
 

@@ -215,7 +215,8 @@ def repair_bare_marker(text, make_frag):
             after = text[i + 1] if i + 1 < n else None
             if after is None or after in POST:
                 start = run_start(text, i)
-                if start is not None and plausible_code(text[start:i]):
+                if start is not None and text[start] not in "/~" \
+                   and plausible_code(text[start:i]):
                     # The run's characters are already in OUT; replace them
                     # with the code fragment as one piece.
                     del out[len(out) - (i - start):]

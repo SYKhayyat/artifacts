@@ -276,7 +276,7 @@ That's the difference between `+` combination and inheritance-of-behaviour: inhe
 ]
 
 #exercise("27.5")[
-  Write `safe-change-class`, which takes an instance and a new class name, verifies with `class-precedence-list` that no slots would be `/dropped` (slots on the old class absent from the new), and refuses with a condition listing the dropped slot names. What does the refusal check teach about `change-class`'s slot policy?
+  Write `safe-change-class`, which takes an instance and a new class name, verifies with `class-precedence-list` that no slots would be dropped (slots on the old class absent from the new), and refuses with a condition listing the dropped slot names. What does the refusal check teach about `change-class`'s slot policy?
 
 ]
 

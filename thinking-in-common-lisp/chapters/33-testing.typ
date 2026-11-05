@@ -53,10 +53,10 @@ Both choices scale: `fiveam` adds assertion types (`is-true`, `is-false`, `is-eq
 
 == What to test
 
-The first discipline: #emph[test behaviour through the public interface, not internals]. Tests that call `items-here` directly are testing the machinery; tests that call run-command '`(take key)` and check the reply are testing the `/behaviour` players see. The two kinds of tests have different stability profiles:
+The first discipline: #emph[test behaviour through the public interface, not internals]. Tests that call `items-here` directly are testing the machinery; tests that call run-command '`(take key)` and check the reply are testing the behaviour players see. The two kinds of tests have different stability profiles:
 
 - Internal tests (call `items-here`, `set-location`) break when the internals change. They're cheap to write, useful during development of one function, and should be discarded or moved into a "unit test" file when the function stabilises.
-- Behaviour tests (call run-command '`(take key)`, `save-game`, `look`) are what players exercise. They break when the `/contract` changes, which is exactly when you want to be notified.
+- Behaviour tests (call run-command '`(take key)`, `save-game`, `look`) are what players exercise. They break when the contract changes, which is exactly when you want to be notified.
 
 For the game, the behaviour test set is short:
 
@@ -88,7 +88,7 @@ The flag-vs-condition distinction from Chapters 24 and 19 determines which behav
     (condition-type (c) (declare (ignore c)) t)))
 ```
 
-The `(progn ... nil)` is the trick: if the thunk returns normally, the `progn` returns `nil` and the test fails because the expected condition never fired. If the thunk signals the expected type, the handler runs and returns `t`. If the thunk signals a `/different` type, the handler doesn't match, and the condition propagates — the test fails with the `/wrong` condition visible, not with a misleading "expected condition, got value".
+The `(progn ... nil)` is the trick: if the thunk returns normally, the `progn` returns `nil` and the test fails because the expected condition never fired. If the thunk signals the expected type, the handler runs and returns `t`. If the thunk signals a different type, the handler doesn't match, and the condition propagates — the test fails with the wrong condition visible, not with a misleading "expected condition, got value".
 
 - #emph[Value-returning functions] — `item-names`, `item-phrase`, `comma-list` — are the easy case: call with an input, compare with `equal`.
 
@@ -116,7 +116,7 @@ Some tests need to control what a function sees without changing the game's actu
        0)   ; SEARCH returns 0 when the substring is at the start
 ```
 
-The `search` check is interesting: it returns the index of the match, so any result other than `nil` means "found". The test asserts `0` specifically because `look` should `/start` with the room name; a `search` returning 5 would mean the name appears but not where the player expects. The assertion is stricter than "contains", which is the point — tests can encode formatting expectations that a `stringp` check can't.
+The `search` check is interesting: it returns the index of the match, so any result other than `nil` means "found". The test asserts `0` specifically because `look` should start with the room name; a `search` returning 5 would mean the name appears but not where the player expects. The assertion is stricter than "contains", which is the point — tests can encode formatting expectations that a `stringp` check can't.
 
 The general pattern: closures (Chapter 25) make test doubles free. A function that reads from #strong[game-output] can be tested by binding it to a string stream; a function that reads from #strong[save-file] can be tested by binding it to `/tmp/test-save`. No mocking framework needed; the dynamic variables are the seams, and `let` is the tool.
 
@@ -178,13 +178,13 @@ The hand-rolled framework from Chapter 31 is enough for under about thirty tests
 
 The transition point is when the test suite has its own structure — multiple files, shared setup, several suites. For the game at thirty-two tests, hand-rolled is fine. For the game at fifty, reach for the library.
 
-The `run-tests` shape survives the transition: `fiveam`'s `run!` returns a similar result, and the build script's check is the same. The framework is a `/tool`; the discipline (test the contract, one test per bug, green before shipping) is the `/habit`, and it transfers.
+The `run-tests` shape survives the transition: `fiveam`'s `run!` returns a similar result, and the build script's check is the same. The framework is a tool; the discipline (test the contract, one test per bug, green before shipping) is the habit, and it transfers.
 
 == Common mistakes
 
 === Testing internals
 
-A test that calls `(items-here 'kitchen)` directly is testing `items-here`; a test that calls run-command '`(look)` and searches the reply is testing `look`. The second survives `items-here` being renamed, rewritten, or moved to another package. The first breaks every time. Test through the interface; save internal tests for `/during` the development of one function, then delete them.
+A test that calls `(items-here 'kitchen)` directly is testing `items-here`; a test that calls run-command '`(look)` and searches the reply is testing `look`. The second survives `items-here` being renamed, rewritten, or moved to another package. The first breaks every time. Test through the interface; save internal tests for during the development of one function, then delete them.
 
 === Tests that depend on order
 
@@ -199,13 +199,13 @@ If `take-key` is skipped or `undo-take` is run alone, `undo-take` fails. The fix
 
 A check that returns `(name . t)` when the value is wrong — because the comparison used `eq` where `equal` was needed, or because the "value" was a side-effect-producing form that always returns `t` — is worse than no test. The symptom: the suite says "green" and the bug ships anyway. `check`'s `(equal got want)` is doing the right comparison; using `eq` on strings or lists is the classic mistake (Chapter 10's four equalities, in a test context).
 
-The disproof: deliberately break the code a test covers, run the test, watch it fail. If it doesn't fail, the test isn't testing what you thought. Every test suite should have at least one deliberate-break session where the developer `/sees` the tests do their job.
+The disproof: deliberately break the code a test covers, run the test, watch it fail. If it doesn't fail, the test isn't testing what you thought. Every test suite should have at least one deliberate-break session where the developer sees the tests do their job.
 
 === Trusting the debugger during tests
 
-Running a test in the REPL, watching it enter the debugger on failure, and manually inspecting state — that's normal during test development. But the suite as run by `asdf:test-system` must not enter the debugger. A test that signals an error should be `/caught` by the framework or by an explicit `handler-case` in the test; letting the debugger open turns "test suite" into "interactive test session", and the build script hangs waiting for input.
+Running a test in the REPL, watching it enter the debugger on failure, and manually inspecting state — that's normal during test development. But the suite as run by `asdf:test-system` must not enter the debugger. A test that signals an error should be caught by the framework or by an explicit `handler-case` in the test; letting the debugger open turns "test suite" into "interactive test session", and the build script hangs waiting for input.
 
-The `check`-based framework is debugger-safe: assertions compare values and return pairs, no error signalling. Tests that use `expect-condition` are debugger-safe for the `/expected` condition; an `/unexpected` condition is the problem the framework must catch. Wiring `run-tests` into a `handler-case` in `test-op`:
+The `check`-based framework is debugger-safe: assertions compare values and return pairs, no error signalling. Tests that use `expect-condition` are debugger-safe for the expected condition; an unexpected condition is the problem the framework must catch. Wiring `run-tests` into a `handler-case` in `test-op`:
 
 ```lisp
 (defun run-tests-safely ()
@@ -220,7 +220,7 @@ The `check`-based framework is debugger-safe: assertions compare values and retu
 
 === Over-testing
 
-Tests have a cost: writing them, maintaining them, waiting for them. A test that asserts "string-upcase of "a" is "A"" is testing the language, not your code. A test that asserts `(1+ 2)` is `3` is testing SBCL. Tests are for `/your` decisions — the invariants you chose — not for the language's. Delete any test you can't imagine ever failing.
+Tests have a cost: writing them, maintaining them, waiting for them. A test that asserts "string-upcase of "a" is "A"" is testing the language, not your code. A test that asserts `(1+ 2)` is `3` is testing SBCL. Tests are for your decisions — the invariants you chose — not for the language's. Delete any test you can't imagine ever failing.
 
 === Over-mocking
 
@@ -393,7 +393,7 @@ The ASDF system:
                         (remove-if #'cdr results))))))
 ```
 
-The `:perform` clause on `test-op` is what `asdf:test-system` invokes. The check: if any `cdr` is nil, the failure message lists `/which` tests failed — same shape as `check`'s `(name . ok)` pairs, one line of code, and the caller sees the failure names, not just "tests failed".
+The `:perform` clause on `test-op` is what `asdf:test-system` invokes. The check: if any `cdr` is nil, the failure message lists which tests failed — same shape as `check`'s `(name . ok)` pairs, one line of code, and the caller sees the failure names, not just "tests failed".
 
 And the build script (already shown in Chapter 32's Exercise 32.4, but for completeness):
 

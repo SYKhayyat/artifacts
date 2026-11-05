@@ -123,7 +123,7 @@ Several clauses, most specific first:
 
 Expected: `(5 "Can't divide by zero." "Bad input: X.")`
 
-The clause with no parameter, `(division-by-zero () ...)`, is normal: the condition object is there if you want it, not if you don't. The clause form `(:no-error ...)` runs when the body `/succeeded`, which is handy for functions that report either a result or a failure:
+The clause with no parameter, `(division-by-zero () ...)`, is normal: the condition object is there if you want it, not if you don't. The clause form `(:no-error ...)` runs when the body succeeded, which is handy for functions that report either a result or a failure:
 
 ```lisp
 (defun safe-parse-or-log (text)

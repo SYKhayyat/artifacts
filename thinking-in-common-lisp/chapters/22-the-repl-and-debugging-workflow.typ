@@ -54,7 +54,7 @@ Use it on: an alist whose shape looks wrong, a condition object caught in a hand
 
 The difference is intent and recovery: an error unwinds looking for handlers; a break just opens the debugger with a `CONTINUE` restart that puts everything back. Use `break` while hunting, then delete it — or turn it into `warn` if the condition is worth reporting in the finished program.
 
-`trace` (Chapter 8) shows calls and returns; `step` walks a form one subform at a time, in SLIME\/SLY showing each step in Emacs with keys to descend, skip or evaluate. Stepping is slow but exact — when you can't see `/why` a function returns what it returns, `step` shows the path; when you can't see `/what` its inputs were, `trace` shows the calls.
+`trace` (Chapter 8) shows calls and returns; `step` walks a form one subform at a time, in SLIME\/SLY showing each step in Emacs with keys to descend, skip or evaluate. Stepping is slow but exact — when you can't see why a function returns what it returns, `step` shows the path; when you can't see what its inputs were, `trace` shows the calls.
 
 == Reading a backtrace
 

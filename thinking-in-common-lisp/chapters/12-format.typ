@@ -236,7 +236,7 @@ The `:;` clause is the default, used when the number is out of range. This one e
 ;; => "You see nothing."
 ```
 
-== Recursive format: `/` and named functions
+== Recursive format: \/ and named functions
 
 There's a directive that spells out numbers in words:
 

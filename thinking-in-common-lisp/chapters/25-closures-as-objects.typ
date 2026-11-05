@@ -260,7 +260,7 @@ The `limit` trimming keeps the history bounded without any caller knowing. Note 
 ]
 
 #exercise("25.4")[
-  Write `make-stack`, returning four closures (`push!`, `pop!`, `empty-p`, `contents`) sharing one list binding. `pop!` should signal an error on underflow, and `contents` should return a `/copy` of the list. What does returning a copy teach about encapsulation vs leaking?
+  Write `make-stack`, returning four closures (`push!`, `pop!`, `empty-p`, `contents`) sharing one list binding. `pop!` should signal an error on underflow, and `contents` should return a copy of the list. What does returning a copy teach about encapsulation vs leaking?
 
 ]
 

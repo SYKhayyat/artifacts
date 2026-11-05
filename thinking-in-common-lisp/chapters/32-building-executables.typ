@@ -35,7 +35,7 @@ The other form:
 :toplevel #'main)
 ```
 
-This writes an `/executable` — an image with SBCL's runtime bundled in, self-contained:
+This writes an executable — an image with SBCL's runtime bundled in, self-contained:
 
 ```text
 ./game # on Linux
@@ -163,7 +163,7 @@ The dispatch shape (search for the flag, act, exit or fall through) is standard;
 
 == Cross-platform notes
 
-`sb-ext:save-lisp-and-die` :executable `t` produces a native executable for the platform it runs on. Build on Linux, get a Linux binary; build on Windows, get a Windows executable; to support both, build on both. The build is not cross-platform; the `/source` is.
+`sb-ext:save-lisp-and-die` :executable `t` produces a native executable for the platform it runs on. Build on Linux, get a Linux binary; build on Windows, get a Windows executable; to support both, build on both. The build is not cross-platform; the source is.
 
 The Windows-specific concerns:
 
@@ -216,7 +216,7 @@ An executable that exits 0 after a crash is a script's worst nightmare: the shel
 
 === Losing the debugger
 
-The `handler-case` in `main` catches all errors and translates them to stderr + exit 1. That's right for a deployed executable — the user isn't a Lisp programmer, and a full debugger would be noise. But during development, you `/want` the debugger. Two ways to have both:
+The `handler-case` in `main` catches all errors and translates them to stderr + exit 1. That's right for a deployed executable — the user isn't a Lisp programmer, and a full debugger would be noise. But during development, you want the debugger. Two ways to have both:
 
 Build two executables, one with `handler-case`, one without, from two `toplevel` functions. `main-production` wraps, `main-development` doesn't.
 

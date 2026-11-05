@@ -3910,7 +3910,7 @@ For exercises where the answer is a single expression, the check is simply runni
 == Chapter 19
 
 #soln("19.1")[
-  The `handler-case` form returns `CAUGHT`. The `handler-bind` form `/also` returns `CAUGHT` — but by a different route:
+  The `handler-case` form returns `CAUGHT`. The `handler-bind` form also returns `CAUGHT` — but by a different route:
 
   ```lisp
   (handler-case (error "boom")
@@ -4622,7 +4622,7 @@ For exercises where the answer is a single expression, the check is simply runni
         (symbol-package (gensym))) ; => NIL — uninterned
   ```
 
-  The `intern` line is the reader's own machinery, used by hand: `intern` looks the string up in a package's table (default current package), creating the symbol if absent. Reading `kitchen` `/is` interning `"KITCHEN"` — which is why the `eq` holds: there is only one symbol named `KITCHEN` home in a package, and both expressions reach it.
+  The `intern` line is the reader's own machinery, used by hand: `intern` looks the string up in a package's table (default current package), creating the symbol if absent. Reading `kitchen` is interning `"KITCHEN"` — which is why the `eq` holds: there is only one symbol named `KITCHEN` home in a package, and both expressions reach it.
 
   The last line's `NIL` is the tell for an uninterned symbol: no package holds it, so `symbol-package` has nothing to return. Every interned symbol has a non-`nil` package; every uninterned one has `nil`. There is no third case.
 
@@ -4857,7 +4857,7 @@ For exercises where the answer is a single expression, the check is simply runni
     (if found-p val :absent))   ; => NIL (the stored one)
   ```
 
-  #strong[Surprising:] (1), not\~`(1 2)`. The function's body is the variable reference `form-values` — but the #emph[caller's] argument position `(pass-through (values 1 2))` is a single-value context, so `pass-through` received 1 before any body ran. No function body can recover values its caller truncated. Fix: take a `/thunk` and call it in a multiple-value context:
+  #strong[Surprising:] (1), not\~`(1 2)`. The function's body is the variable reference `form-values` — but the #emph[caller's] argument position `(pass-through (values 1 2))` is a single-value context, so `pass-through` received 1 before any body ran. No function body can recover values its caller truncated. Fix: take a thunk and call it in a multiple-value context:
 
   ```lisp
   (defun pass-through (thunk)
@@ -4910,7 +4910,7 @@ For exercises where the answer is a single expression, the check is simply runni
 
   - `gethash` returns value + found-flag. Callers ignoring the flag get the value or `nil`. Callers binding both get the distinction.
   - `safe-sum` returns total + failed-flag. Same shape.
-  - `(handler-case ...)` is for `/bugs` — errors the caller couldn't have anticipated. Flags are for predicted `failures` — errors the caller routinely branches on.
+  - `(handler-case ...)` is for bugs — errors the caller couldn't have anticipated. Flags are for predicted `failures` — errors the caller routinely branches on.
 
   The rule of thumb: if the caller's natural response is "check the second value and maybe react", use a flag. If the caller's natural response is "let someone higher up deal with it", signal a condition.
 
@@ -5004,7 +5004,7 @@ For exercises where the answer is a single expression, the check is simply runni
       (error () (values nil nil))))
   ```
 
-  Note that `load-game` now returns the `/state` rather than applying it — the caller decides whether to `restore-state` it. That's the flag pattern applied cleanly: the function's job is "get the data from disk"; whether the game adopts it is the game's decision.
+  Note that `load-game` now returns the state rather than applying it — the caller decides whether to `restore-state` it. That's the flag pattern applied cleanly: the function's job is "get the data from disk"; whether the game adopts it is the game's decision.
 
   Update the save and load commands:
 
@@ -5051,7 +5051,7 @@ For exercises where the answer is a single expression, the check is simply runni
 
   The comment the exercise asks for:
 
-  The string-matching approach has three problems that the two-value approach fixes. First, it's brittle: change the error message text, and the caller's match stops working. Second, it's not the information the caller wants — "there was no file" and "the file was corrupt" are both "no load happened", but a caller might want to distinguish them for logging or for a different player message. Two values (state, loaded-p) say what happened; if the caller needs the `/reason`, the function can return three values (state, loaded-p, reason), and callers who don't care ignore the third. Third, string matching is slow and requires allocation of a temp string; comparing against nil or t costs nothing.
+  The string-matching approach has three problems that the two-value approach fixes. First, it's brittle: change the error message text, and the caller's match stops working. Second, it's not the information the caller wants — "there was no file" and "the file was corrupt" are both "no load happened", but a caller might want to distinguish them for logging or for a different player message. Two values (state, loaded-p) say what happened; if the caller needs the reason, the function can return three values (state, loaded-p, reason), and callers who don't care ignore the third. Third, string matching is slow and requires allocation of a temp string; comparing against nil or t costs nothing.
 
   The reason #emph[this] function returns two values instead of signaling a condition: a missing save file is expected (first run of a fresh game), not a bug. Conditions are for bugs and emergencies. Flags are for expected outcomes the caller branches on. save-game and load-game are on the flag side of the line; the game's data structures on disk are on the condition side (see Exercise 18.6's convert-save-v0 and the reader's handling of corrupt files).
 
@@ -5421,7 +5421,7 @@ For exercises where the answer is a single expression, the check is simply runni
 
   The `:after` method runs after the slot is filled from `:initarg`, so it sees the given contents and repairs them. `copy-list` before `sort` is Chapter 10's rule about not sorting things you don't own — the list in the slot may be the caller's. The :key `#'symbol-name` makes `string<` compare the names of the symbols, alphabetically.
 
-  Sorting content is a `/repair`, not a semantic transformation: the same set of things, put in a canonical order. That's the right shape for `initialize-instance :after` — it enforces an invariant without changing meaning. A `:after` that filtered duplicates would be more aggressive; it would be visible transformation, and better signalled by a separate method called by the caller, not by `make-instance`.
+  Sorting content is a repair, not a semantic transformation: the same set of things, put in a canonical order. That's the right shape for `initialize-instance :after` — it enforces an invariant without changing meaning. A `:after` that filtered duplicates would be more aggressive; it would be visible transformation, and better signalled by a separate method called by the caller, not by `make-instance`.
 
 ]
 
@@ -6043,7 +6043,7 @@ For exercises where the answer is a single expression, the check is simply runni
   (uiop:run-program (list "ls" dir) :output :string)
   ```
 
-  #strong[Surprising:] `(assoc "key" decoded)` returns `nil` — the decoded alist's keys are `/keywords` `:key`, and `assoc` defaults to `eql`, which never matches a string against a keyword. Fix: `(assoc :key decoded)`, or pass :test `#'equal` if the keys were strings by design (some JSON libraries decode with string keys, and this test separates the cases).
+  #strong[Surprising:] `(assoc "key" decoded)` returns `nil` — the decoded alist's keys are keywords `:key`, and `assoc` defaults to `eql`, which never matches a string against a keyword. Fix: `(assoc :key decoded)`, or pass :test `#'equal` if the keys were strings by design (some JSON libraries decode with string keys, and this test separates the cases).
 
   #strong[Wrong:] `gzip` on a missing file exits non-zero, and `run-program` signals a `subprocess-error` — uncaught, it interrupts the caller. Fix depends on intent:
 
@@ -6052,7 +6052,7 @@ For exercises where the answer is a single expression, the check is simply runni
 
   The choice is Chapter 24's flags-vs-conditions rule: if the caller routinely branches on "did the command succeed?", take the flag. If the command should always succeed and a failure is a bug, let the condition fly.
 
-  #strong[Wrong:] the decode delivers `:room` as a string `"kitchen"`, and `find-room` needs a `/symbol`. `(find-room "kitchen")` — find-room calls `(find name #strong[rooms] :key #'room-name)`, which uses `eql` by default, and no symbol is `eql` to a string. It returns `nil`, the state gets set to `nil`, and the game is quietly broken. Fix:
+  #strong[Wrong:] the decode delivers `:room` as a string `"kitchen"`, and `find-room` needs a symbol. `(find-room "kitchen")` — find-room calls `(find name #strong[rooms] :key #'room-name)`, which uses `eql` by default, and no symbol is `eql` to a string. It returns `nil`, the state gets set to `nil`, and the game is quietly broken. Fix:
 
   ```lisp
   (defun json->state (json)
@@ -6101,7 +6101,7 @@ For exercises where the answer is a single expression, the check is simply runni
 
   The naive number test is `ignore-errors parse-integer` — it accepts "42", "-7", and "+3" (parse-integer handles the sign); it rejects "3.5" (which JSON would call a number, so this version keeps it a string — a deliberate under-parsing). Three things it misses that a real schema would care about:
 
-  + It interns a `/keyword` from header text. A hostile or mistaken header row floods the keyword table (Chapter 23's warning). Production code should validate against a known header set, not trust the file.
+  + It interns a keyword from header text. A hostile or mistaken header row floods the keyword table (Chapter 23's warning). Production code should validate against a known header set, not trust the file.
 
   + `parse-integer=` on " 3 " returns 3 (it skips leading whitespace), but on "3.0" returns 3 with a second value of 2 (where it stopped). The naive `or=` keeps only the integer, silently dropping the ".0" — a value mismatch an upstream consumer might not notice.
 
@@ -6321,7 +6321,7 @@ For exercises where the answer is a single expression, the check is simply runni
 
   Surprising: `lazy-all-p` #emph[consumes] the generator as it checks — even when it returns `t`, the source is drained, and the caller's "keep checking afterwards" expectation fails. Every later read on that generator reports exhausted.
 
-  The fix is context-dependent. If the caller needs to check other things on the same data, pass a `/list` and let the function rebuild a generator internally:
+  The fix is context-dependent. If the caller needs to check other things on the same data, pass a list and let the function rebuild a generator internally:
 
   ```lisp
   (defun lazy-all-p (pred items)
@@ -6549,7 +6549,7 @@ For exercises where the answer is a single expression, the check is simply runni
 == Chapter 31
 
 #soln("31.1")[
-  The answers vary by library; the `/shape` of a full-credit answer, using split-sequence as the worked specimen:
+  The answers vary by library; the shape of a full-credit answer, using split-sequence as the worked specimen:
 
   ```text
   ;; Files: 2 source files (package.lisp, split-sequence.lisp).
@@ -6602,7 +6602,7 @@ For exercises where the answer is a single expression, the check is simply runni
 
   The distinctions the question probes:
 
-  `asdf:find-system` searches, loads the `.asd` file if needed, and `/is` the step that registers. So `system-source-directory` on an unregistered system errors, but `find-system` registers then returns it.
+  `asdf:find-system` searches, loads the `.asd` file if needed, and is the step that registers. So `system-source-directory` on an unregistered system errors, but `find-system` registers then returns it.
 
   `:license` is present only if the `defsystem` declared it — an audit point in itself: a system with no `:license` line sends you to the LICENSE file, checklist step 1.
 
@@ -6632,7 +6632,7 @@ For exercises where the answer is a single expression, the check is simply runni
 
   — two values stated (Chapter 24's contract), argument shape stated, failure mode stated. If your actual docstring lacks any of the three, that's the exercise's finding.
 
-  The meta-lesson: the docstring a function `/should` have is a question the docstring itself can't answer — you discover it by `/using` the function, finding the places where its behaviour surprises you, and adding sentences to the docstring for each. Every `run-command` caller who's had to check "did the command succeed?" is a sentence the docstring needs.
+  The meta-lesson: the docstring a function should have is a question the docstring itself can't answer — you discover it by using the function, finding the places where its behaviour surprises you, and adding sentences to the docstring for each. Every `run-command` caller who's had to check "did the command succeed?" is a sentence the docstring needs.
 
 ]
 
@@ -6843,7 +6843,7 @@ For exercises where the answer is a single expression, the check is simply runni
 
   #strong[Wrong:] `(quit)` — in modern SBCL, `quit` is deprecated in favour of `sb-ext:exit`, and the exact behaviour across versions varies (older `quit` had no portable way to specify the exit code). More importantly: placed #emph[after] `save-lisp-and-die`, it never runs — `save-lisp-and-die` terminates the process. The `:toplevel` function is the after-save continuation. Remove the `(quit)` line entirely.
 
-  The general pattern: `save-lisp-and-die` is the #emph[last thing a build script runs], and the executable it produces has `:toplevel` as its own `/first` thing. Two different processes, two different "beginnings".
+  The general pattern: `save-lisp-and-die` is the #emph[last thing a build script runs], and the executable it produces has `:toplevel` as its own first thing. Two different processes, two different "beginnings".
 
 ]
 
