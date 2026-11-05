@@ -105,7 +105,7 @@ The Common Lisp HyperSpec is the standard, browsed like a manual. Install it so 
 
 (Windows users: forward slashes work in these paths even on Windows — `C:/docs/HyperSpec/`.)
 
-Now, with Slime connected: point at any symbol, `C-c C-d h` opens the Hyperspec page; `C-c C-d d` does the same for spec dict entries. A later chapter builds the #strong[habit]; this is the #strong[keypress].
+Now, with Slime connected: point at any symbol, `C-c C-d h` opens the Hyperspec page; `C-c C-d d` does the same for spec dict entries. A later chapter builds the #strong[habit]#";" this is the #strong[keypress].
 
 == If you use Doom Emacs
 

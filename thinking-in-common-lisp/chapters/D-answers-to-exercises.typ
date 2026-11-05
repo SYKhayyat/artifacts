@@ -3810,7 +3810,7 @@ For exercises where the answer is a single expression, the check is simply runni
   (member "sbcl" (feature-list) :test #'string=)  ; => same answer
   ```
 
-  The two tests answer the same question by different doors. The second asks "is there a feature whose #emph[name] is 'sbcl'"; the first asks "is `:sbcl` one of the symbols in the list". They agree because both are looking at the same symbol `:sbcl` — the second just converted it to a string for the comparison. `implementation-p` is the right spelling for feature-conditional #emph[decisions]; `feature-list` is the right spelling for #emph[inspection] at the REPL.
+  The two tests answer the same question by different doors. The second asks "is there a feature whose #emph[name] is 'sbcl'"; the first asks "is `:sbcl` one of the symbols in the list". They agree because both are looking at the same symbol `:sbcl` — the second just converted it to a string for the comparison. `implementation-p` is the right spelling for feature-conditional #emph[decisions]#";" `feature-list` is the right spelling for #emph[inspection] at the REPL.
 
   A typical SBCL reports `:sbcl`, `:sb-core-compression` or similar, `:unix` (or `:win32`), `:x86-64` (or `:arm64`), `:64-bit`, `:little-endian`, `:ansi-cl`, `:common-lisp`, and more. The features are how one source tree covers every implementation and platform — and how Appendix A's install instructions can say "on your platform" in Lisp itself.
 

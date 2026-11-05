@@ -180,7 +180,7 @@ KITCHEN   KEY
 
 == Width, padding and case
 
-A number between `~` and the letter sets the #emph[minimum width]; the value is padded with spaces on the left:
+A number between `~` and the letter sets the #emph[minimum width]#";" the value is padded with spaces on the left:
 
 ```lisp
 (format nil "[~5D]" 42)    ; => "[   42]"

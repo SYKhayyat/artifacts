@@ -139,7 +139,7 @@ Restart #emph[objects] matter because names alone can be ambiguous: two nested `
 (parse-or "nope" 0) ; => 0 — handler invoked the restart
 ```
 
-Read the division of labour once more, because this chapter's point is that it's now complete: `parse-with-retry` #emph[offers]; the `handler-bind` #emph[decides]; `parse-or`'s caller needs to know nothing. And because the handler ran at the signal site, the restart it invoked was still in scope — a `handler-case` here would have unwound #emph[past] the `restart-case` and lost it. That is the rule of thumb the two chapters add up to:
+Read the division of labour once more, because this chapter's point is that it's now complete: `parse-with-retry` #emph[offers]#";" the `handler-bind` #emph[decides]#";" `parse-or`'s caller needs to know nothing. And because the handler ran at the signal site, the restart it invoked was still in scope — a `handler-case` here would have unwound #emph[past] the `restart-case` and lost it. That is the rule of thumb the two chapters add up to:
 
 - Handler needs the #emph[stack below it] (restarts, state, the failing call's context): `handler-bind`.
 - Handler only needs to produce a value from `here`: `handler-case`.
